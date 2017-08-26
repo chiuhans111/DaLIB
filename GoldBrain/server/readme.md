@@ -9,7 +9,7 @@ __`GET`__ /api/member/contest/view/key/_`member key`_
 
 ### update
 __`post`__ /api/member/contest/update/key/_`member key`_
-* __body__ * `json` document
+* __body__ `json` document
 * __return__ `object` error
 
 
