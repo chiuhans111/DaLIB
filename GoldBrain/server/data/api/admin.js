@@ -31,14 +31,14 @@ db.then(mongoose => {
             .findOne({ _id: ObjectID(req.params.id) })
             .then(doc => res.send(doc));
     })
-
+/*
     app.post('/find/:collection', (req, res) => {
         db.collection(req.params.collection)
             .find()
             .insertOne(req.body)
             .then(r => res.send(r));
     })
-
+*/
     app.post('/create/:collection', (req, res) => {
         db.collection(req.params.collection)
             .insertOne(req.body)
