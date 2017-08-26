@@ -9,6 +9,7 @@ __`GET`__ /api/member/contest/view/key/_`member key`_
 
 ### update
 __`post`__ /api/member/contest/update/key/_`member key`_
+* __body__ * `json` document
 * __return__ `object` error
 
 
@@ -34,11 +35,11 @@ __`GET`__ /api/admin/find/_`colletion name`_/_`ObjectId`_/key/_`admin key`_
 
 ### create document
 __`POST`__ /api/admin/create/_`colletion name`_/key/_`admin key`_
-* __body__ `document`
+* __body__ `json` document
 
 ### update document
 __`POST`__ /api/admin/update/_`colletion name`_/_`ObjectId`_/key/_`admin key`_
-* __body__ `document`
+* __body__ `json` document
 
 ### delete document
 __`GET`__ /api/admin/delete/_`colletion name`_/_`ObjectId`_/key/_`admin key`_
