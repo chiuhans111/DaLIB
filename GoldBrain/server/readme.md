@@ -28,21 +28,21 @@ crud operations
 __`GET`__ /api/admin/collections/key/_`admin key`_
 
 ### get collection
-__`GET`__ /api/admin/collection/_`colletion name`_/key/_`admin key`_
+__`GET`__ /api/admin/collection/_`collection name`_/key/_`admin key`_
 
 ### find in collection
-__`GET`__ /api/admin/find/_`colletion name`_/_`ObjectId`_/key/_`admin key`_
+__`GET`__ /api/admin/find/_`collection name`_/_`ObjectId`_/key/_`admin key`_
 
 ### create document
-__`POST`__ /api/admin/create/_`colletion name`_/key/_`admin key`_
+__`POST`__ /api/admin/create/_`collection name`_/key/_`admin key`_
 * __body__ `json` document
 
 ### update document
-__`POST`__ /api/admin/update/_`colletion name`_/_`ObjectId`_/key/_`admin key`_
+__`POST`__ /api/admin/update/_`collection name`_/_`ObjectId`_/key/_`admin key`_
 * __body__ `json` document
 
 ### delete document
-__`GET`__ /api/admin/delete/_`colletion name`_/_`ObjectId`_/key/_`admin key`_
+__`GET`__ /api/admin/delete/_`collection name`_/_`ObjectId`_/key/_`admin key`_
 
 ### drop collection
-__`GET`__ /api/admin/drop/_`colletion name`_/key/_`admin key`_
+__`GET`__ /api/admin/drop/_`collection name`_/key/_`admin key`_
