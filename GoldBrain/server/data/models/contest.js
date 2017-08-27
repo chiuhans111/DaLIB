@@ -1,6 +1,21 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+exports.mask = {
+    any: {
+        name: 1,
+        _id: 0,
+
+        'rounds.name': 1,
+        'rounds.content': 1,
+
+        'teams.no': 1,
+        'teams.name': 1,
+        'teams.score': 1,
+        'teams.round': 1
+    }
+}
+
 exports.schema = new Schema({
     key: String,
 

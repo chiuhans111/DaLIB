@@ -12,32 +12,40 @@ var db = require('../base');
 
 var _any = express.Router();
 var _member = express.Router();
-var _view = express.Router();
+var _team = express.Router();
 
 exports.any = _any;
 exports.member = _member;
-exports.view = _view;
+exports.team = _team;
 
 db.then(mongoose => {
     var collection = mongoose.model('contest', model.schema);
 
+    // MEMBER
     _member.get('/view', (req, res) => {
         collection.find(req.contestId, (err, doc) => {
-            console.log('viewing', req.contestId);
+            console.log('viewing', req.contestID);
             res.send(doc)
         })
     })
 
     _member.post('/update', (req, res) => {
-        collection.findByIdAndUpdate(req.contestId, req.body, {
+        collection.findByIdAndUpdate(req.contestID, req.body, {
             runValidators: true
         }, function (err, doc) {
             res.send(err);
         })
     })
 
-    
+    // TEAM
+    _team.get('/', (req, res) => {
+        console.log('2', req.team);
+        collection.findById(req.team.contestID)
+            .select(model.mask.any)
+            .exec((err, doc) => res.send(doc));
+    })
 
+    // ANY
     _any.get('/create/:count', (req, res) => {
         var key = dog.keygen(20);
         var count = +req.params.count;

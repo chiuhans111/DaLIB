@@ -12,9 +12,9 @@ exports.connect = function (db) {
 
     app.use('/admin', require('./admin'));
     app.use('/member', require('./member'));
+    app.use('/team', require('./team'));
 
     // any
-    // app.use('/team', teamAPI.any);
     app.use('/contest', contestAPI.any);
 
     return app;
