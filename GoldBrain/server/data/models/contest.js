@@ -30,7 +30,7 @@ exports.schema = new Schema({
                     content: String,
                     choise: [   // 選擇題選項
                         {
-                            name: String,   // 選項
+                            value: String,   // 選項
                             content: String // 內容
                         }
                     ],
@@ -54,3 +54,47 @@ exports.schema = new Schema({
         }
     ]
 });
+
+/**
+ * 
+ * @typedef {Object} Answer
+ * @property {String} value
+ * @property {String} description
+ * 
+ * @typedef {Object} Choise
+ * @property {String} value
+ * @property {String} content
+ * 
+ * @typedef {Object} Problem
+ * @property {String} title
+ * @property {String} content
+ * @property {Array.<Choise>} choise
+ * @property {Number} timeout
+ * @property {Answer} answer
+ * @property {Number} score
+ * 
+ * @typedef {Object} Round
+ * @property {Number} players
+ * @property {String} name
+ * @property {Array.<Problem>} problems
+ * 
+ * @typedef {Object} Team
+ * @property {Number} no
+ * @property {String} name
+ * @property {String} key
+ * @property {Number} score
+ * @property {Number} round
+ */
+
+function Type() {
+    /**@type {String} */
+    this.key = '';
+    /**@type {String} */
+    this.name = '';
+    /**@type {Array.<Round>}*/
+    this.rounds = [];
+    /**@type {Array.<Team>} */
+    this.teams = [];
+}
+
+exports.type = Type;

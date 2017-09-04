@@ -6,7 +6,6 @@ var dog = require('tool/dog');
 
 var model = require('../models/contest.js');
 
-
 var db = require('../base');
 
 
@@ -24,7 +23,7 @@ db.then(mongoose => {
     // MEMBER
     _member.get('/view', (req, res) => {
         collection.find(req.contestId, (err, doc) => {
-            console.log('viewing', req.contestID);
+            
             res.send(doc)
         })
     })
@@ -37,13 +36,6 @@ db.then(mongoose => {
         })
     })
 
-    // TEAM
-    _team.get('/', (req, res) => {
-        console.log('2', req.team);
-        collection.findById(req.team.contestID)
-            .select(model.mask.any)
-            .exec((err, doc) => res.send(doc));
-    })
 
     // ANY
     _any.get('/create/:count', (req, res) => {

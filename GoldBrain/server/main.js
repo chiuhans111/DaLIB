@@ -2,8 +2,11 @@ var express = require('express');
 
 var app = require("./webpage/web.js");
 var db = require("./data/base.js");
+var io = require("./socket/io.js");
 
 var api = require('./routes/api.js');
+
+var roundManager = require('./socket/round/roundManager');
 
 // DATABASE
 db.then(db => {
@@ -13,24 +16,18 @@ db.then(db => {
 
 })
 
-// SOCKET IO
-var socket = require('socket.io');
+io.then(io => {
+    io.on('connection', socket => {
+        socket.on('hi', data => {
+            console.log('you ping me')
+            socket.emit('pong', {
+                data, time: new Date().getTime()
+            })
+        })
+    });
 
-var io = socket(app.server, null);
-io.on('connection', function (socket) {
-
-    socket.on('join', function (data) {
-        socket.join(data);
-        io.to('1234').emit('message', 'hi you joinned!');
-
-    })
-
-    socket.on('disconnect', function () {
-
-    })
+    console.log('io connected, socket is avaliable');
 })
-
-
 
 exports.publicFolder = function (path) {
     app.use(

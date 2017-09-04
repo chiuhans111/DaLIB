@@ -3,6 +3,7 @@ var ObjectID = require("mongodb").ObjectID;
 var db = require('../data/base');
 
 var contest = require('../data/api/contest');
+var round = require('../data/api/round');
 
 var app = express.Router();
 module.exports = app;
@@ -42,5 +43,8 @@ db.then(mongoose => {
         })
     })
 
-    memberApp.use('/contest', contest.team)
+
+
+    memberApp.use('/contest', contest.team);
+    memberApp.use('/round', round.team);
 })
