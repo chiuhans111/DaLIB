@@ -18,7 +18,7 @@ use this document to write a client work with my server
 |method|event name|data|description|
 |-----:|:---------|----|-----------|
 |__`emit`__|`login`|__`String`__ key|send team `key` in `string` format|
-|__`on`__|`state`|__`JSON`__ [state](#state)|full information in `json`, you will get this state update after login successfully|
+|__`on`__|`state`|__`JSON`__ [state](#state)|full information in `json`, you will get this state update after login successfully, or other player login state changed|
 |__`emit`__|`race`|__`String`__ answer|race with `answer` in `string`, can be `choice.id` or `null`|
 |__`on`__|`racestart`|__`Number`__ time|race will start in `time` millisecond|
 |__`on`__|`setproblem`|__`Number`__ id|the problem is changed, with this `id`|
@@ -36,10 +36,10 @@ use this document to write a client work with my server
     no: Number // problem id
     info: { // could be null if problem have not show yet
       title: String // problem title
-      choice: {
+      choice: [{ // array, or null if this is not a choice problem
         value: String // A, B, C.... the id of the choice
         content: String // the content of the choice
-      }
+      }]
     }
   }
   teams: {
@@ -54,10 +54,10 @@ use this document to write a client work with my server
 ``` javascript
 {
   title: String // problem title
-  choice: {
+  choice: [{ // array, or null if this is not a choice problem
     value: String // A, B, C.... the id of the choice
     content: String // the content of the choice
-  }
+  }]
 }
 ```
 ### info
