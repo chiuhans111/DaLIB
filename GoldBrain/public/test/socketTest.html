@@ -17,25 +17,20 @@
   var socket = io('/round');
 
   var actions = {};
-  actions.setProblem = 'setproblem';
-  actions.setRound = 'setround';
-  actions.showProblem = 'showproblem';
-  actions.race = 'race';
-  actions.answer = 'answer';
-  actions.state = 'state';
-  actions.viewKey = 'viewkey';
-  actions.close = 'close';
 
-
-  for (var i in actions) {
-    (function () {
-      var name = i + '';
-      socket.on(actions[i], data => {
-        console.log(`%c${name}`, 'background-color:blue')
-        console.log(data);
-      })
-    })()
-  }
+  socket.on('actions', _actions => {
+    actions = _actions;
+    console.log(actions);
+    for (var i in actions) {
+      (function () {
+        var name = i + '';
+        socket.on(actions[i], data => {
+          console.log(`%c${name}`, 'background-color:blue;color:white')
+          console.log(data);
+        })
+      })()
+    }
+  })
 
 </script>
 

@@ -39,9 +39,11 @@ function Round(contest, viewKey, io) {
     var event_connection;
     /**@param {type_socket} socket */
     this.connection = function (socket) {
+        socket.emit('actions', actions);
+
         sockets.push(socket);
         console.log('got connection');
-        socket.on('login', key => {
+        socket.on(actions.login, key => {
             if (socket.login) return;
             // VIEWER Login
             console.log('login');
@@ -66,7 +68,7 @@ function Round(contest, viewKey, io) {
                 socket.on(actions.setRound, me.setRound);
                 socket.on(actions.setProblem, me.setProblem);
                 socket.on(actions.showProblem, me.showProblem);
-                socket.on(actions.race, me.startRace);
+                socket.on(actions.raceStart, me.startRace);
                 socket.emit(actions.state, me.state_member());
                 socket.login = true;
                 return;
@@ -96,6 +98,7 @@ function Round(contest, viewKey, io) {
             if (socket.team) {
                 delete me.onlineTeams[socket.team.no];          // offline
                 console.log('a team has lost connection.. QQ');
+                socket.emit(actions.state, me.state_member());
             }
         })
 
@@ -156,7 +159,7 @@ function Round(contest, viewKey, io) {
     // RACE
     this.startRace = function () {
         me.raceTeams = [];
-        room.emit(actions.race)
+        room.emit(actions.raceStart)
     }
     this.race = function (no, answer) {
         me.raceTeams.push({
