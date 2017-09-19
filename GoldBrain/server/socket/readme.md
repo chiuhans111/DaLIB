@@ -21,8 +21,7 @@ use this document to write a client work with my server
 |__`on`__|`state`|__`JSON`__ [state](#state)|full information in `json`, you will get this state update after login successfully, or other player login state changed|
 |__`emit`__|`race`|__`String`__ answer|race with `answer` in `string`, can be `choice.id` or `null`|
 |__`on`__|`racestart`|__`Number`__ time|race will start in `time` millisecond|
-|__`on`__|`setproblem`|__`Number`__ id|the problem is changed, with this `id`|
-|__`on`__|`showproblem`|__`JSON`__ [problem](#problem)|this problem is showing on the main screen, prepare buttons for player|
+|__`on`__|`problem`|__`Number`__[problem](#problem)|this problem is showing on the main screen, prepare buttons for player|
 |__`on`__|`showinfo`|__`JSON`__ [info](#info)| the server want to display some information on client|
 |__`emit`__|`hey`|__`any`__| say hey to the server|
 |__`on`__|`hey`|__`Number`__ time| after you say hey, server will reply hey with server `time` in millisecond|
@@ -32,9 +31,9 @@ use this document to write a client work with my server
 ``` javascript
 {
   round: Number // current round
-  problem: {
+  problem: {  // current problem, could be null if problem have not set yet
     no: Number // problem id
-    info: { // could be null if problem have not show yet
+    info: {
       title: String // problem title
       choice: [{ // array, or null if this is not a choice problem
         value: String // A, B, C.... the id of the choice
@@ -42,18 +41,21 @@ use this document to write a client work with my server
       }]
     }
   }
-  teams: {
+  team: Number // my team number
+  teams: [{ // array of teams
     name: String
     no: Number // team id
     score: Number
     online: Boolean
-  }
+  }]
 }
 ```
 ### problem
 ``` javascript
 {
-  title: String // problem title
+  no: Number // problem id
+  title: String // problem title, not include content
+  race: Boolean // true if need to use the race button, false if it is a choice problem
   choice: [{ // array, or null if this is not a choice problem
     value: String // A, B, C.... the id of the choice
     content: String // the content of the choice
