@@ -21,6 +21,7 @@ use this document to write a client work with my server
 |__`on`__|`state`|__`JSON`__ [state](#state)|full information in `json`, you will get this state update after login successfully, or other player login state changed|
 |__`emit`__|`race`|__`String`__ answer|race with `answer` in `string`, can be `choice.id` or `null`|
 |__`on`__|`racestart`|__`Number`__ time|race will start in `time` millisecond|
+|__`on`__|`round`|__`JSON`__ [round](#round)|a new round is started|
 |__`on`__|`problem`|__`JSON`__ [problem](#problem)|this problem is showing on the main screen, prepare buttons for player|
 |__`on`__|`showinfo`|__`JSON`__ [info](#info)| the server want to display some information on client|
 |__`emit`__|`hey`|__`any`__| say hey to the server|
@@ -30,7 +31,11 @@ use this document to write a client work with my server
 ### state
 ``` javascript
 {
-  round: Number // current round
+  round: {
+    no: Number // round id
+    title: String
+    usebutton: Boolean // require physical button
+  }
   problem: {  // current problem, could be null if problem have not set yet
     no: Number // problem id
     info: {
@@ -50,12 +55,20 @@ use this document to write a client work with my server
   }]
 }
 ```
+### round
+```javascript
+{
+  no: Number // round id
+  title: String
+  usebutton: Boolean // require physical button
+}
+```
+
 ### problem
 ``` javascript
 {
   no: Number // problem id
   title: String // problem title, not include content
-  race: Boolean // true if need to use the race button, false if it is a choice problem
   choice: [{ // array, or null if this is not a choice problem
     value: String // A, B, C.... the id of the choice
     content: String // the content of the choice
