@@ -31,6 +31,7 @@ use this document to write a client work with my server
 ### state
 ``` javascript
 {
+  page: String // "round", "problem", "race", "info".  the current page need to be show
   round: {
     no: Number // round id
     title: String
