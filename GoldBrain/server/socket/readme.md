@@ -21,7 +21,7 @@ use this document to write a client work with my server
 |__`on`__|`state`|__`JSON`__ [state](#state)|full information in `json`, you will get this state update after login successfully, or other player login state changed|
 |__`emit`__|`race`|__`String`__ answer|race with `answer` in `string`, can be `choice.id` or `null`|
 |__`on`__|`racestart`|__`Number`__ time|race will start in `time` millisecond|
-|__`on`__|`problem`|__`Number`__[problem](#problem)|this problem is showing on the main screen, prepare buttons for player|
+|__`on`__|`problem`|__`JSON`__ [problem](#problem)|this problem is showing on the main screen, prepare buttons for player|
 |__`on`__|`showinfo`|__`JSON`__ [info](#info)| the server want to display some information on client|
 |__`emit`__|`hey`|__`any`__| say hey to the server|
 |__`on`__|`hey`|__`Number`__ time| after you say hey, server will reply hey with server `time` in millisecond|
