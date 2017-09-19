@@ -46,6 +46,10 @@ use this document to write a client work with my server
       }]
     }
   }
+  info:{ // is info page is showing
+    content: String // html code
+    backgroundColor: String // hex code #FFFFFF
+  }
   team: Number // my team number
   teams: [{ // array of teams
     name: String
