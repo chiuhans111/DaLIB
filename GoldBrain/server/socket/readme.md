@@ -13,12 +13,12 @@ use this document to write a client work with my server
 2. desplay something
 
 
-# Socket methods
+# Socket methods (Client)
 
 |method|event name|data|description|
 |-----:|:---------|----|-----------|
 |__`emit`__|`login`|__`String`__ key|send team `key` in `string` format|
-|__`on`__|`state`|__`JSON`__ [state](#state)|full information in `json`, you will get this state update after login successfully, or other player login state changed|
+|__`on`__|`state`|__`JSON`__ [state](#state)|full information in `json`,after you or other player login successfully|
 |__`emit`__|`race`|__`String`__ answer|race with `answer` in `string`, can be `choice.id` or `null`|
 |__`on`__|`racestart`|__`Number`__ time|race will start in `time` millisecond|
 |__`on`__|`round`|__`JSON`__ [round](#round)|a new round is started|
@@ -27,8 +27,86 @@ use this document to write a client work with my server
 |__`emit`__|`hey`|__`any`__| say hey to the server|
 |__`on`__|`hey`|__`Number`__ time| after you say hey, server will reply hey with server `time` in millisecond|
 
+# Socket methods (Member)
+|method|event name|data|description|
+|-----:|:---------|----|-----------|
+|__`emit`__|`login`|__`String`__ key|login|
+|__`on`__|`state`|__`JSON`__ [state](#state)|full information, for member only|
+|__`emit`__|`startrace`|__`Number`__ time|start the race in `time` millisecond|
+|__`on`__|`race`|__`Array`__ [result](#race_result)|a list of all race result|
+|__`emit`__|`round`|__`Number`__ round|set current round to given id|
+|__`on`__|`round`|__`JSON`__ [round](#round)|round information|
+|__`emit`__|`problem`|__`Number`__ problem|set current problem to given id|
+|__`on`__|`problem`|__`problem`__ [problem](#problem)|problem information|
+|__`emit`__|`answer`|__`JSON`__ [result](#answer_result)|answer reply to client|
+
+
+
 ## object schema
 ### state
+``` javascript
+{
+  team: Number // my team number
+  teams: [{ // array of teams
+    name: String
+    no: Number // team id
+    score: Number
+    online: Boolean
+  }]
+}
+
+```
+### round
+```javascript
+{
+  no: Number // round id
+  title: String
+  usebutton: Boolean // require physical button
+}
+```
+
+### problem
+``` javascript
+{
+  no: Number // problem id
+  title: String // problem title, not include content
+  choice: [{ // array, or null if this is not a choice problem
+    value: String // A, B, C.... the id of the choice
+    content: String // the content of the choice
+  }]
+}
+```
+
+### info
+``` javascript
+{
+  content: String // html code
+  backgroundColor: String // hex code #FFFFFF
+}
+```
+
+### race result
+``` javascript
+[
+  {
+    no: Number // team id
+    answer: String
+    time: Number // in millisecond
+  }
+]
+```
+
+## answer result
+``` javascript
+{
+  correct: Boolean // is the answer correct?
+  team: Number // team id
+  message: String // extra information?
+}
+```
+
+
+### state old
 ``` javascript
 {
   page: String // "round", "problem", "race", "info".  the current page need to be show
@@ -59,31 +137,3 @@ use this document to write a client work with my server
     online: Boolean
   }]
 }
-```
-### round
-```javascript
-{
-  no: Number // round id
-  title: String
-  usebutton: Boolean // require physical button
-}
-```
-
-### problem
-``` javascript
-{
-  no: Number // problem id
-  title: String // problem title, not include content
-  choice: [{ // array, or null if this is not a choice problem
-    value: String // A, B, C.... the id of the choice
-    content: String // the content of the choice
-  }]
-}
-```
-### info
-``` javascript
-{
-  content: String // html code
-  backgroundColor: String // hex code #FFFFFF
-}
-```

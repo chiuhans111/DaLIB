@@ -24,6 +24,7 @@ exports.schema = new Schema({
         {
             players: Number,    // 多少人可以參加這一輪
             name: String,
+            usebutton: Boolean,
             problems: [
                 {
                     title: String,
@@ -76,6 +77,7 @@ exports.schema = new Schema({
  * @typedef {Object} Round
  * @property {Number} players
  * @property {String} name
+ * @property {Boolean} usebutton
  * @property {Array.<Problem>} problems
  * 
  * @typedef {Object} Team

@@ -9,7 +9,7 @@ var type_contest_team = new model_contest.type().teams[0];
 var crypt = require('crypt');
 
 var actions = require('./actions');
-
+var colors = require('colors');
 /**
  * @typedef {Object} type_racer
  * @property {Number} no
@@ -43,6 +43,8 @@ function Round(contest, viewKey, io) {
 
         sockets.push(socket);
         console.log('got connection');
+
+        //// LOGIN
         socket.on(actions.login, key => {
             if (socket.login) return;
             // VIEWER Login
@@ -51,7 +53,11 @@ function Round(contest, viewKey, io) {
             if (key == me.viewKey) {
                 socket.join(contestID);
                 socket.join(contestID_member);
+                // up to date
                 socket.emit(actions.state, me.state_any());
+                socket.emit(actions.round, me.state.round);
+                socket.emit(actions.problem, me.state.problem);
+                socket.emit(actions.race, me.raceTeams);
                 socket.login = true;
                 return;
             }
@@ -65,11 +71,14 @@ function Round(contest, viewKey, io) {
                 socket.member = true;
                 // MEMBER COMMUNICATION
 
-                socket.on(actions.setRound, me.setRound);
-                socket.on(actions.setProblem, me.setProblem);
-                socket.on(actions.showProblem, me.showProblem);
-                socket.on(actions.raceStart, me.startRace);
-                socket.emit(actions.state, me.state_member());
+                socket.on(actions.round, me.setRound);
+                socket.on(actions.problem, me.setProblem);
+                socket.on(actions.racestart, me.raceStart);
+                // up to date
+                socket.emit(actions.state, me.state_any());
+                socket.emit(actions.round, me.state.round);
+                socket.emit(actions.problem, me.state.problem);
+                socket.emit(actions.race, me.raceTeams);
                 socket.login = true;
                 return;
             }
@@ -79,30 +88,55 @@ function Round(contest, viewKey, io) {
             var passed = contest.teams.filter(team => key.includes(team.key));
             if (passed.length == 1) {
                 var team = passed[0];
+
+                if (me.onlineTeams[team.no]) {
+                    socket.emit(actions.showinfo, {
+                        content: '你不能同時登入兩台或以上裝置，請先關閉其他裝置',
+                        backgroundColor: colors.error
+                    })
+                    return;
+                }
+
                 if (team.round < me.state.round) return;
                 socket.team = team;
 
                 socket.join(contestID);
                 socket.on(actions.race, answer => me.race(team.no, answer));
-                me.onlineTeams[team.no] = true;                 // online
+                me.onlineTeams[team.no] = socket;                 // online
                 console.log('a team has joined us!!');
 
                 // TEAM COMMUNICATION!
-                room.emit(actions.state, me.state_any());
                 socket.login = true;
+                var state = me.state_any();
+                room.emit(state);
+                state.team = team.no;
+
+                // up to date
+                socket.emit(actions.state, state);
+                if (me.state.page == '') return;
+                socket.emit(actions.round, me.state.round);
+                if (me.state.page == 'round') return;
+                socket.emit(actions.problem, me.state.problem);
+                if (me.state.page == 'problem') return;
+                socket.emit(actions.race, me.raceTeams);
+                if (me.state.page == 'race') return;
+                socket.emit(actions.info, me.raceTeams);
+
             }
 
         })
 
+
         socket.on('disconnect', () => {
             if (socket.team) {
-                delete me.onlineTeams[socket.team.no];          // offline
+                me.onlineTeams[socket.team.no] = false;          // offline
                 console.log('a team has lost connection.. QQ');
                 socket.emit(actions.state, me.state_member());
             }
         })
 
     }
+
 
 
     /**@type {Round} */
@@ -115,32 +149,55 @@ function Round(contest, viewKey, io) {
         me.state.round = round;
         me.state.problem.no = 0;
         me.state.problem.info = null;
-        room.emit(actions.setRound, me.state.round);
+        var round_info = contest.rounds[round];
+        var obj = {
+            no: round,
+            title: round_info.name,
+            usebutton: round_info.usebutton
+        }
+        me.state.page = 'round';
+        me.state.round = obj;
+        room.emit(actions.round, obj);
     }
 
     this.setProblem = function (problem) {
-        me.state.problem.no = problem;
-        me.state.problem.info = null;
-        room.emit(actions.setProblem, me.state.problem.no);
+        var problem_info = contest.rounds[me.state.round.no].problems[problem];
+        var obj = {
+            no: problem,
+            title: problem_info.title,
+            choise: problem_info.choise
+        }
+        me.state.page = 'problem';
+        me.state.problem = obj;
+        room.emit(actions.problem, obj);
     }
 
 
-
+    /**@type {Array.<type_socket>} */
     this.onlineTeams = {};
     /**@type {Array.<type_racer>} */
     this.raceTeams = [];
 
     this.state = {
-        round: 0,
+        page: '',
+        round: {
+            no: 0,
+            title: '',
+            usebutton: false
+        },
         problem: {
             no: 0,
             info: null
+        },
+        info: {
+            content: '',
+            backgroundColor: ''
         }
     }
 
 
     this.state_any = function () {
-        var obj = me.state;
+        var obj = {}
         obj.teams = contest.teams.map(team => ({
             name: team.name,
             no: team.no,
@@ -156,9 +213,10 @@ function Round(contest, viewKey, io) {
         return obj;
     }
 
-    // RACE
-    this.startRace = function () {
+    //// RACE
+    this.raceStart = function () {
         me.raceTeams = [];
+        me.state.page = 'race';
         room.emit(actions.raceStart)
     }
     this.race = function (no, answer) {
@@ -170,29 +228,12 @@ function Round(contest, viewKey, io) {
 
 
     // OTHER IMPORTANT THINGS
-
-    this.showProblem = function () {
-        try {
-
-            var problem = contest.rounds[me.state.round].problems[me.state.problem.no];
-            var choise = problem.choise;
-            var title = problem.title;
-            var content = problem.content;
-            var state = me.state_any();
-
-            var info = {
-                title,
-                content,
-                choise
-            };
-
-            state.problem.info = info;
-            room.emit(actions.showProblem, info);
-        } catch (e) {
-            console.error(e);
-        }
+    this.showinfo = function (text, bgcolor = 'white') {
+        me.state.info.content = text;
+        me.state.info.backgroundColor = bgcolor;
+        me.state.page = 'info';
+        room.emit(actions.showinfo, me.state.info);
     }
-
 
 
     this.stop = function () {
