@@ -38,7 +38,8 @@ use this document to write a client work with my server
 |__`on`__|`round`|__`JSON`__ [round](#round)|round information|
 |__`emit`__|`problem`|__`Number`__ problem|set current problem to given id|
 |__`on`__|`problem`|__`problem`__ [problem](#problem)|problem information|
-|__`emit`__|`answer`|__`JSON`__ [result](#answer_result)|answer reply to client|
+|__`emit`__|`answer`|__`Array`__ [result](#answer_result)|answer reply to client, send in array|
+|__`on`__|`team`|__`JSON`__ [team](#state)|team informations|
 
 
 
@@ -46,7 +47,7 @@ use this document to write a client work with my server
 ### state
 ``` javascript
 {
-  team: Number // my team number
+  team: Number // my team number, only provide after login
   teams: [{ // array of teams
     name: String
     no: Number // team id
@@ -98,11 +99,14 @@ use this document to write a client work with my server
 
 ## answer result
 ``` javascript
-{
-  correct: Boolean // is the answer correct?
-  team: Number // team id
-  message: String // extra information?
-}
+[
+  {
+    correct: Boolean // is the answer correct?
+    team: Number // team id
+    message: String // extra information?
+    score: Number
+  }
+]
 ```
 
 

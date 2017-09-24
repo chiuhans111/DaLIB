@@ -74,6 +74,7 @@ function Round(contest, viewKey, io) {
                 socket.on(actions.round, me.setRound);
                 socket.on(actions.problem, me.setProblem);
                 socket.on(actions.racestart, me.raceStart);
+                socket.on(actions.answer, me.answer);
                 // up to date
                 socket.emit(actions.state, me.state_any());
                 socket.emit(actions.round, me.state.round);
@@ -108,10 +109,10 @@ function Round(contest, viewKey, io) {
                 // TEAM COMMUNICATION!
                 socket.login = true;
                 var state = me.state_any();
-                room.emit(state);
-                state.team = team.no;
+                room.emit(actions.team, state);
 
                 // up to date
+                state.team = team.no;
                 socket.emit(actions.state, state);
                 if (me.state.page == '') return;
                 socket.emit(actions.round, me.state.round);
@@ -165,7 +166,8 @@ function Round(contest, viewKey, io) {
         var obj = {
             no: problem,
             title: problem_info.title,
-            choise: problem_info.choise
+            choise: problem_info.choise,
+            score: problem_info.score
         }
         me.state.page = 'problem';
         me.state.problem = obj;
@@ -187,7 +189,9 @@ function Round(contest, viewKey, io) {
         },
         problem: {
             no: 0,
-            info: null
+            title: '',
+            choise: [],
+            score: 0,
         },
         info: {
             content: '',
@@ -233,6 +237,22 @@ function Round(contest, viewKey, io) {
         me.state.info.backgroundColor = bgcolor;
         me.state.page = 'info';
         room.emit(actions.showinfo, me.state.info);
+    }
+
+    /**@param {Array.<{correct: Boolean, team: String, message: String}>} data*/
+    this.answer = function (data) {
+        data.filter(reply => reply.correct).map(reply => {
+            me.contest.teams[index].score += me.state.problem.score;
+        })
+        me.contest.save();
+        for (var i in me.onlineTeams) {
+            var team = me.onlineTeams[i];
+            var info = data.filter(reply => reply.team == i)[0];
+            if (info) team.emit(actions.showinfo, {
+                content: `${info.correct ? '恭喜答對' : '答錯了'}\n${info.message}`,
+                backgroundColor: info.correct ? colors.ok : colors.error
+            })
+        }
     }
 
 
