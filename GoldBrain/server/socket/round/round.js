@@ -239,17 +239,17 @@ function Round(contest, viewKey, io) {
         room.emit(actions.showinfo, me.state.info);
     }
 
-    /**@param {Array.<{correct: Boolean, team: String, message: String}>} data*/
+    /**@param {Array.<{correct: Boolean, team: String, message: String, score:Number, hidden:Boolean}>} data*/
     this.answer = function (data) {
         data.filter(reply => reply.correct).map(reply => {
-            me.contest.teams[index].score += me.state.problem.score;
+            me.contest.teams[index].score += reply.score;
         })
         me.contest.save();
         for (var i in me.onlineTeams) {
             var team = me.onlineTeams[i];
-            var info = data.filter(reply => reply.team == i)[0];
+            var info = data.filter(reply => reply.team == i && !reply.hidden)[0];
             if (info) team.emit(actions.showinfo, {
-                content: `${info.correct ? '恭喜答對' : '答錯了'}\n${info.message}`,
+                content: `${info.correct ? reply.score + '分\n恭喜答對' : '答錯了'}\n${info.message}`,
                 backgroundColor: info.correct ? colors.ok : colors.error
             })
         }

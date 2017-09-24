@@ -74,6 +74,7 @@ use this document to write a client work with my server
   choice: [{ // array, or null if this is not a choice problem
     value: String // A, B, C.... the id of the choice
     content: String // the content of the choice
+    score: Number
   }]
 }
 ```
@@ -105,6 +106,7 @@ use this document to write a client work with my server
     team: Number // team id
     message: String // extra information?
     score: Number
+    hidden: Boolean // hide answer information
   }
 ]
 ```
