@@ -175,15 +175,13 @@ function Round(contest, viewKey, io) {
         try {
 
             var problem = contest.rounds[me.state.round].problems[me.state.problem.no];
-            var choise = problem.choise;
+            var choice = problem.choice;
             var title = problem.title;
-            var content = problem.content;
             var state = me.state_any();
 
             var info = {
                 title,
-                content,
-                choise
+                choice
             };
 
             state.problem.info = info;
