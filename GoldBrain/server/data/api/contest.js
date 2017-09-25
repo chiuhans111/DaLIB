@@ -23,7 +23,7 @@ db.then(mongoose => {
     // MEMBER
     _member.get('/view', (req, res) => {
         collection.find(req.contestId, (err, doc) => {
-            
+
             res.send(doc)
         })
     })
@@ -58,13 +58,18 @@ db.then(mongoose => {
                 {
                     players: count,    // 多少人可以參加這一輪
                     name: "第一輪",
+                    usebutton: false,
                     problems: [
                         {
                             title: "新題目",
                             content: "題目敘述",
                             choice: [],
                             timeout: 0,    // 作答時間
-                            score: 3 // 得分
+                            score: 3, // 得分
+                            answer: {
+                                value: '',
+                                description: '答案敘述',
+                            },
                         }
                     ],
                 }

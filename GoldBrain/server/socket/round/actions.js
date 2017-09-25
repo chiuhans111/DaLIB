@@ -1,15 +1,14 @@
 exports.login = 'login';
 
-exports.setProblem = 'setproblem';
-exports.setRound = 'setround';
-exports.showProblem = 'showproblem';
-
+exports.state = 'state';
 exports.race = 'race';
-exports.raceStart = 'raceStart';
+exports.racestart = 'racestart';
+exports.round = 'round';
+exports.problem = 'problem';
+exports.showinfo = 'showinfo';
+
+exports.hey = 'hey';
+
 
 exports.answer = 'answer';
-
-exports.state = 'state';
-
-exports.viewKey = 'viewkey';
-exports.close = 'close';
+exports.team = 'team';
