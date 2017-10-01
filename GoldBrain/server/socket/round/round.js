@@ -167,7 +167,7 @@ function Round(contest, viewKey, io) {
         var obj = {
             no: problem,
             title: problem_info.title,
-            choise: problem_info.choise,
+            choice: problem_info.choice,
             score: problem_info.score
         }
         me.state.page = 'problem';
@@ -191,7 +191,7 @@ function Round(contest, viewKey, io) {
         problem: {
             no: 0,
             title: '',
-            choise: [],
+            choice: [],
             score: 0,
         },
         info: {

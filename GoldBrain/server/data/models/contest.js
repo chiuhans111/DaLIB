@@ -29,7 +29,7 @@ exports.schema = new Schema({
                 {
                     title: String,
                     content: String,
-                    choise: [   // 選擇題選項
+                    choice: [   // 選擇題選項
                         {
                             value: String,   // 選項
                             content: String // 內容
@@ -62,14 +62,14 @@ exports.schema = new Schema({
  * @property {String} value
  * @property {String} description
  * 
- * @typedef {Object} Choise
+ * @typedef {Object} Choice
  * @property {String} value
  * @property {String} content
  * 
  * @typedef {Object} Problem
  * @property {String} title
  * @property {String} content
- * @property {Array.<Choise>} choise
+ * @property {Array.<Choice>} choice
  * @property {Number} timeout
  * @property {Answer} answer
  * @property {Number} score
