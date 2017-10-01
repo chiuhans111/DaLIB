@@ -109,9 +109,10 @@ function Round(contest, viewKey, io) {
                 // TEAM COMMUNICATION!
                 socket.login = true;
                 var state = me.state_any();
-                room.emit(actions.team, state);
 
+                socket.in(contestID).broadcast.emit(actions.state, state);
                 // up to date
+
                 state.team = team.no;
                 socket.emit(actions.state, state);
                 if (me.state.page == '') return;
@@ -132,7 +133,7 @@ function Round(contest, viewKey, io) {
             if (socket.team) {
                 me.onlineTeams[socket.team.no] = false;          // offline
                 console.log('a team has lost connection.. QQ');
-                socket.emit(actions.state, me.state_member());
+                room.emit(actions.state, me.state_any());
             }
         })
 
@@ -199,14 +200,13 @@ function Round(contest, viewKey, io) {
         }
     }
 
-
     this.state_any = function () {
         var obj = {}
         obj.teams = contest.teams.map(team => ({
             name: team.name,
             no: team.no,
             score: team.score,
-            online: me.onlineTeams[team.no] || false
+            online: me.onlineTeams[team.no] ? true : false
         }))
         return obj;
     }
@@ -221,7 +221,7 @@ function Round(contest, viewKey, io) {
     this.raceStart = function () {
         me.raceTeams = [];
         me.state.page = 'race';
-        room.emit(actions.raceStart)
+        room.emit(actions.racestart)
     }
     this.race = function (no, answer) {
         me.raceTeams.push({
