@@ -63,7 +63,7 @@ db.then(mongoose => {
                         {
                             title: "新題目",
                             content: "題目敘述",
-                            choise: [],
+                            choice: [],
                             timeout: 0,    // 作答時間
                             score: 3, // 得分
                             answer: {
