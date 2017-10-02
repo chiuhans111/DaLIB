@@ -64,6 +64,10 @@ module.exports = {
             '/api': {
                 target: 'http://localhost:80/',
                 secure: false
+            },
+            '/round': {
+                target: 'http://localhost:80/',
+                secure: false
             }
         }
     },

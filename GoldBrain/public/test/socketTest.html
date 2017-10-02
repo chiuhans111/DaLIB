@@ -6,13 +6,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>圖書室搶答系統</title>
+	<script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
 	<div id="app">
 		<v-container>
 
-			<p>組別:{{state.team}}</p>
+			<p v-if="state.team">組別:{{state.teams[state.team].name}}</p>
 			<v-layout row>
 
 				<v-flex xs6 sm3>
@@ -22,8 +23,7 @@
 							<template v-for="team in state.teams" v-if="team.online">
 
 								<div :key="team.no">
-									{{team.name}}
-									<v-chip>{{team.score}} 分</v-chip>
+									<v-chip class="green text--white">{{team.name}} {{team.score}} 分</v-chip>
 								</div>
 
 							</template>
@@ -33,9 +33,8 @@
 							<template v-for="team in state.teams" v-if="!team.online">
 
 								<div :key="team.no">
-									{{team.name}}
-									<v-chip v-if="team.online" class="green">on</v-chip>
-									<v-chip>{{team.score}} 分</v-chip>
+
+									<v-chip>{{team.name}} {{team.score}} 分</v-chip>
 								</div>
 
 							</template>
@@ -46,22 +45,55 @@
 				</v-flex>
 
 				<v-flex xs6 sm9>
-					<div class="headline">Unlimited music now</div>
+					<template>
+						<div class="headline">Info</div>
+						<div>{{info}}</div>
+					</template>
 
+					<div class="headline">Problem</div>
+					<v-btn @click="socket.emit('problem', 0)">
+						set 0
+					</v-btn>
 					<div>{{problem.title}}</div>
 					<v-chip>{{problem.score}}分</v-chip>
-					<template v-for="problem.choice">
-
+					<template v-for="choice in problem.choice">
+						<v-chip>
+							<v-avatar class="teal">{{choice.value}}</v-avatar>
+							{{choice.content}}
+						</v-chip>
 					</template>
-					{{problem}}
+
+					<div class="headline">Race {{racestart}}</div>
+
+					<v-btn primary @click="socket.emit('race')">
+						race
+					</v-btn>
+					<v-btn @click="socket.emit('startrace', 2000)">
+						2
+					</v-btn>
+					<v-btn @click="socket.emit('startrace', 1000)">
+						1
+					</v-btn>
+					<v-btn @click="socket.emit('startrace', 0)">
+						0
+					</v-btn>
+
+					<transition-group name="list" tag="div">
+						<template v-for="(r, i) in race">
+							<v-chip :key="i">
+								<v-avatar class="teal">{{i}}</v-avatar>
+								{{state.teams[r.no].name}} {{r.time}}
+							</v-chip>
+						</template>
+					</transition-group>
+
+
 				</v-flex>
 
 			</v-layout>
 		</v-container>
 	</div>
 </body>
-
-<script src="/socket.io/socket.io.js"></script>
 <script src="/dist/socketTest.js"></script>
 
 </html>

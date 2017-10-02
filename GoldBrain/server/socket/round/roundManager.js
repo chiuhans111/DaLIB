@@ -1,5 +1,3 @@
-var socket = require('socket.io');
-
 var db = require('../../data/base');
 var io = require('../io');
 

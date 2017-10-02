@@ -3,6 +3,7 @@ exports.login = 'login';
 exports.state = 'state';
 exports.race = 'race';
 exports.racestart = 'racestart';
+exports.startrace = 'startrace';
 exports.round = 'round';
 exports.problem = 'problem';
 exports.showinfo = 'showinfo';

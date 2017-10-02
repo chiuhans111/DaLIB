@@ -6,6 +6,9 @@ var app = require("../webpage/web.js");
 
 /**@type {Promise.<type_socket_io>} */
 module.exports = new Promise(done => {
-    var io = socket(app.server, null);
+    var io = socket(app.server, {
+        pingInterval: 4000,
+        pingTimeout: 2000
+    });
     done(io);
 })

@@ -4,13 +4,12 @@ var data = {
     state: { teams: "loading" },
     round: {},
     problem: {},
-    race: {}
+    race: {},
+    info: {},
+    racestart: -1
 }
 
-new Vue({
-    el: "#app",
-    data
-})
+
 
 var io = window.io;
 
@@ -25,13 +24,20 @@ socket.on('state', state => {
     data.state = s;
 })
 
-socket.on('round', round => data.round = round);
-socket.on('problem', problem => data.problem = problem);
-socket.on('race', race => data.race = race);
-
+socket.on('round', round => console.log(data.round = round));
+socket.on('problem', problem => console.log(data.problem = problem));
+socket.on('race', race => console.log(data.race = race));
+socket.on('racestart', ms => console.log(data.racestart = ms));
+socket.on('showinfo', info => console.log(data.info = info));
+window.socket = socket;
 
 // login
 var key = location.href.match(/key\/(.+)/)[1];
 socket.emit('login', key);
 
 window.data = data;
+
+new Vue({
+    el: "#app",
+    data
+})

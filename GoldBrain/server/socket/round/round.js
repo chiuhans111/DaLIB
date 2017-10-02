@@ -58,6 +58,7 @@ function Round(contest, viewKey, io) {
                 socket.emit(actions.round, me.state.round);
                 socket.emit(actions.problem, me.state.problem);
                 socket.emit(actions.race, me.raceTeams);
+                socket.emit(actions.racestart, me.state.race);
                 socket.login = true;
                 return;
             }
@@ -73,13 +74,15 @@ function Round(contest, viewKey, io) {
 
                 socket.on(actions.round, me.setRound);
                 socket.on(actions.problem, me.setProblem);
-                socket.on(actions.racestart, me.raceStart);
+                socket.on(actions.startrace, me.startRace);
                 socket.on(actions.answer, me.answer);
                 // up to date
                 socket.emit(actions.state, me.state_any());
                 socket.emit(actions.round, me.state.round);
                 socket.emit(actions.problem, me.state.problem);
                 socket.emit(actions.race, me.raceTeams);
+                socket.emit(actions.racestart, me.state.race);
+
                 socket.login = true;
                 return;
             }
@@ -92,9 +95,10 @@ function Round(contest, viewKey, io) {
 
                 if (me.onlineTeams[team.no]) {
                     socket.emit(actions.showinfo, {
-                        content: '你不能同時登入兩台或以上裝置，請先關閉其他裝置',
+                        content: '你不能同時登入兩台或以上裝置，請先關閉其他裝置，或是等待3至5秒後重新登入',
                         backgroundColor: colors.error
-                    })
+                    });
+                    socket.disconnect()
                     return;
                 }
 
@@ -114,14 +118,19 @@ function Round(contest, viewKey, io) {
                 // up to date
 
                 state.team = team.no;
+
                 socket.emit(actions.state, state);
                 if (me.state.page == '') return;
                 socket.emit(actions.round, me.state.round);
                 if (me.state.page == 'round') return;
                 socket.emit(actions.problem, me.state.problem);
                 if (me.state.page == 'problem') return;
-                socket.emit(actions.race, me.raceTeams);
-                if (me.state.page == 'race') return;
+
+                if (me.state.page == 'race') {
+                    socket.emit(actions.racestart, me.state.race);
+                    return;
+                }
+
                 socket.emit(actions.info, me.raceTeams);
 
             }
@@ -130,6 +139,7 @@ function Round(contest, viewKey, io) {
 
 
         socket.on('disconnect', () => {
+            console.log('some one disconnected')
             if (socket.team) {
                 me.onlineTeams[socket.team.no] = false;          // offline
                 console.log('a team has lost connection.. QQ');
@@ -197,7 +207,8 @@ function Round(contest, viewKey, io) {
         info: {
             content: '',
             backgroundColor: ''
-        }
+        },
+        race: -1
     }
 
     this.state_any = function () {
@@ -218,15 +229,21 @@ function Round(contest, viewKey, io) {
     }
 
     //// RACE
-    this.raceStart = function () {
-        me.raceTeams = [];
+    this.startRace = function (ms) {
         me.state.page = 'race';
-        room.emit(actions.racestart)
+        me.state.race = ms;
+        if (ms == 0) {
+            me.raceTeams = [];
+            io.in(contestID_member).emit(actions.race, me.raceTeams);
+        }
+        room.emit(actions.racestart, ms);
     }
+
     this.race = function (no, answer) {
-        me.raceTeams.push({
-            no, answer, time: new Date().getTime()
-        })
+        if (me.raceTeams.filter(x => x.no == no).length == 0)
+            me.raceTeams.push({
+                no, answer, time: new Date().getTime()
+            })
         io.in(contestID_member).emit(actions.race, me.raceTeams);
     }
 
