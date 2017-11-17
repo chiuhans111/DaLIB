@@ -2,17 +2,22 @@ var path = require('path')
 var webpack = require('webpack')
 var fs = require('fs');
 
-
+// ENTRY and OUTPUT
 var entryFolder = './client/';
 var outputFolder = path.resolve(__dirname, './public/dist');
 var publicFolder = path.resolve(__dirname, './public');
 console.log('webpack target in:', entryFolder, 'out:', outputFolder);
+
+// TARGET ALL JS FILES
 var targets = fs.readdirSync(entryFolder).filter(x => x.match(/\.js$/));
 console.log('found:', targets.join(','));
+
+// APPLY ALL TARGETS
 var entry = {};
 for (var file of targets) entry[file] = entryFolder + file;
 console.log(entry);
 
+// EXPORT SETTING
 module.exports = {
 
 
@@ -22,28 +27,31 @@ module.exports = {
     output: {
         // To the `dist` folder 
         path: outputFolder,
-        publicPath: 'http://localhost:8080/dist/',
+        publicPath: '/dist/',
         // With the filename `build.js` so it's dist/build.js
         filename: '[name]'
     },
     module: {
         rules: [
-            {
+            {   // VUE
                 test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    loaders: {
-                    }
-                    // other vue-loader options go here
-                }
+                loader: 'vue-loader'
             },
-            {
+            {   // JS
                 test: /\.js$/,
                 loader: 'babel-loader',
                 exclude: /node_modules/
             },
-            {
-                test: /\.(png|jpg|gif|svg)$/,
+            {   // CSS
+                test: /\.css$/,
+                loader: ["style-loader", "css-loader"]
+            },
+            {   // STYLUS
+                test: /\.styl$/,
+                loader: ['style-loader', 'css-loader', 'stylus-loader']
+            },
+            {   // FILES
+                test: /\.(png|jpg|gif|svg|ttf|woff|woff2|eot)$/,
                 loader: 'file-loader',
                 options: {
                     name: '[name].[ext]?[hash]'
@@ -53,7 +61,11 @@ module.exports = {
     },
     resolve: {
         alias: {
-            'vue$': 'vue/dist/vue.esm.js'
+            'vue': 'vue/dist/vue.esm.js',
+            'vuetify.css': 'vuetify/dist/vuetify.min.css',
+            'material-icons.css': 'material-design-icons/iconfont/material-icons.css',
+            'bootstrap.css': 'bootstrap/dist/css/bootstrap.css',
+            'bootstrap-vue.css': 'bootstrap-vue/dist/bootstrap-vue.css'
         }
     },
     devServer: {
