@@ -6,7 +6,7 @@ var dog = {
     },
     url: function (url) {
         // get current using key
-        return url + '/' + dog.key;
+        return url + '/key/' + dog.key;
     },
     json: function (string) {
         return JSON.parse(string);
@@ -21,6 +21,7 @@ var dog = {
             xhr.onload = function () {
                 done(xhr.response);
             }
+            
             xhr.send(JSON.stringify(content));
         });
     },

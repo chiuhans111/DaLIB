@@ -1,7 +1,7 @@
 import dog from "../web/dog.js";
 
 var q = location.href.match(/\/q\/(\w+)\//);
-q = q ? q[1] : 'team';
+q = q ? q[1] : 'contests';
 
 var data = {
     loading: true,
