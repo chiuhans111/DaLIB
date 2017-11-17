@@ -1,4 +1,4 @@
-import Vue from "./common";
+import Vue from "./lib/vuetify";
 
 var data = {
     state: { teams: "loading" },

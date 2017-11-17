@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+
+            <v-container>
+                <v-layout>
+                    <v-flex md8 offset-md2 sm10 offset-sm1 xs12>
+                        <v-card>
+                            <v-card-title primary-title>
+                                <div>
+
+                                    <h3 class="headline mb-0 primary--text">
+                                        <template v-if="state==0">
+                                            建立比賽內容
+                                        </template>
+
+                                        <template v-else-if="state==1">
+
+                                            <v-tooltip left>
+                                                <v-btn icon slot="activator" @click.stop="editName()">
+                                                    <v-icon>edit</v-icon>
+                                                </v-btn>
+                                                <span>編輯名稱</span>
+                                            </v-tooltip>
+
+                                            {{content.name}}
+                                        </template>
+                                        <template v-else-if="state==2">
+                                            <v-btn flat @click="state=1">返回比賽</v-btn>
+                                            場次內容
+                                        </template>
+                                        <template v-else-if="state==3">
+                                            <v-btn flat @click="state=2">返回場次</v-btn>
+                                            問題內容
+                                        </template>
+
+                                        <template v-if="state!=0">
+
+                                            <v-tooltip right>
+                                                <v-btn icon slot="activator" @click.stop="save()">
+                                                    <v-icon :color="JSON.stringify(content)!=saved?'primary':'gray'">save</v-icon>
+                                                </v-btn>
+                                                <span>儲存</span>
+                                            </v-tooltip>
+                                        </template>
+
+                                    </h3>
+
+                                </div>
+                            </v-card-title>
+                            <v-progress-linear v-bind:indeterminate="loading"></v-progress-linear>
+                            <v-card-text>
+                                <transition-group name="list">
+                                    <template v-if="state==0">
+
+                                        <v-layout :key="1">
+                                            <p>請先登入</p>
+                                        </v-layout>
+
+                                        <v-layout :key="2">
+                                            <v-text-field label="您的管理者金鑰" v-model="key"></v-text-field>
+                                        </v-layout>
+                                        <v-layout :key="3">
+
+                                            <v-btn primary @click="login">下一步</v-btn>
+                                            <v-btn>取消</v-btn>
+                                        </v-layout>
+                                    </template>
+
+                                    <template v-if="state==1">
+                                        <div key="1">
+
+                                            <p class="mb-0 primary--text">
+                                                場次 | ROUNDS
+
+                                                <v-btn icon @click.stop="roundop().add()">
+                                                    <v-icon>add</v-icon>
+                                                </v-btn>
+                                            </p>
+                                            <v-list two-line>
+                                                <transition-group name="list">
+                                                    <template v-for="(round, index) in content.rounds">
+                                                        <v-list-tile @click="editRound(index)" avatar :key="JSON.stringify(round)">
+                                                            <v-list-tile-content>
+                                                                <v-list-tile-title>{{round.name}}</v-list-tile-title>
+                                                                <v-list-tile-sub-title>{{round.players}}人</v-list-tile-sub-title>
+                                                            </v-list-tile-content>
+
+                                                            <v-list-tile-avatar>
+                                                                <v-btn icon @click.stop="roundop().move(index,-1)">
+                                                                    <v-icon>keyboard_arrow_up</v-icon>
+                                                                </v-btn>
+                                                            </v-list-tile-avatar>
+                                                            <v-list-tile-avatar>
+                                                                <v-btn icon @click.stop="roundop().move(index,+1)">
+                                                                    <v-icon>keyboard_arrow_down</v-icon>
+                                                                </v-btn>
+                                                            </v-list-tile-avatar>
+                                                            <v-list-tile-avatar>
+                                                                <v-btn icon @click.stop="roundop().del(index)">
+                                                                    <v-icon>delete</v-icon>
+                                                                </v-btn>
+                                                            </v-list-tile-avatar>
+                                                        </v-list-tile>
+                                                    </template>
+                                                </transition-group>
+                                            </v-list>
+
+
+                                        </div>
+                                    </template>
+
+
+
+
+                                    <template v-if="state==2">
+                                        <div key="2">
+                                            <p class="mb-0 primary--text">
+                                                場次 | ROUND
+                                            </p>
+
+                                            <v-layout row>
+                                                <v-flex xs4>
+                                                    <v-text-field label="場次名稱" v-model="content.rounds[round].name"></v-text-field>
+                                                </v-flex>
+                                                <v-flex xs4>
+                                                    <v-text-field label="人數" v-model="content.rounds[round].players"></v-text-field>
+                                                </v-flex>
+                                                <v-flex xs4>
+                                                    <v-checkbox label="使用搶答按鈕?" v-model="content.rounds[round].usebutton"></v-checkbox>
+                                                </v-flex>
+                                            </v-layout>
+
+                                            <blockquote>
+                                                <p class="mb-0 primary--text">
+                                                    題目 | PROBLEMS
+                                                    <v-btn icon @click.stop="problemop().add()">
+                                                        <v-icon>add</v-icon>
+                                                    </v-btn>
+                                                </p>
+
+                                                <v-list two-line>
+                                                    <template v-for="(problem, index) in content.rounds[round].problems">
+                                                        <v-list-tile @click="editProblem(index)" avater>
+                                                            <v-list-tile-content>
+                                                                <v-list-tile-title>{{problem.score}}分
+                                                                    <strong>{{problem.title}}</strong>
+                                                                    {{problem.content}}
+                                                                </v-list-tile-title>
+                                                                <v-list-tile-sub-title>
+                                                                    <template v-for="c in problem.choice">
+                                                                        <span>({{c.value}}) {{c.content}} </span>
+                                                                    </template>
+                                                                </v-list-tile-sub-title>
+                                                            </v-list-tile-content>
+                                                            <v-list-tile-avatar>
+                                                                <v-btn icon @click.stop="problemop().move(index,-1)">
+                                                                    <v-icon>keyboard_arrow_up</v-icon>
+                                                                </v-btn>
+                                                            </v-list-tile-avatar>
+                                                            <v-list-tile-avatar>
+                                                                <v-btn icon @click.stop="problemop().move(index,+1)">
+                                                                    <v-icon>keyboard_arrow_down</v-icon>
+                                                                </v-btn>
+                                                            </v-list-tile-avatar>
+                                                            <v-list-tile-avatar>
+                                                                <v-btn icon @click.stop="problemop().del(index)">
+                                                                    <v-icon>delete</v-icon>
+                                                                </v-btn>
+                                                            </v-list-tile-avatar>
+                                                        </v-list-tile>
+                                                    </template>
+                                                </v-list>
+                                            </blockquote>
+                                        </div>
+                                    </template>
+
+
+                                    <template v-if="state==3">
+                                        <template>
+                                            <div class="text-xs-center" key="3k">
+                                                <v-pagination :length="content.rounds[round].problems.length" v-model="problem2" :total-visible="7"></v-pagination>
+                                            </div>
+                                        </template>
+                                        <div :key="3+':'+problem">
+
+                                            <blockquote>
+                                                <v-layout row>
+                                                    <v-flex sm3 class="mr-5">
+                                                        <v-text-field label="標題" v-model="content.rounds[round].problems[problem].title"></v-text-field>
+                                                    </v-flex>
+                                                    <v-flex sm9>
+                                                        <v-text-field label="說明" v-model="content.rounds[round].problems[problem].content"></v-text-field>
+                                                    </v-flex>
+                                                </v-layout>
+                                                <v-layout row>
+                                                    <v-flex sm6 class="mr-5">
+                                                        <v-text-field label="得分" v-model="content.rounds[round].problems[problem].score" type="number" suffix="分"></v-text-field>
+                                                    </v-flex>
+                                                    <v-flex sm6>
+                                                        <v-text-field label="作答時間" v-model="content.rounds[round].problems[problem].timeout" type="number" suffix="毫秒"></v-text-field>
+                                                    </v-flex>
+                                                </v-layout>
+                                                <p class="mb-0 primary--text">
+                                                    答案 | ANSWER
+                                                </p>
+                                                <v-layout row>
+                                                    <v-flex sm1 class="mr-5">
+                                                        <v-text-field label="選項" v-model="content.rounds[round].problems[problem].answer.value"></v-text-field>
+                                                    </v-flex>
+                                                    <v-flex sm10>
+                                                        <v-text-field label="說明" v-model="content.rounds[round].problems[problem].answer.description"></v-text-field>
+                                                    </v-flex>
+                                                </v-layout>
+                                            </blockquote>
+                                            <p class="mb-0 primary--text">
+                                                選項 | CHOICES
+                                                <v-btn icon @click.stop="choiceop().add()">
+                                                    <v-icon>add</v-icon>
+                                                </v-btn>
+                                            </p>
+                                            <template v-for="(choice, index) in content.rounds[round].problems[problem].choice">
+
+
+                                                <v-layout row wrap>
+                                                    <v-flex sm1>
+                                                        <v-text-field label="選項" v-model="choice.value"></v-text-field>
+                                                    </v-flex>
+                                                    <v-flex sm6>
+                                                        <v-text-field label="內容" v-model="choice.content"></v-text-field>
+                                                    </v-flex>
+
+                                                    <v-flex sm5>
+
+
+                                                        <v-btn icon @click.stop="choiceop().move(index,-1)">
+                                                            <v-icon>keyboard_arrow_up</v-icon>
+                                                        </v-btn>
+
+                                                        <v-btn icon @click.stop="choiceop().move(index,+1)">
+                                                            <v-icon>keyboard_arrow_down</v-icon>
+                                                        </v-btn>
+
+                                                        <v-btn icon @click.stop="choiceop().del(index)">
+                                                            <v-icon>delete</v-icon>
+                                                        </v-btn>
+
+
+                                                    </v-flex>
+
+                                                </v-layout>
+
+                                            </template>
+
+                                        </div>
+                                    </template>
+
+                                </transition-group>
+
+                                <template v-if="state==1||state==2">
+
+                                    <p class="primary--text">
+                                        參賽隊伍 | TEAMS
+                                        <v-btn flat @click="_=>genQR(content.teams.filter(team=>state==1||team.round>=round))">產生所有 QRcode</v-btn>
+                                    </p>
+
+                                    <transition-group name="list">
+                                        <template v-for="team in content.teams">
+                                            <v-chip @click="showTeam(team.no)" :key="team.no" outline :color="(state>1&amp;&amp;team.round>=round)?'primary':'gray'">
+                                                <strong>{{team.name}}</strong>
+                                                <span>{{team.score}}分</span>
+                                            </v-chip>
+                                        </template>
+                                    </transition-group>
+
+                                </template>
+
+                            </v-card-text>
+
+                        </v-card>
+                    </v-flex>
+
+                </v-layout>
+                <template v-if="state!=0">
+
+                    <v-dialog v-model="teamDialog">
+                        <v-card>
+                            <v-card-title class="headline">{{teamDialogContent.title}}</v-card-title>
+                            <v-card-text>{{teamDialogContent.text}}</v-card-text>
+                            <v-card-text>
+                                <img :src="teamDialogContent.qrcode" :alt="teamDialogContent.text">
+                            </v-card-text>
+                            <template v-if="content.teams[teamDialogContent.no]">
+                                <v-card-text>
+                                    <v-text-field v-model="content.teams[teamDialogContent.no].score" type="number" label="分數" suffix="分"></v-text-field>
+                                    <v-text-field v-model="content.teams[teamDialogContent.no].round" type="number" label="晉級" suffix="場"></v-text-field>
+                                </v-card-text>
+                            </template>
+
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn flat @click.native="teamDialog = false">關閉</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                    <my-dialog v-model="dialog_setup" @ok="dialog_ok"></my-dialog>
+                </template>
+
+            </v-container>
+
+
+        </v-app>
+    </div>
+    <script src="/dist/general.js"></script>
+    <script src="/sample/contest.js"></script>
+    <script>
+        var data = {
+            loading: false,
+            state: 0,
+            key: '',
+            content: "",
+            login() {
+                dog.request('get', '/api/member/contest/view/key/' + data.key).then(content => {
+                    data.content = JSON.parse(content);
+                    data.state = 1;
+                    data.saved = content;
+                })
+            },
+            saved: "",
+            save() {
+                data.loading = true;
+                dog.request('post', '/api/member/contest/update/key/' + data.key, data.content).then(x => {
+                    data.saved = JSON.stringify(data.content)
+                    data.loading = false;
+                })
+            },
+
+            editName() {
+                data.dialog_setup = [
+                    { title: "修改比賽名稱" },
+                    { text: `這場比賽叫什麼名字呢` },
+                    {
+                        input: {
+                            name: 'name',
+                            value: data.content.name,
+                            label: '名稱'
+                        }
+                    }
+                ]
+                data.dialog_ok = function (result) {
+                    data.content.name = result.name;
+                }
+            },
+            round: 0,
+            editRound(round) {
+                data.round = round;
+                data.state = 2;
+            },
+            problem: 0,
+            get problem2() {
+                return this.problem + 1;
+            },
+            set problem2(value) {
+                this.problem = value - 1;
+            },
+            editProblem(problem) {
+                data.problem = problem;
+                data.state = 3;
+            },
+
+            teamDialog: false,
+            teamDialogContent: {},
+            showTeam(no) {
+                var team = data.content.teams[no];
+                dog.request('post', '/api/qrcode/', {
+                    data: team.key
+                }).then(src => {
+
+                    data.teamDialog = true;
+                    data.teamDialogContent = {
+                        title: team.name,
+                        text: team.key,
+                        qrcode: src,
+                        no
+                    }
+                })
+            },
+
+            // DIALOG
+            dialog_setup: null,
+            dialog_ok: function () { },
+
+            roundop() {
+                return arr(data.content, 'rounds', _ => sampleContest().rounds[0])
+            },
+            problemop() {
+                return arr(data.content.rounds[data.round], 'problems', _ => sampleContest().rounds[0].problems[0])
+            },
+            choiceop() {
+                return arr(data.content.rounds[data.round].problems[data.problem], 'choice', _ => {
+                    var c = data.content.rounds[data.round].problems[data.problem].choice;
+                    var cc = sampleContest().rounds[0].problems[0].choice[0];
+                    if (c.length > 0) cc.value = String.fromCharCode(c[c.length - 1].value.charCodeAt() + 1)
+                    return cc;
+                })
+            }, genQR() {
+
+            }
+
+        }
+
+        var app = done(data);
+        var key = dog.key;
+        if (key) {
+            console.log('has key')
+            data.key = key;
+            data.login();
+        }
+
+        function arr(obj, att, addg) {
+            return {
+                add: function () {
+                    obj[att].push(addg());
+                },
+                del: function (index) {
+                    data.dialog_setup = [
+                        { title: "確認刪除" },
+                        { text: `資料將被標記為刪除` }
+                    ]
+                    data.dialog_ok = function () {
+                        obj[att].splice(index, 1);
+                    }
+                },
+                move: function (index, to) {
+                    to += index;
+                    if (to >= 0 && to < obj[att].length) {
+                        var tmp = obj[att][index];
+                        obj[att][index] = obj[att][to];
+                        obj[att][to] = tmp;
+                    }
+                    obj[att] = JSON.parse(JSON.stringify(obj[att]))
+                },
+                refresh: function () {
+                    obj[att] = JSON.parse(JSON.stringify([att]))
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

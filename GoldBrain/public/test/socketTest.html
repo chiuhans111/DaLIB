@@ -13,7 +13,7 @@
 	<div id="app">
 		<v-container>
 
-			<p v-if="state.team">組別:{{state.teams[state.team].name}}</p>
+			<p v-if="state.team>=0">組別:{{state.teams[state.team].name}}</p>
 			<v-layout row>
 
 				<v-flex xs6 sm3>
@@ -50,14 +50,31 @@
 						<div>{{info}}</div>
 					</template>
 
+
+
+					<div class="headline">Round</div>
+					<p>{{round.no}}</p>
+					<h6>{{round.title}}</h6>
+					<p>usebutton?</p>
+					<p>{{round.usebutton}}</p>
+
+					<v-btn primary @click="socket.emit('round', 0)">
+						0
+					</v-btn>
+					<v-btn primary @click="socket.emit('round', 1)">
+						1
+					</v-btn>
+
+
+
 					<div class="headline">Problem</div>
 					<v-btn @click="socket.emit('problem', 0)">
 						set 0
 					</v-btn>
-					<div>{{problem.title}}</div>
-					<v-chip>{{problem.score}}分</v-chip>
+					<div>{{problem.title}} {{problem.score}}分</div>
+
 					<template v-for="choice in problem.choice">
-						<v-chip>
+						<v-chip @click="socket.emit('race', choice.value)">
 							<v-avatar class="teal">{{choice.value}}</v-avatar>
 							{{choice.content}}
 						</v-chip>
@@ -67,6 +84,9 @@
 
 					<v-btn primary @click="socket.emit('race')">
 						race
+					</v-btn>
+					<v-btn @click="socket.emit('startrace', 5000)">
+						5
 					</v-btn>
 					<v-btn @click="socket.emit('startrace', 2000)">
 						2
@@ -78,15 +98,17 @@
 						0
 					</v-btn>
 
-					<transition-group name="list" tag="div">
+					<div>
+
 						<template v-for="(r, i) in race">
 							<v-chip :key="i">
 								<v-avatar class="teal">{{i}}</v-avatar>
-								{{state.teams[r.no].name}} {{r.time}}
+								{{state.teams[r.no].name}} : {{r.answer}}
+
 							</v-chip>
 						</template>
-					</transition-group>
 
+					</div>
 
 				</v-flex>
 

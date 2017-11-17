@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+
+            <v-container>
+                <v-layout>
+                    <v-flex md8 offset-md2>
+                        <v-card class="mt-5 white">
+                            <v-container>
+
+                                <v-card-title primary-title>
+                                    <div>
+
+                                        <h3 class="headline mb-0 primary--text">
+                                            建立比賽
+                                        </h3>
+                                        <div>建立一場金頭腦搶答比賽</div>
+                                    </div>
+                                </v-card-title>
+
+                                <v-divider></v-divider>
+                                <v-card-text>
+                                    <transition-group name="list">
+
+                                        <template v-if="state==0">
+
+                                            <v-layout key="0">
+                                                <v-text-field label="多少隊伍可以參加此比賽" type="number" v-model="count" suffix="組"></v-text-field>
+                                            </v-layout>
+
+                                            <v-layout key="1">
+
+                                                <v-btn primary @click="setCount">下一步</v-btn>
+                                                <v-btn>取消</v-btn>
+                                            </v-layout>
+
+
+                                        </template>
+                                        <template v-else-if="state==1">
+                                            <div key="2">
+
+                                                <p>請複製此密碼並儲存以後登入使用</p>
+                                                <v-text-field label="比賽管理員登入用金鑰" ref="key" v-model="key" readonly @click="selectKey"></v-text-field>
+                                                <v-btn primary>繼續建立比賽</v-btn>
+                                            </div>
+                                        </template>
+
+                                    </transition-group>
+                                </v-card-text>
+
+
+                            </v-container>
+                        </v-card>
+                    </v-flex>
+
+                </v-layout>
+            </v-container>
+        </v-app>
+    </div>
+    <script src="/dist/general.js"></script>
+    <script>
+        var data = {
+            state: 0,
+            count: 40,
+            key: "",
+            setCount() {
+                dog.request('get', '/api/contest/create/' + data.count).then(key => {
+                    data.key = key;
+                    data.state = 1;
+                    setTimeout(function () {
+                        data.selectKey();
+                    }, 500)
+                })
+            },
+            selectKey() {
+                var input = app.$refs.key.$el.querySelector('input');
+                input.select(0, input.value.length);
+            }
+        }
+
+        var app = done(data);
+
+    </script>
+</body>
+
+</html>

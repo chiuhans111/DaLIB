@@ -1,10 +1,12 @@
 var dog = {
+    get key() {
+        var key = location.href.match(/key\/(.+)/);
+        if (key != null) return key[1];
+        return null;
+    },
     url: function (url) {
         // get current using key
-        var key = location.href.match(/\/key\/.+/);
-        if (key != null) key = key[0];
-        else key = '';
-        return url + key;
+        return url + '/' + dog.key;
     },
     json: function (string) {
         return JSON.parse(string);
@@ -35,4 +37,5 @@ var dog = {
     }
 }
 
+window.dog = dog;
 export default dog;

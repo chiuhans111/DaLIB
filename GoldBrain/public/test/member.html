@@ -1,12 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+
 </head>
+<style>
+    .round {
+        border: solid 1px;
+    }
+</style>
+
 <body>
-    
+
+    <div id="app">
+
+        <input type="text" v-model="key">
+        <button @click="view">view</button>
+        <hr>
+        <p>{{contest.key}}</p>
+        <input type="text" v-model="contest.name">
+
+        <div v-for="round in contest.rounds" class="round">
+            <p>玩家數
+                <input type="text" v-model.number="round.players">
+            </p>
+            <p>名稱
+                <input type="text" v-model="round.name">
+            </p>
+            <p>使用搶答按鈕
+                <input type="checkbox" v-model="round.usebutton">
+            </p>
+            <div v-for="problem in round.problems">
+                <p>標題
+                    <input type="text" v-model="problem.title">
+                </p>
+                <p>內文
+                    <textarea cols="30" rows="10" v-model="problem.content"></textarea>
+                </p>
+
+                <p>選項</p>
+                <div v-for="c in problem.choice">
+                    <input type="text" v-model="c.value">:
+                    <textarea cols="30" rows="10" v-model="c.content"></textarea>
+                </div>
+                <p>答案</p>
+                <input type="text" v-model="problem.answer.value">:
+                <p>
+                    <textarea cols="30" rows="10" v-model="problem.answer.description"></textarea>
+                </p>
+                <p>分數
+                    <input type="text" v-model.number="problem.score">
+                </p>
+                <p>作答時間限制
+                    <input type="text" v-model.number="problem.timeout">
+                </p>
+            </div>
+        </div>
+
+
+    </div>
+
 </body>
+<script src="/dist/general.js"></script>
+<script>
+    // method
+    function view() {
+        get('/api/member/contest/view/key/' + data.key)
+            .then(response => {
+                data.contest = JSON.parse(response);
+            })
+    }
+
+
+
+    // vue
+    var data = {
+        key: '',
+        contest: {},
+    }
+
+
+    var app = new Vue({
+        el: '#app',
+        data
+    })
+
+
+    // helper function
+    function get(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', url);
+        return new Promise(done => {
+            xhr.onload = () => {
+                done(xhr.response)
+            }
+            xhr.send();
+        })
+    }
+
+</script>
+
 </html>
