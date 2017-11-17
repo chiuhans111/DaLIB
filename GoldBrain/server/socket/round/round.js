@@ -87,6 +87,18 @@ function Round(contest, viewKey, io) {
                 return;
             }
 
+
+            function sendState(sockets, state) {
+
+                for (var i in sockets) {
+                    var socket = sockets[i];
+                    if (socket.team) state.team = socket.team.no;
+                    else state.team = -1;
+                    console.log(state);
+                    socket.emit(actions.state, state);
+                }
+            }
+
             // TEAM Login
 
             var passed = contest.teams.filter(team => key.includes(team.key));
@@ -113,13 +125,11 @@ function Round(contest, viewKey, io) {
                 // TEAM COMMUNICATION!
                 socket.login = true;
                 var state = me.state_any();
-
-                socket.in(contestID).broadcast.emit(actions.state, state);
+                sendState(io.in(contestID).connected, state)
                 // up to date
 
-                state.team = team.no;
+                socket.emit(actions.race, me.raceTeams);
 
-                socket.emit(actions.state, state);
                 if (me.state.page == '') return;
                 socket.emit(actions.round, me.state.round);
                 if (me.state.page == 'round') return;
@@ -127,7 +137,7 @@ function Round(contest, viewKey, io) {
                 if (me.state.page == 'problem') return;
 
                 if (me.state.page == 'race') {
-                    socket.emit(actions.racestart, me.state.race);
+                    socket.emit(actions.racestart, Number(me.state.race));
                     return;
                 }
 
@@ -240,10 +250,11 @@ function Round(contest, viewKey, io) {
     }
 
     this.race = function (no, answer) {
-        if (me.raceTeams.filter(x => x.no == no).length == 0)
-            me.raceTeams.push({
-                no, answer, time: new Date().getTime()
-            })
+
+        // if (me.raceTeams.filter(x => x.no == no).length == 0)
+        me.raceTeams.push({
+            no, answer, time: new Date().getTime()
+        })
         io.in(contestID_member).emit(actions.race, me.raceTeams);
     }
 

@@ -13,6 +13,7 @@ exports.connect = function (db) {
     app.use('/admin', require('./admin'));
     app.use('/member', require('./member'));
     app.use('/team', require('./team'));
+    app.use('/qrcode', require('./qrcode'));
 
     // any
     app.use('/contest', contestAPI.any);

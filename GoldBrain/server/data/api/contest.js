@@ -22,8 +22,8 @@ db.then(mongoose => {
 
     // MEMBER
     _member.get('/view', (req, res) => {
-        collection.find(req.contestId, (err, doc) => {
-
+        collection.findOne(req.contestID, (err, doc) => {
+            console.log(req.contestID)
             res.send(doc)
         })
     })
