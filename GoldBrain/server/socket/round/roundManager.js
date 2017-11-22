@@ -2,7 +2,7 @@ var db = require('../../data/base');
 var io = require('../io');
 
 var model_contest = require('../../data/models/contest');
-var crypt = require('crypt');
+var crypt = require('tool/crypt');
 
 // TYPE HELPERS
 var type_contest = model_contest.type;

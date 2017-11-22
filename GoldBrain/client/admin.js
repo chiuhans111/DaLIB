@@ -1,5 +1,5 @@
-import Vue from "./lib/vuetify";
-
+import vuetify from "./lib/vuetify";
+var Vue = vuetify({})
 import admin from "./admin/admin.vue";
 import my_dialog from './admin/my_dialog.vue'
 

@@ -6,10 +6,10 @@ var model_contest = require('../../data/models/contest');
 var type_contest = model_contest.type;
 var type_contest_team = new model_contest.type().teams[0];
 
-var crypt = require('crypt');
+var crypt = require('tool/crypt');
 
 var actions = require('./actions');
-var colors = require('colors');
+var colors = require('tool/colors');
 /**
  * @typedef {Object} type_racer
  * @property {Number} no
