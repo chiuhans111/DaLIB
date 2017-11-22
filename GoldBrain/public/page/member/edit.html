@@ -48,11 +48,12 @@
 
                                             <v-tooltip right>
                                                 <v-btn icon slot="activator" @click.stop="save()">
-                                                    <v-icon :color="JSON.stringify(content)!=saved?'primary':'gray'">save</v-icon>
+                                                    <v-icon :color="changed?'primary':'gray'">save</v-icon>
                                                 </v-btn>
-                                                <span>儲存</span>
+                                                <span>立刻儲存</span>
                                             </v-tooltip>
                                         </template>
+                                        <small style="color:gray; font-size:0.5em">{{changed?"有變更尚未儲存":"所有變更都已儲存"}}</small>
 
                                     </h3>
 
@@ -96,21 +97,20 @@
                                                                 <v-list-tile-sub-title>{{round.players}}人</v-list-tile-sub-title>
                                                             </v-list-tile-content>
 
-                                                            <v-list-tile-avatar>
-                                                                <v-btn icon @click.stop="roundop().move(index,-1)">
-                                                                    <v-icon>keyboard_arrow_up</v-icon>
-                                                                </v-btn>
-                                                            </v-list-tile-avatar>
-                                                            <v-list-tile-avatar>
-                                                                <v-btn icon @click.stop="roundop().move(index,+1)">
-                                                                    <v-icon>keyboard_arrow_down</v-icon>
-                                                                </v-btn>
-                                                            </v-list-tile-avatar>
-                                                            <v-list-tile-avatar>
-                                                                <v-btn icon @click.stop="roundop().del(index)">
-                                                                    <v-icon>delete</v-icon>
-                                                                </v-btn>
-                                                            </v-list-tile-avatar>
+
+                                                            <v-btn icon @click.stop="roundop().move(index,-1)">
+                                                                <v-icon>keyboard_arrow_up</v-icon>
+                                                            </v-btn>
+
+
+                                                            <v-btn icon @click.stop="roundop().move(index,+1)">
+                                                                <v-icon>keyboard_arrow_down</v-icon>
+                                                            </v-btn>
+
+                                                            <v-btn icon @click.stop="roundop().del(index)">
+                                                                <v-icon>delete</v-icon>
+                                                            </v-btn>
+
                                                         </v-list-tile>
                                                     </template>
                                                 </transition-group>
@@ -119,9 +119,6 @@
 
                                         </div>
                                     </template>
-
-
-
 
                                     <template v-if="state==2">
                                         <div key="2">
@@ -150,36 +147,37 @@
                                                 </p>
 
                                                 <v-list two-line>
-                                                    <template v-for="(problem, index) in content.rounds[round].problems">
-                                                        <v-list-tile @click="editProblem(index)" avater>
-                                                            <v-list-tile-content>
-                                                                <v-list-tile-title>{{problem.score}}分
-                                                                    <strong>{{problem.title}}</strong>
-                                                                    {{problem.content}}
-                                                                </v-list-tile-title>
-                                                                <v-list-tile-sub-title>
-                                                                    <template v-for="c in problem.choice">
-                                                                        <span>({{c.value}}) {{c.content}} </span>
-                                                                    </template>
-                                                                </v-list-tile-sub-title>
-                                                            </v-list-tile-content>
-                                                            <v-list-tile-avatar>
+                                                    <transition-group name="list">
+                                                        <template v-for="(problem, index) in content.rounds[round].problems">
+                                                            <v-list-tile @click="editProblem(index)" avater :key="JSON.stringify(problem)">
+                                                                <v-list-tile-content>
+                                                                    <v-list-tile-title>
+                                                                        <strong>{{index+1}}. {{problem.title}}</strong>
+                                                                        {{problem.content}}
+                                                                    </v-list-tile-title>
+                                                                    <v-list-tile-sub-title>
+                                                                        {{problem.score}}分
+                                                                        <template v-for="c in problem.choice">
+                                                                            <span>({{c.value}}) {{c.content}} </span>
+                                                                        </template>
+                                                                    </v-list-tile-sub-title>
+                                                                </v-list-tile-content>
+
                                                                 <v-btn icon @click.stop="problemop().move(index,-1)">
                                                                     <v-icon>keyboard_arrow_up</v-icon>
                                                                 </v-btn>
-                                                            </v-list-tile-avatar>
-                                                            <v-list-tile-avatar>
+
                                                                 <v-btn icon @click.stop="problemop().move(index,+1)">
                                                                     <v-icon>keyboard_arrow_down</v-icon>
                                                                 </v-btn>
-                                                            </v-list-tile-avatar>
-                                                            <v-list-tile-avatar>
+
                                                                 <v-btn icon @click.stop="problemop().del(index)">
                                                                     <v-icon>delete</v-icon>
                                                                 </v-btn>
-                                                            </v-list-tile-avatar>
-                                                        </v-list-tile>
-                                                    </template>
+
+                                                            </v-list-tile>
+                                                        </template>
+                                                    </transition-group>
                                                 </v-list>
                                             </blockquote>
                                         </div>
@@ -189,9 +187,24 @@
                                     <template v-if="state==3">
                                         <template>
                                             <div class="text-xs-center" key="3k">
-                                                <v-pagination :length="content.rounds[round].problems.length" v-model="problem2" :total-visible="7"></v-pagination>
+                                                <v-layout row>
+
+                                                    <v-flex sm9>
+                                                        <v-pagination :length="content.rounds[round].problems.length" v-model="problem2" :total-visible="7"></v-pagination>
+                                                    </v-flex>
+                                                    <v-flex sm3>
+                                                        新增題目
+                                                        <v-btn icon @click.stop="problemop().add()">
+                                                            <v-icon>add</v-icon>
+                                                        </v-btn>
+                                                        <v-btn icon @click.stop="problemop().del(problem)">
+                                                            <v-icon>delete</v-icon>
+                                                        </v-btn>
+                                                    </v-flex>
+                                                </v-layout>
                                             </div>
                                         </template>
+
                                         <div :key="3+':'+problem">
 
                                             <blockquote>
@@ -267,6 +280,7 @@
 
                                 </transition-group>
 
+                                <!--
                                 <template v-if="state==1||state==2">
 
                                     <p class="primary--text">
@@ -284,7 +298,7 @@
                                     </transition-group>
 
                                 </template>
-
+                            -->
                             </v-card-text>
 
                         </v-card>
@@ -361,12 +375,12 @@
                     data.content.name = result.name;
                 }
             },
-            round: 0,
+            round: 0,   // index of current round
             editRound(round) {
                 data.round = round;
                 data.state = 2;
             },
-            problem: 0,
+            problem: 0, // index of current problem
             get problem2() {
                 return this.problem + 1;
             },
@@ -404,7 +418,11 @@
                 return arr(data.content, 'rounds', _ => sampleContest().rounds[0])
             },
             problemop() {
-                return arr(data.content.rounds[data.round], 'problems', _ => sampleContest().rounds[0].problems[0])
+                return arr(data.content.rounds[data.round], 'problems', _ => {
+                    var problem = sampleContest().rounds[0].problems[0]
+                    if (data.content.rounds[data.round].usebutton) problem.choice = [];
+                    return problem
+                })
             },
             choiceop() {
                 return arr(data.content.rounds[data.round].problems[data.problem], 'choice', _ => {
@@ -419,14 +437,21 @@
 
         }
 
-        var app = done(data);
+        var app = done({
+            data,
+            computed: {
+                changed() {
+                    return JSON.stringify(this.content) != this.saved;
+                }
+            }
+        });
         var key = dog.key;
         if (key) {
             console.log('has key')
             data.key = key;
             data.login();
         }
-
+        // a helper object for arrays operate
         function arr(obj, att, addg) {
             return {
                 add: function () {

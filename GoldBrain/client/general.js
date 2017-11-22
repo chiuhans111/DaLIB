@@ -9,22 +9,20 @@ import { palette } from './web/palette.js';
 
 var Vue = Vuetify({
     theme: {
-        primary: palette.Orange.A100,
-        accent: palette.Orange.A200,
-        secondary: palette.Brown['100'],
-        info: palette.Blue.A100,
-        warning: palette.Amber.A100,
-        error: palette.Red.A200,
-        success: palette.Green.A200
+        primary: palette.Orange[500],
+        accent: palette.Orange[300],
+        secondary: palette.Orange[700],
+        info: palette.Blue[500],
+        warning: palette.Amber[500],
+        error: palette.Red[500],
+        success: palette.Green[500]
     }
 })
 
 Vue.component('my-dialog', my_dialog);
 
 window.Vue = Vue;
-window.done = function (data) {
-    return new Vue({
-        el: "#app",
-        data
-    })
+window.done = function (obj) {
+    if (!obj.el) obj.el = '#app';
+    return new Vue(obj)
 }

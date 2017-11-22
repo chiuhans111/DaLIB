@@ -14,6 +14,15 @@ function sampleContest() {
                             {
                                 "value": "A", // 選項
                                 "content": "選項內容" // 內容
+                            }, {
+                                "value": "B", // 選項
+                                "content": "選項內容" // 內容
+                            }, {
+                                "value": "C", // 選項
+                                "content": "選項內容" // 內容
+                            }, {
+                                "value": "D", // 選項
+                                "content": "選項內容" // 內容
                             }
                         ],
                         "timeout": 0, // 作答時間

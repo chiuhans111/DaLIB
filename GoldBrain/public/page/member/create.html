@@ -51,7 +51,7 @@
 
                                                 <p>請複製此密碼並儲存以後登入使用</p>
                                                 <v-text-field label="比賽管理員登入用金鑰" ref="key" v-model="key" readonly @click="selectKey"></v-text-field>
-                                                <v-btn primary>繼續建立比賽</v-btn>
+                                                <v-btn primary @click="go()">繼續建立比賽</v-btn>
                                             </div>
                                         </template>
 
@@ -85,10 +85,13 @@
             selectKey() {
                 var input = app.$refs.key.$el.querySelector('input');
                 input.select(0, input.value.length);
+            },
+            go() {
+                location.href = "/page/member/edit.html?/key/" + this.key;
             }
         }
 
-        var app = done(data);
+        var app = done({ data });
 
     </script>
 </body>

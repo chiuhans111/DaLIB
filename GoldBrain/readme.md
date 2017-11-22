@@ -4,9 +4,7 @@
 * `npm run build` to build every thing
 
 **mongodb is required**
-other requirements:
-material-design-icons
-lot of loaders
+change db url at ./server/data/base.js
 
 
 # TODO 2017/11/17
