@@ -1,9 +1,9 @@
 
 import Vuetify from "./lib/vuetify";
 //import './web/daan.styl';
-import './mainStyle.css';
 import './web/dog';
 
+import './mainStyle.css';
 import my_dialog from './admin/my_dialog.vue'
 import { palette } from './web/palette.js';
 
@@ -12,7 +12,7 @@ var Vue = Vuetify({
         primary: palette.Orange[500],
         accent: palette.Orange[300],
         secondary: palette.Orange[700],
-        info: palette.Blue[500],
+        info: palette.Orange[700],
         warning: palette.Amber[500],
         error: palette.Red[500],
         success: palette.Green[500]

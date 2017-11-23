@@ -1,26 +1,38 @@
-body{
-    font-family: 微軟正黑體, Arial, Helvetica, sans-serif;
+* {
+    font-family: Roboto, 微軟正黑體, Arial, Helvetica, sans-serif;
+}
+
+.background {
+    position: fixed;
+    overflow: hidden;
+    left: 50%;
+    top: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    filter: brightness(0.9) blur(10px);
 }
 
 .list-enter-active {
-    transition: all 0.2s  cubic-bezier(0.4, 0.0, 0.2, 1);
-  }
-  .list-leave-active {
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.list-leave-active {
     transition: all 0.2s cubic-bezier(0.4, 0.0, 1, 1);
     position: absolute;
     z-index: -1;
-  }
-  
-  
-  .list-enter {
+}
+
+.list-enter {
     opacity: 0;
     transform: translateX(30px);
-  }
-  .list-leave-to {
+}
+
+.list-leave-to {
     opacity: 0;
     transform: translateX(-30px);
-  }
-  
-  .list-move {
-      transition: all 0.2s cubic-bezier(.25,.8,.25,1);
-  }
+}
+
+.list-move {
+    transition: all 0.2s cubic-bezier(.25, .8, .25, 1);
+}

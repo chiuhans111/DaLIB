@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="/style/main.css">
+
 </head>
 
 <body>
@@ -52,8 +54,8 @@
                                                 </v-btn>
                                                 <span>立刻儲存</span>
                                             </v-tooltip>
+                                            <small style="color:gray; font-size:0.5em">{{changed?"有變更尚未儲存":"所有變更都已儲存"}}</small>
                                         </template>
-                                        <small style="color:gray; font-size:0.5em">{{changed?"有變更尚未儲存":"所有變更都已儲存"}}</small>
 
                                     </h3>
 
@@ -73,8 +75,8 @@
                                         </v-layout>
                                         <v-layout :key="3">
 
-                                            <v-btn primary @click="login">下一步</v-btn>
-                                            <v-btn>取消</v-btn>
+                                            <v-btn primary @click=" location.href = '/page/member/edit.html?/key/' + this.key;">下一步</v-btn>
+                                            <v-btn @click="cancel()">取消</v-btn>
                                         </v-layout>
                                     </template>
 
@@ -433,6 +435,8 @@
                 })
             }, genQR() {
 
+            }, cancel() {
+                history.go(-1)
             }
 
         }
@@ -477,7 +481,8 @@
                 },
                 refresh: function () {
                     obj[att] = JSON.parse(JSON.stringify([att]))
-                }
+                },
+
             }
         }
     </script>

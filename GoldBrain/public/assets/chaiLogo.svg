@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="480pt"
+   height="480pt"
+   viewBox="0 0 600 600"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="chai - 複製.svg"
+   inkscape:export-filename="E:\Documents\Work\me\chai2_fav.png"
+   inkscape:export-xdpi="28.799999"
+   inkscape:export-ydpi="28.799999">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="267.30671"
+     inkscape:cy="376.34222"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="false"
+     inkscape:snap-page="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="pt"
+     inkscape:object-paths="false"
+     inkscape:snap-bbox="true"
+     inkscape:object-nodes="false"
+     inkscape:snap-nodes="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-grids="true"
+     inkscape:window-width="2560"
+     inkscape:window-height="1027"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4148"
+       units="pt"
+       spacingx="25"
+       spacingy="25"
+       empspacing="4" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     transform="translate(0,-39.999995)"
+     style="display:inline">
+    <path
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.39982843;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 350 74.5 L 350 150 L 350 200 L 350 250 C 350 277.61423 372.38576 300 400 300 C 400.98508 300 401.96064 299.9644 402.93164 299.9082 L 500 299.9082 L 500 250 L 450 250 L 400 250 L 400 200 L 500 200 L 500 150 L 400 150 L 400 74.5 L 350 74.5 z M 200 75 L 200 250 L 150 250 L 150 150 L 100 150 L 100 250 C 100 277.61423 122.38576 300 150 300 L 250 300 A 50 50 0 0 0 300 250 L 250 250 L 250 200 L 300 200 L 300 150 L 250 150 L 250 75 L 200 75 z M 300 300 L 300 350 L 100 350 L 100 400 L 300 400 L 300 525 L 350 525 L 350 400 L 500 400 L 500 350 L 350 350 L 350 300 L 300 300 z M 100 450 L 100 500 L 200 500 A 50 50 0 0 0 250 450 L 200 450 L 100 450 z M 400 450 A 50 50 0 0 0 450 500 L 500 500 L 500 450 L 400 450 z "
+       transform="translate(0,39.999995)"
+       id="rect4228" />
+  </g>
+</svg>

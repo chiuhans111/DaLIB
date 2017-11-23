@@ -6,13 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="/style/main.css">
+
 </head>
 
 <body>
     <div id="app">
+
+        <img src="./background2.png" alt="" class="background">
         <v-app>
 
             <v-container>
+
+
                 <v-layout>
                     <v-flex md8 offset-md2>
                         <v-card class="mt-5 white">
@@ -41,17 +47,17 @@
                                             <v-layout key="1">
 
                                                 <v-btn primary @click="setCount">下一步</v-btn>
-                                                <v-btn>取消</v-btn>
+                                                <v-btn @click="cancel()">取消</v-btn>
                                             </v-layout>
 
 
                                         </template>
-                                        <template v-else-if="state==1">
-                                            <div key="2">
+                                        <template v-else-if=" state==1 ">
+                                            <div key="2 ">
 
                                                 <p>請複製此密碼並儲存以後登入使用</p>
-                                                <v-text-field label="比賽管理員登入用金鑰" ref="key" v-model="key" readonly @click="selectKey"></v-text-field>
-                                                <v-btn primary @click="go()">繼續建立比賽</v-btn>
+                                                <v-text-field label="比賽管理員登入用金鑰 " ref="key " v-model="key" readonly @click="selectKey "></v-text-field>
+                                                <v-btn primary @click="go() ">繼續建立比賽</v-btn>
                                             </div>
                                         </template>
 
@@ -64,15 +70,16 @@
                     </v-flex>
 
                 </v-layout>
+
             </v-container>
         </v-app>
     </div>
-    <script src="/dist/general.js"></script>
+    <script src="/dist/general.js "></script>
     <script>
         var data = {
             state: 0,
             count: 40,
-            key: "",
+            key: " ",
             setCount() {
                 dog.request('get', '/api/contest/create/' + data.count).then(key => {
                     data.key = key;
@@ -87,7 +94,10 @@
                 input.select(0, input.value.length);
             },
             go() {
-                location.href = "/page/member/edit.html?/key/" + this.key;
+                location.href = "/page/member/edit.html?/key/ " + this.key;
+            },
+            cancel() {
+                history.go(-1)
             }
         }
 
