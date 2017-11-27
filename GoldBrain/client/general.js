@@ -26,3 +26,4 @@ window.done = function (obj) {
     if (!obj.el) obj.el = '#app';
     return new Vue(obj)
 }
+export default Vue;
