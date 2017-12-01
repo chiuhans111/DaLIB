@@ -12,9 +12,9 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json({ type: 'application/*' }));
 
 dog.watch(app);
-
+var config = require('../data/config')
 var server = http.createServer(app);
-server.listen(80);
+server.listen(config.port);
 app.server = server;
 
 app.use(function (error, req, res, next) {

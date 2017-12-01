@@ -7,8 +7,9 @@ var db = mongo.MongoClient;
 var _DB = mongo.Db;
 var _MG = mongoose;
 
+var config = require('./config');
 // change db url here
-var url = "mongodb://admin:dalibadmin@localhost:27017/dalib";
+var url = config.db;
 
 function connect(url) {
     return mongoose.connect(url, { useMongoClient: true }).then(_ => {
