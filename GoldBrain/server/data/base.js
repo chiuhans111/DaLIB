@@ -7,7 +7,7 @@ var db = mongo.MongoClient;
 var _DB = mongo.Db;
 var _MG = mongoose;
 
-var config = require('./config');
+var config = require('../config/config');
 // change db url here
 var url = config.db;
 
