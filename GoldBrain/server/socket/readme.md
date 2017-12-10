@@ -1,6 +1,6 @@
 # Socket IO events for client
 use this document to write a client work with my server  
-
+paht: `/round`
 #### main
 1. login
 2. get state

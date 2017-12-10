@@ -80,7 +80,12 @@ module.exports = {
             '/round': {
                 target: 'http://localhost:80/',
                 secure: false
+            },
+            '/socket.io': {
+                target: 'http://localhost:80/',
+                secure: false
             }
+
         }
     },
     performance: {

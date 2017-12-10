@@ -1,6 +1,13 @@
-import Vue from "./lib/vuetify";
+import Vuetify from "./lib/vuetify";
+var Vue = Vuetify({})
+
+
+var io = window.io;
+
+var socket = io('/round');
 
 var data = {
+    socket,
     state: { teams: "loading" },
     round: {},
     problem: {},
@@ -11,9 +18,6 @@ var data = {
 
 
 
-var io = window.io;
-
-var socket = io('/round');
 
 socket.on('state', state => {
     var s = {};

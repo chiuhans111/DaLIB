@@ -7,17 +7,69 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="/style/main.css">
+    <script src="/socket.io/socket.io.js"></script>
 
 </head>
+<style>
+    body {
+        position: fixed;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        font-family: 微軟正黑體, Arial, Helvetica, sans-serif
+    }
+
+    .page {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+</style>
 
 <body>
-    <div id="app">
 
+    <div id="app" class="page">
+        <transition-group name="list">
+            <div class="page" key="slides" v-if="slides">
+                <span @click="go()">
+                    <fbtn>離開解說</fbtn>
+                </span>
+                <slides></slides>
+            </div>
+            <template v-if="!slides">
+                <span @click="slides=true" key="backtoSlides">
+                    <fbtn>解說</fbtn>
+                </span>
+
+                <div class="page" :key="'round'+round.no" v-if="page=='round'">
+                    <h1>{{round.title}}</h1>
+                    <p v-if="round.usebutton">此局使用搶瘩按鈕，請準備好搶答</p>
+                    <p v-else>此局不使用搶答按鈕</p>
+                    <button @click="roundStart()">開始</button>
+                </div>
+
+
+
+                <div class="page" :key="'problem'+problem.no" v-if="page=='problem'||page=='racestart'">
+                    <h2>第{{problem.no+1}}題</h2>
+                    <h3>{{problem.score}}分題</h3>
+                    <h1>{{problem.title}}</h1>
+                    <h2>{{problem.content}}</h2>
+                    <button v-if="round.usebutton" @click="problemStart(3)">開始搶答</button>
+                    <button v-else @click="problemStart(0)">開始作答</button>
+                    <h1 v-if="racestart>0">{{racestart}}</h1>
+                    <h1 v-if="racestart==0">請作答</h1>
+                    {{races}}
+                </div>
+            </template>
+
+        </transition-group>
     </div>
 
-    <script src="/dist/general.js "></script>
+    <script src=" /dist/play.js "></script>
     <script>
-        done({});
+
     </script>
 </body>
 
