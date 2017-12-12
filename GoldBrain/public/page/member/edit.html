@@ -23,7 +23,7 @@
 
                                     <h3 class="headline mb-0 primary--text">
                                         <template v-if="state==0">
-                                            建立比賽內容
+                                            教師登入
                                         </template>
 
                                         <template v-else-if="state==1">
@@ -55,8 +55,15 @@
                                                 <span>立刻儲存</span>
                                             </v-tooltip>
                                             <small style="color:gray; font-size:0.5em">{{changed?"有變更尚未儲存":"所有變更都已儲存"}}</small>
-                                        </template>
 
+
+
+
+
+                                        </template>
+                                        <v-btn v-if="state==1" primary @click="begin()">
+                                            開始比賽
+                                        </v-btn>
                                     </h3>
 
                                 </div>
@@ -75,7 +82,7 @@
                                         </v-layout>
                                         <v-layout :key="3">
 
-                                            <v-btn primary @click=" location.href = '/page/member/edit.html?/key/' + this.key;">下一步</v-btn>
+                                            <v-btn primary @click=" window.location.href = '/page/member/edit.html?/key/' + key;">下一步</v-btn>
                                             <v-btn @click="cancel()">取消</v-btn>
                                         </v-layout>
                                     </template>
@@ -341,6 +348,7 @@
     <script src="/sample/contest.js"></script>
     <script>
         var data = {
+            window,
             loading: false,
             state: 0,
             key: '',
@@ -446,6 +454,14 @@
             computed: {
                 changed() {
                     return JSON.stringify(this.content) != this.saved;
+                }
+            },
+            methods: {
+                begin() {
+                    dog.keyrequest('get', '/api/member/round/start').then(result => {
+                        console.log(result)
+                        location.href = '/play.html?/key/' + dog.key;
+                    })
                 }
             }
         });

@@ -95,9 +95,21 @@ function Round(contest, viewKey, io) {
 
                 for (var i in sockets) {
                     var socket = sockets[i];
-                    if (socket.team) state.team = socket.team.no;
+
+
+                    if (socket.team) {
+                        
+                        if (socket.team.round < state.round) {
+                            socket.emit(actions.showinfo, {
+                                content: '你不屬於這一輪',
+                                backgroundColor: colors.error
+                            });
+                            continue;
+                        }
+
+                        state.team = socket.team.no;
+                    }
                     else state.team = -1;
-                    console.log(state);
                     socket.emit(actions.state, state);
                 }
             }
@@ -117,13 +129,15 @@ function Round(contest, viewKey, io) {
                     return;
                 }
 
+                /*
                 if (team.round < me.state.round) {
                     socket.emit(actions.showinfo, {
                         content: '你不屬於這一輪',
                         backgroundColor: colors.error
                     });
                     return;
-                }
+                }*/
+
                 socket.team = team;
 
                 socket.join(contestID);
@@ -253,6 +267,7 @@ function Round(contest, viewKey, io) {
             name: team.name,
             no: team.no,
             score: team.score,
+            round: team.round,
             online: me.onlineTeams[team.no] ? true : false
         }))
         return obj;

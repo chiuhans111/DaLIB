@@ -18,28 +18,28 @@
 
 				<v-flex xs6 sm3>
 					<v-card-title primary-title>
-						<transition-group name="list" tag="div">
 
-							<template v-for="team in state.teams" v-if="team.online">
 
-								<div :key="team.no">
-									<v-chip class="green text--white">{{team.name}} {{team.score}} 分</v-chip>
-								</div>
+						<template v-for="team in state.teams" v-if="team.online">
 
-							</template>
+							<div :key="team.no">
+								<v-chip class="green text--white">{{team.name}} {{team.score}} 分</v-chip>
+							</div>
 
-							<hr key="divider"></hr>
+						</template>
 
-							<template v-for="team in state.teams" v-if="!team.online">
+						<hr key="divider"></hr>
 
-								<div :key="team.no">
+						<template v-for="team in state.teams" v-if="!team.online">
 
-									<v-chip>{{team.name}} {{team.score}} 分</v-chip>
-								</div>
+							<div :key="team.no">
 
-							</template>
+								<v-chip>{{team.name}} {{team.score}} 分</v-chip>
+							</div>
 
-						</transition-group>
+						</template>
+
+
 					</v-card-title>
 
 				</v-flex>
@@ -104,7 +104,6 @@
 							<v-chip :key="i">
 								<v-avatar class="teal">{{i}}</v-avatar>
 								{{state.teams[r.no].name}} : {{r.answer}}
-
 							</v-chip>
 						</template>
 

@@ -31,6 +31,7 @@ socket.on('round', round => {
     console.log(data.round = round)
 });
 socket.on('problem', problem => {
+    data.racestart = -1;
     data.page = 'problem';
     console.log(data.problem = problem)
 });
