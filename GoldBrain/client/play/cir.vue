@@ -18,5 +18,6 @@ export default {
 .circle {
   display: inline-block;
   text-align: center;
+  overflow: hidden;
 }
 </style>

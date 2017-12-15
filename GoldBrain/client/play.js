@@ -36,6 +36,7 @@ function update() {
     }, 16);
 }
 update();
+play.login();
 
 var app = new Vue({
     data: play.data,
@@ -43,10 +44,12 @@ var app = new Vue({
     methods: {
         go() {
             this.slides = false;
-            play.login();
         },
         roundStart() {
             play.emit('problem', 0);
+        },
+        goRound() {
+            play.emit('round', this.round.no);
         },
         problemStart(race) {
             timestamp = -1000;
@@ -60,7 +63,7 @@ var app = new Vue({
         },
         prevRound() {
             play.emit('round', this.round.no - 1)
-        }
+        },
     },
     computed: {
         races() {

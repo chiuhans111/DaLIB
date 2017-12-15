@@ -4,7 +4,7 @@ import { login } from '../../server/socket/round/actions';
 var data = {
     content: {},
     state: { teams: "loading" },
-    round: { title: '' },
+    round: { title: '', no: -1 },
     problem: {},
     race: {},
     info: {},
@@ -27,23 +27,27 @@ socket.on('state', state => {
 })
 
 socket.on('round', round => {
-    data.page = 'round';
     console.log(data.round = round)
+    if (data.round.no != -1)
+        data.page = 'round';
 });
 socket.on('problem', problem => {
     data.racestart = -1;
-    data.page = 'problem';
+    if (data.round.no != -1)
+        data.page = 'problem';
     console.log(data.problem = problem)
 });
 socket.on('race', race => {
     console.log(data.race = race)
 });
 socket.on('racestart', ms => {
-    data.page = 'racestart';
+    if (data.round.no != -1)
+        data.page = 'racestart';
     console.log(data.racestart = ms)
 });
 socket.on('showinfo', info => {
-    data.page = 'showinfo';
+    if (data.round.no != -1)
+        data.page = 'showinfo';
     console.log(data.info = info)
 });
 window.socket = socket;
@@ -64,6 +68,5 @@ export default {
         dog.keyrequest('get', '/api/member/contest/view/').then(dog.json).then(obj => {
             data.content = obj;
         })
-        socket.emit('round', 0);
     }
 };

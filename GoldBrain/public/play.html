@@ -36,7 +36,7 @@
     }
 
     .bb {
-        color: lightskyblue;
+        color: orange;
         font-size: 45em;
     }
 
@@ -57,6 +57,7 @@
 
     body {
         position: fixed;
+        background: #eee;
         margin: 0;
         padding: 0;
         width: 100%;
@@ -83,6 +84,7 @@
 <body>
 
     <div id="app">
+
         <transition-group name="list">
             <div class="slide" key="slides" v-if="slides">
                 <span @click="go()">
@@ -110,16 +112,27 @@
 
                 <div class="slide" key="problem" v-if="page=='problem'||page=='racestart'">
                     <div class="center">
-                        <h3>第{{problem.no+1}}題
-                            <cir w="64px" bc="black" c="white">{{problem.score}}分</cir>
+
+
+                        <h3>
+                            第{{problem.no+1}}題
+                            <cir w="96px" bc="black" c="white">{{problem.score}}分</cir>
                         </h3>
 
                         <h1>{{problem.title}}</h1>
                         <h3>{{problem.content}}</h3>
-
+                        <template v-for="(c, i) in problem.choice">
+                            <h2 style="display:inline-block; margin:32px">
+                                <cir w="64px" c="white" :bc="['red','orange','green','blue'][i]||'black'">
+                                    {{c.value}}
+                                </cir>
+                                {{c.content}}
+                            </h2>
+                        </template>
+                        <hr>
                         <template v-if="round.usebutton">
-                            <button @click="problemStart(3000)">搶答倒數</button>
-                            <button @click="page='answer'">答案揭曉</button>
+                            <button class="main" @click="problemStart(3000)">搶答倒數</button>
+                            <button :class="{main:races.length>0}" @click="page='answer'">答案揭曉</button>
 
                             <div v-if="racestart==0">
                                 <h3 v-for="(r,i) in races">
@@ -138,31 +151,38 @@
                                 <h3>
                                     <cir w="128px" bc="orange">{{races.length}} / {{players.length}}</cir> 已作答
                                 </h3>
-                                <button class="main" @click="page='answer'" v-if="races.length==players.length">答案揭曉</button>
+                                <button :class="{main:races.length>0}" @click="page='answer'">答案揭曉</button>
                             </template>
 
                         </template>
-
+                        <button @click="goRound()">返回場次</button>
                     </div>
                 </div>
 
                 <div class="slide" key="answer" v-if="page=='answer'">
                     <div class="center">
+
                         <h3>
                             {{problemc.title}} {{problemc.content}}
                         </h3>
                         <h1>正解
-                            <cir w="128px" bc="green" c="white">{{problemc.answer.value}}</cir>
+                            <cir v-if="problemc.answer.value!=''" w="128px" bc="green" c="white">{{problemc.answer.value}}</cir>
                         </h1>
                         <h2>{{problemc.content}}</h2>
+                        {{answer}}
                         <button class="main" v-if="hasNextProblem" @click="nextProblem()">下一題</button>
                         <button class="main" v-else-if="hasNextRound" @click="nextRound()">下一輪</button>
+                        <button @click="goRound()">返回場次</button>
                     </div>
                 </div>
 
                 <div class="slide back" key="background">
-                    <div class="center">
+                    <cir class="center" w="1400px" bc="white"></cir>
+                </div>
+                <div class="slide back" key="background">
+                    <div class="center" v-if="page=='problem'||page=='racestart'">
                         <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
+                        <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
                     </div>
                 </div>
             </template>
