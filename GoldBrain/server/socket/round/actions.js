@@ -13,5 +13,6 @@ exports.hey = 'hey';
 
 exports.answer = 'answer';
 exports.team = 'team';
+exports.teamRound = 'teamRound';
 
 exports.update = 'update';

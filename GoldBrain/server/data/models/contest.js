@@ -51,7 +51,8 @@ exports.schema = new Schema({
             name: String,
             key: String,
             score: Number,
-            round: Number
+            round: Number,
+            record: [String]
         }
     ]
 });

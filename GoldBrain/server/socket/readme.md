@@ -63,6 +63,7 @@ paht: `/round`
   no: Number // round id
   title: String
   usebutton: Boolean // require physical button
+  players: Number // number of players in this round
 }
 ```
 
@@ -107,6 +108,7 @@ paht: `/round`
     message: String // extra information?
     score: Number
     hidden: Boolean // hide answer information
+    hash: String // prevent repeating add same score
   }
 ]
 ```

@@ -102,6 +102,7 @@
                         <h1>{{round.title}}</h1>
                         <p v-if="round.usebutton">請準備好搶答按鈕</p>
                         <p v-else>此局不用搶答按鈕</p>
+                        <p>{{roundc.players}} 人</p>
                         <button v-if="hasPrevRound" @click="prevRound()">到前一輪</button>
                         <button class="main" @click="roundStart()">開始</button>
                         <button v-if="hasNextRound" @click="nextRound()">跳過此輪</button>
@@ -170,6 +171,8 @@
                         </h1>
                         <h2>{{problemc.content}}</h2>
                         {{answer}}
+                        <br>
+
                         <button class="main" v-if="hasNextProblem" @click="nextProblem()">下一題</button>
                         <button class="main" v-else-if="hasNextRound" @click="nextRound()">下一輪</button>
                         <button @click="goRound()">返回場次</button>
@@ -180,6 +183,16 @@
                     <cir class="center" w="1400px" bc="white"></cir>
                 </div>
                 <div class="slide back" key="background">
+
+                    <transition-group>
+                    
+                        <template>
+                            
+                        </template>
+                    </transition-group>
+
+                    <span v-for="team in rank.all">{{team.name}}</span>
+
                     <div class="center" v-if="page=='problem'||page=='racestart'">
                         <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
                         <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>

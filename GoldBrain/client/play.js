@@ -8,6 +8,7 @@ import slides from './play/slides.vue';
 import fbtn from './play/fbtn.vue';
 import play from './play/play';
 import { setInterval } from 'timers';
+import { teamRound } from '../server/socket/round/actions';
 
 Vue.component('cir', cir);
 Vue.component('answer', answer);
@@ -44,12 +45,21 @@ var app = new Vue({
     methods: {
         go() {
             this.slides = false;
+            if (this.round.no == -1) play.emit('round', 0);
         },
         roundStart() {
             play.emit('problem', 0);
         },
-        goRound() {
-            play.emit('round', this.round.no);
+        goRound(round) {
+            if (round == null) round = this.round.no;
+
+            if (this.rank.same.length == 0) {
+                play.emit('teamRound', {
+                    teams: this.rank.teams.map(x => x.no),
+                    round
+                });
+            }
+            play.emit('round', round);
         },
         problemStart(race) {
             timestamp = -1000;
@@ -59,11 +69,13 @@ var app = new Vue({
             play.emit('problem', this.problem.no + 1)
         },
         nextRound() {
-            play.emit('round', this.round.no + 1)
+            this.goRound(this.round.no + 1)
         },
         prevRound() {
-            play.emit('round', this.round.no - 1)
+            this.goRound(this.round.no - 1)
         },
+
+
     },
     computed: {
         races() {
@@ -83,13 +95,70 @@ var app = new Vue({
         problemc() {
             return this.roundc.problems[this.problem.no]
         },
-        answer() {
-            return this.problemc.choice.map(x => ({
-                value: x.value,
-                content: x.content,
-                team: this.races.filter(y => y.answer == x.value),
-                correct: x.value == this.problemc.answer.value
+        rank() {
+            var teams = this.state.teams.map(x => ({
+                no: x.no,
+                name: x.name,
+                round: x.round,
+                score: x.score
             }))
+
+            teams.sort((a, b) => b.score - a.score);
+
+            var players = 1;
+            if (this.round.no + 1 < this.content.rounds.length)
+                players = this.content.rounds[this.round.no + 1].players;
+
+            var same = [];
+            var other = [];
+            if (teams.length > players)
+                teams.slice(players).map(team => {
+                    if (team.score == teams[players - 1].score) same.push(team);
+                    else other.push(team);
+                });
+            teams = teams.slice(0, players);
+
+            var all = [];
+            var i = 0;
+            teams.map(team => {
+                team.rank = i++;
+                team.type = 0;
+                all.push(team);
+            })
+
+            same.map(team => {
+                team.rank = i++;
+                team.type = 1;
+                all.push(team);
+            })
+
+            other.map(team => {
+                team.rank = i++;
+                team.type = 2;
+                all.push(team);
+            })
+
+            return {
+                teams,
+                same,
+                other,
+                all
+            }
+        },
+        answer() {
+            var result = this.races.map(x => ({
+                correct: x.answer == this.problemc.answer.value,
+                team: x.no,
+                message: '',
+                score: this.problemc.score,
+                time: x.time,
+                hash: JSON.stringify({
+                    round: this.round.no,
+                    problem: this.problem.no
+                })
+            }))
+            play.emit('answer', result);
+            return result;
         },
         hasNextProblem() {
             return this.problem.no < this.roundc.problems.length - 1;
@@ -102,3 +171,5 @@ var app = new Vue({
         }
     }
 })
+
+window.app = app;

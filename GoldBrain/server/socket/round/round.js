@@ -59,6 +59,7 @@ function Round(contest, viewKey, io) {
                 socket.emit(actions.problem, me.state.problem);
                 socket.emit(actions.race, me.raceTeams);
                 socket.emit(actions.racestart, me.state.race);
+
                 socket.login = true;
                 sockets.push(socket);
                 return;
@@ -77,13 +78,27 @@ function Round(contest, viewKey, io) {
                 socket.on(actions.problem, me.setProblem);
                 socket.on(actions.startrace, me.startRace);
                 socket.on(actions.answer, me.answer);
-                socket.on(actions.update, me.update)
-                // up to date
-                socket.emit(actions.state, me.state_any());
-                socket.emit(actions.round, me.state.round);
-                socket.emit(actions.problem, me.state.problem);
-                socket.emit(actions.race, me.raceTeams);
-                socket.emit(actions.racestart, me.state.race);
+                socket.on(actions.update, me.update);
+                socket.on(actions.teamRound, data => {
+                    me.teamRound(data.teams, data.round)
+                })
+                    // up to date
+                    ;
+                (function () {
+                    socket.emit(actions.state, me.state_any());
+                    if (me.state.page == '') return;
+                    socket.emit(actions.round, me.state.round);
+                    if (me.state.page == 'round') return;
+                    socket.emit(actions.problem, me.state.problem);
+                    if (me.state.page == 'problem') return;
+                    if (me.state.page == 'race') {
+                        socket.emit(actions.racestart, Number(me.state.race));
+                        socket.emit(actions.race, me.raceTeams);
+                    }
+                })();
+
+
+
 
                 socket.login = true;
                 sockets.push(socket);
@@ -98,7 +113,7 @@ function Round(contest, viewKey, io) {
 
 
                     if (socket.team) {
-                        
+
                         if (socket.team.round < state.round) {
                             socket.emit(actions.showinfo, {
                                 content: '你不屬於這一輪',
@@ -165,7 +180,7 @@ function Round(contest, viewKey, io) {
                     return;
                 }
 
-                socket.emit(actions.info, me.raceTeams);
+
 
             }
 
@@ -201,7 +216,8 @@ function Round(contest, viewKey, io) {
             var obj = {
                 no: round,
                 title: round_info.name,
-                usebutton: round_info.usebutton
+                usebutton: round_info.usebutton,
+                players: round_info.players
             }
             me.state.page = 'round';
             me.state.round = obj;
@@ -291,13 +307,32 @@ function Round(contest, viewKey, io) {
     }
 
     this.race = function (no, answer) {
+        // check if already raced
+        if (me.raceTeams.filter(x => x.no == no).length == 0) {
 
-        // if (me.raceTeams.filter(x => x.no == no).length == 0)
-        me.raceTeams.push({
-            no, answer, time: new Date().getTime()
-        })
-        io.in(contestID_member).emit(actions.race, me.raceTeams);
+            me.raceTeams.push({
+                no, answer, time: new Date().getTime()
+            })
+            io.in(contestID_member).emit(actions.race, me.raceTeams);
+        }
     }
+
+    //// next round
+    /**
+     * set the team's round to some round
+     * @param {Array<Number>} teams the Number of Teams
+     * @param {Number} round the Round to be set
+     */
+    this.teamRound = function (teams, round) {
+        me.contest.teams.map(team => {
+            if (teams.indexOf(team.no) == -1) return;
+            team.round = round;
+        })
+        console.log(teams, round)
+        me.contest.save();
+        room.emit(actions.state, me.state_any());
+    }
+
 
 
     // OTHER IMPORTANT THINGS
@@ -311,20 +346,30 @@ function Round(contest, viewKey, io) {
     /**@param {Array.<{correct: Boolean, team: String, message: String, score:Number, hidden:Boolean}>} data*/
     this.answer = function (data) {
         data.filter(reply => reply.correct).map(reply => {
-            me.contest.teams[index].score += reply.score;
+            var team = me.contest.teams[reply.team];
+            if (team.record == null) team.record = [];
+            if (reply.hash) {   // checking
+                if (team.record.indexOf(reply.hash) != -1) return;
+                team.record.push(reply.hash);
+            }
+            team.score += reply.score;
+            console.log(team);
         })
-        me.contest.save();
-        for (var i in me.onlineTeams) {
-            var team = me.onlineTeams[i];
-            var info = data.filter(reply => reply.team == i && !reply.hidden)[0];
-            if (info) team.emit(actions.showinfo, {
-                content: `${info.correct ? reply.score + '分\n恭喜答對' : '答錯了'}\n${info.message}`,
-                backgroundColor: info.correct ? colors.ok : colors.error
-            })
-        }
-        room.emit(actions.state, me.state_any());
-    }
 
+        me.contest.save();
+        room.emit(actions.state, me.state_any());
+
+        data.map(reply => {
+
+            var team = me.onlineTeams[reply.team];
+            if (team === false) return;
+
+            if (!reply.hidden) team.emit(actions.showinfo, {
+                content: `${reply.correct ? reply.score + '分\n恭喜答對' : '答錯了'}\n${reply.message}`,
+                backgroundColor: reply.correct ? colors.ok : colors.error
+            })
+        })
+    }
 
     this.stop = function () {
         console.log('round', viewKey, 'stopped')
