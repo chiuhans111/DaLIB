@@ -103,7 +103,11 @@ var app = new Vue({
                 score: x.score
             }))
 
-            teams.sort((a, b) => b.score - a.score);
+            teams.sort((a, b) => {
+                var rank = b.score - a.score;
+                if (rank == 0) return b.round - a.round;
+                return rank;
+            });
 
             var players = 1;
             if (this.round.no + 1 < this.content.rounds.length)
@@ -173,3 +177,5 @@ var app = new Vue({
 })
 
 window.app = app;
+
+if (location.href.match(/\?skip/)) app.go();

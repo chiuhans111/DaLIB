@@ -1,5 +1,9 @@
 <template>
-    <div class="float">
+    <div :class="{
+        float: true,
+        right: r,
+        dmain: main
+    }" @click="$emit('click')">
         <div class="btn">
             <slot></slot>
         </div>
@@ -8,6 +12,7 @@
 
 <script>
     export default {
+        props: ['r', 'main'],
         data() {
             return {
 
@@ -18,14 +23,23 @@
 
 <style>
     .float {
-        position: fixed;
         padding: 0px;
         left: 0;
-        bottom: 5%;
+        position: relative;
         z-index: 99;
-        background-color: orange;
+        background-color: lightgray;
         cursor: pointer;
         transition: all 0.2s;
+        display: inline-block
+    }
+
+    .dmain {
+        background-color: orange;
+    }
+
+    .right {
+        left: initial;
+        right: 0;
     }
 
     .btn {
@@ -34,6 +48,6 @@
     }
 
     .float:hover {
-        padding-left: 8px;
+        padding: 0px 8px;
     }
 </style>

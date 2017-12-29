@@ -12,7 +12,7 @@ var Vue = Vuetify({
         primary: palette.Orange[500],
         accent: palette.Orange[300],
         secondary: palette.Orange[700],
-        info: palette.Orange[700],
+        info: palette.Cyan[700],
         warning: palette.Amber[500],
         error: palette.Red[500],
         success: palette.Green[500]

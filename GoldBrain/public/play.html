@@ -41,12 +41,12 @@
     }
 
     h1 {
-        font-size: 5em;
+        font-size: 6em;
         margin: 8px;
     }
 
     h2 {
-        font-size: 3em;
+        font-size: 4em;
         margin: 6px;
     }
 
@@ -79,6 +79,26 @@
     .main {
         background-color: orange;
     }
+
+    .blob {
+        border-radius: 999px;
+        padding: 4px;
+        margin: 16px;
+    }
+
+    .dright {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+    }
+
+    .dleft {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100px;
+        height: 200px;
+    }
 </style>
 
 <body>
@@ -87,40 +107,66 @@
 
         <transition-group name="list">
             <div class="slide" key="slides" v-if="slides">
-                <span @click="go()">
-                    <fbtn>關閉</fbtn>
-                </span>
+                <div class="dleft">
+                    <fbtn main="1" @click.native="go()">關閉</fbtn>
+                </div>
+
                 <slides></slides>
             </div>
             <template v-if="!slides">
+
+                <!--
                 <span @click="slides=true" key="backtoSlides">
                     <fbtn>比賽規則</fbtn>
                 </span>
+            -->
 
                 <div class="slide" :key="'round'+round.no" v-if="page=='round'">
+                    <div class="dright">
+
+                        <fbtn r="1" @click="prevRound()" v-if="hasPrevRound">到前一輪</fbtn>
+                        <fbtn r="1" main="1" class="main" @click="roundStart()">開始</fbtn>
+                        <fbtn r="1" v-if="hasNextRound" @click="nextRound()">跳過此輪</fbtn>
+
+                    </div>
+
                     <div class="center">
                         <h1>{{round.title}}</h1>
                         <p v-if="round.usebutton">請準備好搶答按鈕</p>
                         <p v-else>此局不用搶答按鈕</p>
                         <p>{{roundc.players}} 人</p>
-                        <button v-if="hasPrevRound" @click="prevRound()">到前一輪</button>
-                        <button class="main" @click="roundStart()">開始</button>
-                        <button v-if="hasNextRound" @click="nextRound()">跳過此輪</button>
+
+
                     </div>
                 </div>
 
 
 
                 <div class="slide" key="problem" v-if="page=='problem'||page=='racestart'">
-                    <div class="center">
 
+                    <!-- button part -->
+                    <div class="dright">
+                        <template v-if="round.usebutton">
+                            <fbtn r="1" main="1" @click="problemStart(3000)">搶答倒數</fbtn>
+                            <fbtn r="1" :class="{main:races.length>0}" @click="page='answer'">答案揭曉</fbtn>
+                        </template>
+                        <template v-else>
+                            <fbtn r="1" main="1" @click="problemStart(0)" v-if="racestart==-1">開始作答</fbtn>
+                            <template v-if="racestart==0">
+                                <fbtn r="1" :main="races.length>0" @click="page='answer'">答案揭曉</fbtn>
+                            </template>
 
-                        <h3>
-                            第{{problem.no+1}}題
-                            <cir w="96px" bc="black" c="white">{{problem.score}}分</cir>
-                        </h3>
+                        </template>
+                        <fbtn r="1" @click="goRound()">返回場次</fbtn>
+                    </div>
 
-                        <h1>{{problem.title}}</h1>
+                    <!-- content part -->
+                    <div class="center" style="max-width:800px">
+                        <h1>
+                            <small style="color:gray"> 第{{problem.no+1}}題</small>
+                            {{problem.title}}
+                            <small style="color:orange">{{problem.score}}分</small>
+                        </h1>
                         <h3>{{problem.content}}</h3>
                         <template v-for="(c, i) in problem.choice">
                             <h2 style="display:inline-block; margin:32px">
@@ -132,36 +178,35 @@
                         </template>
                         <hr>
                         <template v-if="round.usebutton">
-                            <button class="main" @click="problemStart(3000)">搶答倒數</button>
-                            <button :class="{main:races.length>0}" @click="page='answer'">答案揭曉</button>
 
                             <div v-if="racestart==0">
-                                <h3 v-for="(r,i) in races">
-                                    <cir w="48px" :bc="i==0?'orange':'lightGray'">
-                                        {{r.no}}
-                                    </cir>
+                                <h3 v-for="(r,i) in races.slice(0,4)">
+                                    <span class="blob" :style="{backgroundColor:i==0?'orange':'white'}">
+                                        第{{r.no+1}}組
+                                    </span>
                                 </h3>
                             </div>
                         </template>
 
                         <template v-else>
-
-                            <button class="main" @click="problemStart(0)" v-if="racestart==-1">開始作答</button>
-
                             <template v-if="racestart==0">
                                 <h3>
                                     <cir w="128px" bc="orange">{{races.length}} / {{players.length}}</cir> 已作答
                                 </h3>
-                                <button :class="{main:races.length>0}" @click="page='answer'">答案揭曉</button>
                             </template>
-
                         </template>
-                        <button @click="goRound()">返回場次</button>
+
                     </div>
                 </div>
 
                 <div class="slide" key="answer" v-if="page=='answer'">
-                    <div class="center">
+                    <div class="dright">
+                        <fbtn r="1" main="1" v-if="hasNextProblem" @click="nextProblem()">下一題</fbtn>
+                        <fbtn r="1" main="1" v-else-if="hasNextRound" @click="nextRound()">下一輪</fbtn>
+                        <fbtn r="1" @click="goRound()">返回場次</fbtn>
+                    </div>
+
+                    <div class="center" style="max-width:800px">
 
                         <h3>
                             {{problemc.title}} {{problemc.content}}
@@ -170,28 +215,18 @@
                             <cir v-if="problemc.answer.value!=''" w="128px" bc="green" c="white">{{problemc.answer.value}}</cir>
                         </h1>
                         <h2>{{problemc.content}}</h2>
-                        {{answer}}
-                        <br>
 
-                        <button class="main" v-if="hasNextProblem" @click="nextProblem()">下一題</button>
-                        <button class="main" v-else-if="hasNextRound" @click="nextRound()">下一輪</button>
-                        <button @click="goRound()">返回場次</button>
+                        <br> 答對人數{{answer.filter(x=>x.correct).length}}/{{answer.length}}
+
                     </div>
                 </div>
 
-                <div class="slide back" key="background">
-                    <cir class="center" w="1400px" bc="white"></cir>
-                </div>
+
+
                 <div class="slide back" key="background">
 
-                    <transition-group>
-                    
-                        <template>
-                            
-                        </template>
-                    </transition-group>
 
-                    <span v-for="team in rank.all">{{team.name}}</span>
+                    <score :teams="rank.all" :round="round.no"></score>
 
                     <div class="center" v-if="page=='problem'||page=='racestart'">
                         <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
