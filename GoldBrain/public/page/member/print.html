@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/style/main.css">
+
+</head>
+<style>
+    .block {
+        float: left;
+        width: 200px;
+        padding: 8px;
+        border: solid 1px;
+        page-break-after: always;
+        page-break-inside: avoid;
+    }
+</style>
+
+<body>
+    <div id="app">
+
+
+        <div class="block" v-for="team in content">
+            <h1>{{team.name}}</h1>
+            <img :src="team.qrcode" alt="">
+        </div>
+    </div>
+    <script src="/dist/general.js"></script>
+
+    <script>
+        var data = {
+
+            key: '',
+            content: {},
+            login() {
+                dog.request('get', '/api/member/contest/qrcode/key/' + data.key).then(content => {
+                    data.content = JSON.parse(content);
+                })
+            }
+
+        }
+
+        var app = done({
+            data,
+        });
+
+        var key = dog.key;
+
+        if (key) {
+            console.log('has key')
+            data.key = key;
+            data.login();
+        }
+
+        window.data = data;
+    </script>
+</body>
+
+</html>
