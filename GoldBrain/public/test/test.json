@@ -1,33 +1,33 @@
 {
-    "key": "Bn98ufBeAQCO62P6aRVtoTvhkikaW8/3LkiMww==",
+    "key": "dev-0-0",
     "name": "新比賽",
     "__v": 0,
     "teams": [
         {
             "no": 0,
             "name": "第1隊",
-            "key": "BoB8ufBeAQHY9Q==",
+            "key": "dev-0-1",
             "score": 0,
             "round": 0
         },
         {
             "no": 1,
             "name": "第2隊",
-            "key": "BoB8ufBeAQLmpQ==",
+            "key": "dev-0-2",
             "score": 0,
             "round": 0
         },
         {
             "no": 2,
             "name": "第3隊",
-            "key": "BoB8ufBeAQN8gg==",
+            "key": "dev-0-3",
             "score": 0,
             "round": 0
         },
         {
             "no": 3,
             "name": "第4隊",
-            "key": "BoB8ufBeAQQAZw==",
+            "key": "dev-0-4",
             "score": 0,
             "round": 0
         },

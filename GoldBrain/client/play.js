@@ -49,6 +49,7 @@ var app = new Vue({
         },
         roundStart() {
             play.emit('problem', 0);
+            console.log('start')
         },
         goRound(round) {
             if (round == null) round = this.round.no;
@@ -80,11 +81,13 @@ var app = new Vue({
     computed: {
         races() {
             var obj = {};
-            return this.race.filter(x => {
-                var has = obj[x.no];
-                obj[x.no] = true;
-                return !has;
-            })
+            if (this.race.filter)
+                return this.race.filter(x => {
+                    var has = obj[x.no];
+                    obj[x.no] = true;
+                    return !has;
+                })
+            else return [];
         },
         players() {
             return this.state.teams.filter(x => x.online && x.round >= this.round.no)
@@ -163,6 +166,21 @@ var app = new Vue({
             }))
             play.emit('answer', result);
             return result;
+        },
+        answerCorrect() {
+            play.emit('answer', [
+                {
+                    correct: true,
+                    team: this.answerTeam.no,
+                    message: '',
+                    score: this.problemc.score,
+                    hash: JSON.stringify({
+                        round: this.round.no,
+                        problem: this.problem.no
+                    })
+                }
+            ]);
+            this.page = 'answer'
         },
         hasNextProblem() {
             return this.problem.no < this.roundc.problems.length - 1;
