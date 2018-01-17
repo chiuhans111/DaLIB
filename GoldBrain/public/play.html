@@ -24,8 +24,8 @@
 
     button {
         transition: all 0.2s;
+        font-size: 1em;
         border: none;
-        font-size: 1.1em;
         padding: 10px;
         border-radius: 100px;
         margin: 8px;
@@ -37,7 +37,7 @@
 
     .bb {
         color: orange;
-        font-size: 45em;
+        font-size: 30em;
     }
 
     h1 {
@@ -181,9 +181,11 @@
 
                             <div v-if="racestart==0">
                                 <h3 v-for="(r,i) in races.slice(0,4)">
-                                    <span class="blob" :style="{backgroundColor:i==0?'orange':'white'}">
+                                    <button :class="{main:i==0}" @click="answerTeam=r; page='answer2'">
+
                                         第{{r.no+1}}組
-                                    </span>
+
+                                    </button>
                                 </h3>
                             </div>
                         </template>
@@ -198,6 +200,44 @@
 
                     </div>
                 </div>
+
+
+                <div class="slide" key="answer2" v-if="page=='answer2'">
+
+                    <div class="center" style="max-width:800px">
+                        <h1>
+                            <small style="color:gray"> 第{{problem.no+1}}題</small>
+                            {{problem.title}}
+                            <small style="color:orange">{{problem.score}}分</small>
+                        </h1>
+                        <h3>{{problem.content}}</h3>
+                        <template v-for="(c, i) in problem.choice">
+                            <h2 style="display:inline-block; margin:32px">
+                                <cir w="64px" c="white" :bc="['red','orange','green','blue'][i]||'black'">
+                                    {{c.value}}
+                                </cir>
+                                {{c.content}}
+                            </h2>
+                        </template>
+
+                        <hr>
+                        <h2>
+                            第{{answerTeam.no+1}}組
+                            <small style="color:orange">請回答</small>
+                        </h2>
+                        <hr>
+                        <h2>
+                            <button style="background:green; color:white" @click="answerCorrect(answerTeam.no)">
+                                正解
+                            </button>
+                            <button style="background:red; color:white" @click="page='problem'">
+                                錯誤
+                            </button>
+                        </h2>
+                    </div>
+
+                </div>
+
 
                 <div class="slide" key="answer" v-if="page=='answer'">
                     <div class="dright">
@@ -222,16 +262,18 @@
                 </div>
 
 
-
+                <div class="slide back" key="background">
+                    <div class="center" v-if="page=='problem'||page=='racestart'">
+                        <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
+                        <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
+                    </div>
+                </div>
                 <div class="slide back" key="background">
 
 
                     <score :teams="rank.all" :round="round.no"></score>
 
-                    <div class="center" v-if="page=='problem'||page=='racestart'">
-                        <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
-                        <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
-                    </div>
+
                 </div>
             </template>
 

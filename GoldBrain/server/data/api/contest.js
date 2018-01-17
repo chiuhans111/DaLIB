@@ -7,7 +7,7 @@ var dog = require('tool/dog');
 var model = require('../models/contest.js');
 
 var db = require('../base');
-
+var qrcode = require('tool/qrcode');
 
 var _any = express.Router();
 var _member = express.Router();
@@ -33,6 +33,28 @@ db.then(mongoose => {
             runValidators: true
         }, function (err, doc) {
             res.send(err);
+        })
+    })
+
+    _member.get('/qrcode', (req, res) => {
+        collection.findOne(req.contestID, { "teams.key": 1, "teams.name": 1, "teams.no": 1 }, function (err, doc) {
+
+            var all = Promise.all(doc.teams.map(team => {
+                return qrcode.png(team.key).then(code => {
+                    return {
+                        no: team.no,
+                        name: team.name,
+                        qrcode: code,
+                        key: team.key
+                    };
+                })
+            }))
+            console.log(all);
+            all.then(result => {
+                console.log('sent', result);
+                res.send(result);
+            })
+
         })
     })
 
