@@ -48,6 +48,6 @@
     }
 
     .float:hover {
-        padding: 0px 8px;
+        transform: scale(1.1)
     }
 </style>

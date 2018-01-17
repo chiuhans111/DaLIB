@@ -16,10 +16,10 @@
         position: relative;
         display: block;
         left: 50%;
-        top: 45%;
+        top: 10%;
         text-align: center;
         min-width: 50%;
-        transform: translate(-50%, -50%)
+        transform: translate(-50%, 0)
     }
 
     button {
@@ -37,7 +37,8 @@
 
     .bb {
         color: orange;
-        font-size: 30em;
+        font-size: 20em;
+        margin: 0;
     }
 
     h1 {
@@ -70,6 +71,7 @@
         position: fixed;
         width: 100%;
         height: 100%;
+        overflow: auto;
     }
 
     .back {
@@ -98,6 +100,7 @@
         bottom: 0;
         width: 100px;
         height: 200px;
+
     }
 </style>
 
@@ -116,17 +119,25 @@
             <template v-if="!slides">
 
                 <!--
-                <span @click="slides=true" key="backtoSlides">
-                    <fbtn>比賽規則</fbtn>
-                </span>
-            -->
+                    <span @click="slides=true" key="backtoSlides">
+                        <fbtn>比賽規則</fbtn>
+                    </span>
+                -->
+
+
 
                 <div class="slide" :key="'round'+round.no" v-if="page=='round'">
-                    <div class="dright">
 
-                        <fbtn r="1" @click="prevRound()" v-if="hasPrevRound">到前一輪</fbtn>
+
+
+                    <div class="dright">
+                        <div>
+                            <fbtn r="1" :main="round.no==content.rounds.length-1" @click.native="page='score'">分數結算</fbtn>
+
+                        </div>
+                        <fbtn r="1" @click="prevRound()" v-if="hasPrevRound">←倒退</fbtn>
                         <fbtn r="1" main="1" class="main" @click="roundStart()">開始</fbtn>
-                        <fbtn r="1" v-if="hasNextRound" @click="nextRound()">跳過此輪</fbtn>
+                        <fbtn r="1" v-if="hasNextRound" @click="nextRound()">跳過→</fbtn>
 
                     </div>
 
@@ -178,6 +189,10 @@
                         </template>
                         <hr>
                         <template v-if="round.usebutton">
+                            <template v-if="racestart!=0||races.length==0">
+                                <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
+                                <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
+                            </template>
 
                             <div v-if="racestart==0">
                                 <h3 v-for="(r,i) in races.slice(0,4)">
@@ -261,19 +276,57 @@
                     </div>
                 </div>
 
+                <div class="slide" key="answer" v-if="page=='score'">
 
+                    <div class="center">
+                        <button @click="goRound()">返回場次</button>
+                        <table style="position:relative; left:50%; transform:translate(-50%,0)">
+                            <thead>
+                                <td>
+                                    <h3>隊伍</h3>
+                                </td>
+                                <td>
+                                    <h3>得分</h3>
+                                </td>
+                            </thead>
+                            <template v-for="(team,i) in rank.all">
+                                <tr :class="{
+                                    first: team.rank==0,
+                                    second: team.rank==1,
+                                    third: team.rank==2,
+                                    same: team.type==1,
+                                    out: team.round&lt;round
+                                }">
+                                    <td class="number" style="width:auto">
+                                        <h2>
+                                            {{team.name}}
+                                        </h2>
+                                    </td>
+                                    <td>
+                                        <h2>
+                                            {{team.score}} 分
+                                        </h2>
+                                    </td>
+                                </tr>
+
+                            </template>
+                        </table>
+                    </div>
+
+
+                </div>
+
+                <!--
                 <div class="slide back" key="background">
                     <div class="center" v-if="page=='problem'||page=='racestart'">
+                        <br>
                         <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
                         <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
                     </div>
                 </div>
-                <div class="slide back" key="background">
-
-
-                    <score :teams="rank.all" :round="round.no"></score>
-
-
+            -->
+                <div class="slide back" key="background" style="overflow:hidden">
+                    <score :teams="rank.all" :round="round.no" v-if="page!='score'"></score>
                 </div>
             </template>
 

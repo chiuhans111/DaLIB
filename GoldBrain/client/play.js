@@ -127,23 +127,30 @@ var app = new Vue({
             teams = teams.slice(0, players);
 
             var all = [];
-            var i = 0;
+            var i = -1;
+            var last = null;
+
             teams.map(team => {
-                team.rank = i++;
                 team.type = 0;
                 all.push(team);
             })
 
             same.map(team => {
-                team.rank = i++;
                 team.type = 1;
                 all.push(team);
             })
 
             other.map(team => {
-                team.rank = i++;
                 team.type = 2;
                 all.push(team);
+            })
+
+            all.map(team => {
+                if (last != team.score) {
+                    last = team.score;
+                    i++;
+                }
+                team.rank = i;
             })
 
             return {
