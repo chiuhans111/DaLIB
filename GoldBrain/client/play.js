@@ -53,12 +53,12 @@ var app = new Vue({
         goRound(round) {
             if (round == null) round = this.round.no;
 
-            if (this.rank.same.length == 0) {
-                play.emit('teamRound', {
-                    teams: this.rank.teams.map(x => x.no),
-                    round
-                });
-            }
+
+            play.emit('teamRound', {
+                teams: this.rank.teams.map(x => x.no),
+                round
+            });
+
             play.emit('round', round);
         },
         problemStart(race) {
@@ -105,7 +105,8 @@ var app = new Vue({
 
             teams.sort((a, b) => {
                 var rank = b.score - a.score;
-                if (rank == 0) return b.round - a.round;
+                if (rank == 0) rank = b.round - a.round;
+                if (rank == 0) rank = a.no - b.no;
                 return rank;
             });
 

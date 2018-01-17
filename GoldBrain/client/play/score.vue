@@ -1,22 +1,23 @@
 <template>
     <div class="score-main">
 
-        <template v-for="(team, i) in teams">
-            <transition-group name="list" tag="table">
-
-                <tr :key="team.no" :class="{
+        <transition-group name="list" tag="div">
+            <template v-for="(team, i) in teams">
+                <li :key="team.no" style="display:block;margin:4px">
+                    <tr :class="{
                         first: team.rank==0,
                         second: team.rank==1,
                         third: team.rank==2,
                         same: team.type==1,
                         out: team.round&lt;round
                     }">
-                    <td class="number">{{team.name}}</td>
-                    <td class="score">{{team.score}} 分</td>
-                    <td class="score">{{team.round}}</td>
-                </tr>
-            </transition-group>
-        </template>
+                        <td class="number">{{team.name}}</td>
+                        <td class="score">{{team.score}} 分</td>
+                        <td class="score">{{team.round}}</td>
+                    </tr>
+                </li>
+            </template>
+        </transition-group>
 
     </div>
 </template>
@@ -36,18 +37,21 @@
     }
 
     .first>.number {
-        border-left: solid 16px orange;
+        border-left: solid 16px gold;
         font-size: 32px;
+        width: 120px;
     }
 
     .second>.number {
-        border-left: solid 16px green;
+        border-left: solid 16px silver;
         font-size: 30px;
+        width: 110px;
     }
 
     .third>.number {
         border-left: solid 16px coral;
         font-size: 28px;
+        width: 100px;
     }
 
     .same>.score {
@@ -73,16 +77,19 @@
         background-color: #444;
         font-size: 18px;
         transition: all 0.2s;
+        transition-delay: 0.3s;
         opacity: 1;
     }
 
     .number {
         color: black;
         background-color: lightgray;
+        width: 96px;
     }
 
     .list-enter-active {
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: absolute;
     }
 
     .list-leave-active {
