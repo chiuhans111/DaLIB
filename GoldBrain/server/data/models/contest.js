@@ -52,7 +52,14 @@ exports.schema = new Schema({
             key: String,
             score: Number,
             round: Number,
-            record: [String]
+            record: [{
+                round: Number,
+                problem: Number,
+                time: Number,
+                score: Number,
+                correct: Boolean,
+                hash: String
+            }]
         }
     ]
 });

@@ -15,10 +15,10 @@
         margin: 0px;
         position: relative;
         display: block;
-        left: 50%;
+        left: 55%;
         top: 10%;
         text-align: center;
-        min-width: 50%;
+        min-width: 80%;
         transform: translate(-50%, 0)
     }
 
@@ -47,13 +47,13 @@
     }
 
     h2 {
-        font-size: 4em;
+        font-size: 3em;
         margin: 6px;
     }
 
     h3 {
         font-size: 2em;
-        margin: 4px;
+        margin: 0px;
     }
 
     body {
@@ -144,9 +144,8 @@
 
                     <div class="center">
                         <h1>{{round.title}}</h1>
-                        <p v-if="round.usebutton">請準備好搶答按鈕</p>
-                        <p v-else>此局不用搶答按鈕</p>
-                        <p>{{roundc.players}} 人</p>
+                        <h2 v-if="round.usebutton">請準備好搶答按鈕</h2>
+                        <h3>{{roundc.players}} 人</h3>
 
 
                     </div>
@@ -154,7 +153,7 @@
 
 
 
-                <div class="slide" key="problem" v-if="page=='problem'||page=='racestart'">
+                <div class="slide" key="problem" v-if="page=='problem'||page=='racestart'||page=='answer'||page=='answer2'">
 
                     <!-- button part -->
                     <div class="dright">
@@ -165,50 +164,89 @@
                         <template v-else>
                             <fbtn r="1" main="1" @click="problemStart(0)" v-if="racestart==-1">開始作答</fbtn>
                             <template v-if="racestart==0">
-                                <fbtn r="1" :main="races.length>0" @click="page='answer'">答案揭曉</fbtn>
+                                <fbtn r="1" :main="races.length>0" @click="answer()">答案揭曉</fbtn>
                             </template>
 
+                        </template>
+                        <template v-if="page=='answer'">
+                            <fbtn r="1" main="1" v-if="hasNextProblem" @click="nextProblem()">下一題</fbtn>
+                            <fbtn r="1" main="1" v-else-if="hasNextRound" @click="nextRound()">下一輪</fbtn>
                         </template>
                         <fbtn r="1" @click="goRound()">返回場次</fbtn>
                     </div>
 
                     <!-- content part -->
                     <div class="center" style="max-width:800px">
-                        <h1>
+                        <h2>
                             <small style="color:gray"> 第{{problem.no+1}}題</small>
-                            {{problem.title}}
+                            {{lineBreakFixer(problem.content)}}
                             <small style="color:orange">{{problem.score}}分</small>
-                        </h1>
-                        <h3>{{problem.content}}</h3>
-                        <template v-for="(c, i) in problem.choice">
-                            <h2 style="display:inline-block; margin:32px">
-                                <cir w="64px" c="white" :bc="['red','orange','green','blue'][i]||'black'">
-                                    {{c.value}}
-                                </cir>
-                                {{c.content}}
-                            </h2>
-                        </template>
+                        </h2>
+
+                        <transition-group name="list">
+                            <h2 key="answertitle" v-if="page=='answer'" style="color:green">正確答案：</h2>
+                            <template v-for="(c, i) in problem.choice">
+                                <h2 style="display:inline-block; margin:16px; position:relative" :key="i+':'+problem.no" v-if="problemc.answer.value.indexOf(c.value)!=-1||page!='answer'">
+                                    <cir w="64px" c="white" :bc="['red','orange','green','blue','purple','brown'][i]||'black'">
+                                        {{c.value}}
+                                    </cir>
+                                    {{lineBreakFixer(c.content)}}
+                                </h2>
+                            </template>
+                        </transition-group>
                         <hr>
-                        <template v-if="round.usebutton">
+
+                        <template v-if="page=='answer'">
+                            <h3>{{lineBreakFixer(problemc.answer.description)}}</h3>
+                            <template v-if="!round.usebutton">
+                                <h2>
+
+                                    答對人數{{answerResult.filter(x=>x.correct).length}}/{{answerResult.length}}
+                                </h2>
+                            </template>
+                        </template>
+
+                        <!-- 搶答器 -->
+                        <template v-if="round.usebutton&amp;&amp;page!='answer'">
                             <template v-if="racestart!=0||races.length==0">
                                 <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
                                 <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
                             </template>
 
+
                             <div v-if="racestart==0">
-                                <h3 v-for="(r,i) in races.slice(0,4)">
-                                    <button :class="{main:i==0}" @click="answerTeam=r; page='answer2'">
-
-                                        第{{r.no+1}}組
-
-                                    </button>
-                                </h3>
+                                <template v-if="page!='answer2'">
+                                    <h3 v-for="(r,i) in races.slice(0,4)">
+                                        <button :class="{main:i==0}" @click="answerTeam=r; page='answer2'">
+                                            第{{r.no+1}}組
+                                        </button>
+                                    </h3>
+                                </template>
+                                <!-- 回答 -->
+                                <template v-else>
+                                    <h2>
+                                        第{{answerTeam.no+1}}組
+                                        <small style="color:orange">請回答</small>
+                                    </h2>
+                                    <hr>
+                                    <h2>
+                                        <button style="background:green; color:white" @click="answerCorrect(answerTeam.no)">
+                                            正解
+                                        </button>
+                                        <button style="background:red; color:white" @click="page='problem'">
+                                            錯誤
+                                        </button>
+                                    </h2>
+                                </template>
                             </div>
+
+
+
                         </template>
 
                         <template v-else>
                             <template v-if="racestart==0">
-                                <h3>
+                                <h3 v-if="page!='answer'">
                                     <cir w="128px" bc="orange">{{races.length}} / {{players.length}}</cir> 已作答
                                 </h3>
                             </template>
@@ -217,7 +255,7 @@
                     </div>
                 </div>
 
-
+                <!--
                 <div class="slide" key="answer2" v-if="page=='answer2'">
 
                     <div class="center" style="max-width:800px">
@@ -254,7 +292,7 @@
 
                 </div>
 
-
+                
                 <div class="slide" key="answer" v-if="page=='answer'">
                     <div class="dright">
                         <fbtn r="1" main="1" v-if="hasNextProblem" @click="nextProblem()">下一題</fbtn>
@@ -265,11 +303,19 @@
                     <div class="center" style="max-width:800px">
 
                         <h3>
+<<<<<<< HEAD
                             {{problemc.title}}
+=======
+                            {{problemc.content}}
+>>>>>>> d8d738dae3feea6befe0aa2c5a498a8316deb6f9
                         </h3>
                         <h1>正解
                             <cir v-if="problemc.answer.value!=''" w="128px" bc="green" c="white">{{problemc.answer.value}}</cir>
                         </h1>
+<<<<<<< HEAD
+=======
+                        <h3>{{problemc.answer.description}}</h3>
+>>>>>>> d8d738dae3feea6befe0aa2c5a498a8316deb6f9
 
                         <h3>{{problemc.content}}</h3>
                         <h2>
@@ -279,6 +325,8 @@
 
                     </div>
                 </div>
+            -->
+
 
                 <div class="slide" key="answer" v-if="page=='score'">
 
@@ -339,6 +387,10 @@
 
     <script src=" /dist/play.js "></script>
     <script>
+        function lineBreakFixer(text) {
+            return text.replace(/[^，,。、\s]/g, "$&\u2060");
+        }
+
 
     </script>
 </body>

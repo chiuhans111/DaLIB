@@ -77,6 +77,45 @@ var app = new Vue({
         },
 
 
+        answer() {
+            var result = this.races.map(x => ({
+                correct: x.answer == this.problemc.answer.value,
+                team: x.no,
+                message: '',
+                score: this.problemc.score,
+                time: x.time,
+                record: ({
+                    round: this.round.no,
+                    problem: this.problem.no,
+                    time: x.time,
+                    score: this.problemc.score,
+                    correct: x.answer == this.problemc.answer.value
+                })
+            }))
+            play.emit('answer', result);
+            this.answerResult = result;
+            this.page = 'answer';
+        },
+        answerCorrect() {
+            play.emit('answer', [
+                {
+                    correct: true,
+                    team: this.answerTeam.no,
+                    message: '',
+                    score: this.problemc.score,
+                    record: ({
+                        round: this.round.no,
+                        problem: this.problem.no,
+                        time: this.answerTeam.time,
+                        score: this.problemc.score,
+                        correct: true
+                    })
+                }
+            ]);
+            this.page = 'answer'
+        },
+
+
     },
     computed: {
         races() {
@@ -103,13 +142,35 @@ var app = new Vue({
                 no: x.no,
                 name: x.name,
                 round: x.round,
-                score: x.score
+                score: x.score,
+                record: x.record
             }))
 
             teams.sort((a, b) => {
                 var rank = b.score - a.score;
-                if (rank == 0) rank = b.round - a.round;
+                if (rank == 0) {
+
+                    try {
+
+                        var aa = a.record.filter(r => r.correct)
+                            .map(x => x.time)
+                        var bb = b.record.filter(r => r.correct)
+                            .map(x => x.time)
+
+                        var aas = aa.reduce((a, b) => a + b, 0);
+                        var bbs = bb.reduce((a, b) => a + b, 0);
+                        aas /= aa.length;
+                        bbs /= bb.length;
+                        rank = aas - bbs;
+
+                        console.log(a, b, aas, bbs)
+                    } catch (e) {
+                        console.log(e);
+                        rank = 0;
+                    }
+                }
                 if (rank == 0) rank = a.no - b.no;
+
                 return rank;
             });
 
@@ -159,36 +220,6 @@ var app = new Vue({
                 other,
                 all
             }
-        },
-        answer() {
-            var result = this.races.map(x => ({
-                correct: x.answer == this.problemc.answer.value,
-                team: x.no,
-                message: '',
-                score: this.problemc.score,
-                time: x.time,
-                hash: JSON.stringify({
-                    round: this.round.no,
-                    problem: this.problem.no
-                })
-            }))
-            play.emit('answer', result);
-            return result;
-        },
-        answerCorrect() {
-            play.emit('answer', [
-                {
-                    correct: true,
-                    team: this.answerTeam.no,
-                    message: '',
-                    score: this.problemc.score,
-                    hash: JSON.stringify({
-                        round: this.round.no,
-                        problem: this.problem.no
-                    })
-                }
-            ]);
-            this.page = 'answer'
         },
         hasNextProblem() {
             return this.problem.no < this.roundc.problems.length - 1;
