@@ -11,7 +11,8 @@ var data = {
     racestart: -1,
     page: '',
     slides: true,
-    answerTeam: null
+    answerTeam: null,
+    answerResult: {}
 }
 window.data = data;
 var io = window.io;
