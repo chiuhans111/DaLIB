@@ -178,6 +178,11 @@ function Round(contest, viewKey, io) {
                 if (me.state.page == 'race') {
                     socket.emit(actions.racestart, Number(me.state.race));
                     return;
+                } else if (me.state.page == 'answered') {
+                    socket.emit(actions.showinfo, {
+                        content: "歡迎回來，請稍後將您加入比賽",
+                        backgroundColor: colors.ok
+                    })
                 }
 
 
@@ -274,7 +279,8 @@ function Round(contest, viewKey, io) {
             content: '',
             backgroundColor: ''
         },
-        race: -1
+        race: -1,
+        raceStartTime: 0
     }
 
     this.state_any = function () {
@@ -284,6 +290,7 @@ function Round(contest, viewKey, io) {
             no: team.no,
             score: team.score,
             round: team.round,
+            record: team.record,
             online: me.onlineTeams[team.no] ? true : false
         }))
         return obj;
@@ -302,6 +309,7 @@ function Round(contest, viewKey, io) {
         if (ms == 0) {
             me.raceTeams = [];
             io.in(contestID_member).emit(actions.race, me.raceTeams);
+            me.state.raceStartTime = new Date().getTime();
         }
         room.emit(actions.racestart, ms);
     }
@@ -311,7 +319,7 @@ function Round(contest, viewKey, io) {
         if (me.raceTeams.filter(x => x.no == no).length == 0) {
 
             me.raceTeams.push({
-                no, answer, time: new Date().getTime()
+                no, answer, time: new Date().getTime() - me.state.raceStartTime
             })
             io.in(contestID_member).emit(actions.race, me.raceTeams);
         }
@@ -348,12 +356,19 @@ function Round(contest, viewKey, io) {
         data.filter(reply => reply.correct).map(reply => {
             var team = me.contest.teams[reply.team];
             if (team.record == null) team.record = [];
-            if (reply.hash) {   // checking
-                if (team.record.indexOf(reply.hash) != -1) return;
-                team.record.push(reply.hash);
+
+            if (reply.record) {
+                reply.record.hash = JSON.stringify({
+                    round: reply.record.round,
+                    problem: reply.record.problem
+                })
+            }
+
+            if (reply.record.hash) {   // checking
+                if (team.record.some(r => r.hash == reply.record.hash)) return;
+                team.record.push(reply.record);
             }
             team.score += reply.score;
-            console.log(team);
         })
 
         me.contest.save();
@@ -369,6 +384,8 @@ function Round(contest, viewKey, io) {
                 backgroundColor: reply.correct ? colors.ok : colors.error
             })
         })
+
+        me.state.page = "answered";
     }
 
     this.stop = function () {
