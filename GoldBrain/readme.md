@@ -23,3 +23,4 @@ change db url at ./server/data/base.js
 #TODO 0206
 * 題目字體大小調整
 * 2 3 階段搶答6選項
+* 
