@@ -17,3 +17,10 @@ change db url at ./server/data/base.js
 * 搶答單純用回答
 * 回答提倒數
 * 輸出答案本
+
+
+
+#TODO 0206
+* 題目字體大小調整
+* 2 3 階段搶答6選項
+* 
