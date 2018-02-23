@@ -15,11 +15,22 @@
         margin: 0px;
         position: relative;
         display: block;
-        left: 55%;
+        left: 50%;
         top: 10%;
         text-align: center;
         min-width: 80%;
         transform: translate(-50%, 0)
+    }
+
+    .centerleft {
+        margin: 0px;
+        position: relative;
+        display: block;
+        left: 330px;
+        top: 16px;
+        text-align: left;
+        min-width: 80%;
+        transform: translate(0, 0)
     }
 
     button {
@@ -42,7 +53,7 @@
     }
 
     h1 {
-        font-size: 6em;
+        font-size: 4em;
         margin: 8px;
     }
 
@@ -93,6 +104,7 @@
         position: fixed;
         right: 0;
         bottom: 0;
+        z-index: 99;
     }
 
     .dleft {
@@ -180,12 +192,15 @@
                     </div>
 
                     <!-- content part -->
-                    <div class="center" style="max-width:800px">
-                        <h2>
+                    <div class="centerleft" style="max-width:800px;">
+                        <h1>
                             <small style="color:gray"> 第{{problem.no+1}}題</small>
-                            {{lineBreakFixer(problem.content)}}
                             <small style="color:orange">{{problem.score}}分</small>
-                        </h2>
+                        </h1>
+                        <h1>
+
+                            {{lineBreakFixer(problem.content)}}
+                        </h1>
 
                         <transition-group name="list">
                             <h2 key="answertitle" v-if="page=='answer'" style="color:green">正確答案：</h2>
@@ -197,14 +212,29 @@
                                     {{lineBreakFixer(c.content)}}
                                 </h2>
                             </template>
+
+                            <template v-if="page=='answer'">
+                                <hr key="hr">
+                                <template v-for="(c, i) in problem.choice">
+                                    <h3 style="display:inline-block; margin:16px; position:relative" :key="i+':'+problem.no" v-if="problemc.answer.value.indexOf(c.value)==-1">
+                                        <cir w="32px" c="white" bc="gray">
+                                            {{c.value}}
+                                        </cir>
+                                        {{lineBreakFixer(c.content)}}
+                                    </h3>
+                                </template>
+                            </template>
+
                         </transition-group>
                         <hr>
 
+                        <!-- 解析 -->
                         <template v-if="page=='answer'">
+                            <h3 style="color:orange">解析</h3>
+
                             <h3>{{lineBreakFixer(problemc.answer.description)}}</h3>
                             <template v-if="!round.usebutton">
                                 <h2>
-
                                     答對人數{{answerResult.filter(x=>x.correct).length}}/{{answerResult.length}}
                                 </h2>
                             </template>
