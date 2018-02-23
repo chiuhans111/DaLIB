@@ -162,10 +162,8 @@ var app = new Vue({
                         aas /= aa.length;
                         bbs /= bb.length;
                         rank = aas - bbs;
-
-                        console.log(a, b, aas, bbs)
+                        if (isNaN(rank)) throw new Error("speed not vailed");
                     } catch (e) {
-                        console.log(e);
                         rank = 0;
                     }
                 }

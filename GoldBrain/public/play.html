@@ -145,7 +145,11 @@
                     <div class="center">
                         <h1>{{round.title}}</h1>
                         <h2 v-if="round.usebutton">請準備好搶答按鈕</h2>
-                        <h3>{{roundc.players}} 人</h3>
+                        <h3>{{roundc.players}} 隊
+                            <template v-if="round.no&lt;content.rounds.length-1">
+                                取 {{content.rounds[round.no+1].players}} 隊
+                            </template>
+                        </h3>
 
 
                     </div>
@@ -201,7 +205,7 @@
                             <template v-if="!round.usebutton">
                                 <h2>
 
-                                  答對人數{{answerResult.filter(x=>x.correct).length}}/{{answerResult.length}}
+                                    答對人數{{answerResult.filter(x=>x.correct).length}}/{{answerResult.length}}
                                 </h2>
                             </template>
                         </template>
