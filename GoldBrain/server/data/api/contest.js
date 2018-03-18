@@ -49,7 +49,7 @@ db.then(mongoose => {
                     };
                 })
             }))
-            console.log(all);
+            //console.log(all);
             all.then(result => {
                 console.log('sent', result);
                 res.send(result);

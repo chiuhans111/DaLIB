@@ -175,12 +175,14 @@
                     <div class="dright">
                         <template v-if="round.usebutton">
                             <fbtn r="1" main="1" @click="problemStart(3000)">搶答倒數</fbtn>
-                            <fbtn r="1" :class="{main:races.length>0}" @click="page='answer'">答案揭曉</fbtn>
+                            <fbtn r="1" :class="{main:races.length>0}" @click="answer(2)">答案揭曉</fbtn>
+                            <!-- answer button for 搶答 -->
                         </template>
                         <template v-else>
                             <fbtn r="1" main="1" @click="problemStart(0)" v-if="racestart==-1">開始作答</fbtn>
                             <template v-if="racestart==0">
-                                <fbtn r="1" :main="races.length>0" @click="answer()">答案揭曉</fbtn>
+                                <fbtn r="1" :main="races.length>0" @click="answer(1)">答案揭曉</fbtn>
+                                <!-- answer button for 選擇題 -->
                             </template>
 
                         </template>
@@ -247,13 +249,15 @@
                                 <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
                             </template>
 
-
+                            <!-- race teams -->
                             <div v-if="racestart==0">
                                 <template v-if="page!='answer2'">
                                     <h3 v-for="(r,i) in races.slice(0,4)">
+                                        第 {{i+1}} 位：
                                         <button :class="{main:i==0}" @click="answerTeam=r; page='answer2'">
                                             第{{r.no+1}}組
                                         </button>
+                                        <small> 速度 {{r.time}} ms</small>
                                     </h3>
                                 </template>
                                 <!-- 回答 -->
@@ -361,12 +365,32 @@
                         <button @click="goRound()">返回場次</button>
                         <table style="position:relative; left:50%; transform:translate(-50%,0)">
                             <thead>
-                                <td>
-                                    <h3>隊伍</h3>
-                                </td>
-                                <td>
-                                    <h3>得分</h3>
-                                </td>
+                                <tr>
+                                    <td rowspan="2">
+                                        <h3>隊伍</h3>
+                                    </td>
+                                    <td rowspan="2">
+                                        <h3>總分</h3>
+                                    </td>
+
+                                    <template v-for="round in content.rounds">
+                                        <td colspan="2">
+                                            <h3>
+                                                {{round.name}}
+                                            </h3>
+                                        </td>
+                                    </template>
+                                </tr>
+                                <tr>
+                                    <template v-for="round in content.rounds">
+                                        <td>
+                                            得分
+                                        </td>
+                                        <td>
+                                            時間
+                                        </td>
+                                    </template>
+                                </tr>
                             </thead>
                             <template v-for="(team,i) in rank.all">
                                 <tr :class="{
@@ -376,7 +400,7 @@
                                     same: team.type==1,
                                     out: team.round&lt;round
                                 }">
-                                    <td class="number" style="width:auto">
+                                    <td class="number" style="width:auto; font-size:1em">
                                         <h2>
                                             {{team.name}}
                                         </h2>
@@ -386,6 +410,17 @@
                                             {{team.score}} 分
                                         </h2>
                                     </td>
+                                    <template v-for="(round,no) in content.rounds">
+                                        <template v-if="team.round>=no">
+
+                                            <td>
+                                                {{isNaN(team.scores[no])?'':team.scores[no]+' 分'}}
+                                            </td>
+                                            <td>
+                                                {{isNaN(team.time[no])?'':team.time[no]+' ms'}}
+                                            </td>
+                                        </template>
+                                    </template>
                                 </tr>
 
                             </template>
@@ -405,7 +440,7 @@
                 </div>
             -->
                 <div class="slide back" key="background" style="overflow:hidden">
-                    <score :teams="rank.all" :round="round.no" v-if="page!='score'"></score>
+                    <score :teams="rank.all" :round="round.no" :debug="debug" v-if="page!='score'"></score>
                 </div>
             </template>
 
@@ -414,10 +449,6 @@
 
     <script src=" /dist/play.js "></script>
     <script>
-        function lineBreakFixer(text) {
-            return text.replace(/[^，,。、\s]/g, "$&\u2060");
-        }
-
 
     </script>
 </body>

@@ -60,6 +60,7 @@ var app = new Vue({
                 round
             });
 
+
             play.emit('round', round);
         },
         problemStart(race) {
@@ -77,23 +78,28 @@ var app = new Vue({
         },
 
 
-        answer() {
-            var result = this.races.map(x => ({
-                correct: x.answer == this.problemc.answer.value,
-                team: x.no,
-                message: '',
-                score: this.problemc.score,
-                time: x.time,
-                record: ({
-                    round: this.round.no,
-                    problem: this.problem.no,
-                    time: x.time,
+        answer(type) {
+
+            if (type == 1) {
+                var result = this.races.map(x => ({
+                    correct: x.answer == this.problemc.answer.value,
+                    team: x.no,
+                    message: '',
                     score: this.problemc.score,
-                    correct: x.answer == this.problemc.answer.value
-                })
-            }))
-            play.emit('answer', result);
-            this.answerResult = result;
+                    time: x.time,
+                    record: ({
+                        round: this.round.no,
+                        problem: this.problem.no,
+                        time: x.time,
+                        score: this.problemc.score,
+                        correct: x.answer == this.problemc.answer.value
+                    })
+                }))
+                play.emit('answer', result);
+                this.answerResult = result;
+            } else play.emit('answer', null);
+
+
             this.page = 'answer';
         },
         answerCorrect() {
@@ -114,7 +120,9 @@ var app = new Vue({
             ]);
             this.page = 'answer'
         },
-
+        lineBreakFixer(text) {
+            return text.replace(/[^，,。、\s]/g, "$&\u2060");
+        }
 
     },
     computed: {
@@ -146,23 +154,40 @@ var app = new Vue({
                 record: x.record
             }))
 
+
+            teams.map(team => {
+                team.time = [];
+                team.scores = [];
+                for (var i in this.content.rounds) {
+                    try {
+
+                        var t = team.record.filter(r => r.round == i && r.correct)
+
+                        var ts = t.map(x => x.time).reduce((a, b) => a + b, 0);
+
+                        var s = t.map(x => x.score).reduce((a, b) => a + b, 0);
+                        ts /= t.length;
+
+                        team.time[i] = ts;
+                        team.scores[i] = s;
+
+                    } catch (e) {
+                        team.time[i] = null;
+                    }
+                }
+            })
+
             teams.sort((a, b) => {
                 var rank = b.score - a.score;
                 if (rank == 0) {
 
                     try {
-
-                        var aa = a.record.filter(r => r.correct)
-                            .map(x => x.time)
-                        var bb = b.record.filter(r => r.correct)
-                            .map(x => x.time)
-
-                        var aas = aa.reduce((a, b) => a + b, 0);
-                        var bbs = bb.reduce((a, b) => a + b, 0);
-                        aas /= aa.length;
-                        bbs /= bb.length;
-                        rank = aas - bbs;
-                        if (isNaN(rank)) throw new Error("speed not vailed");
+                        var i = 0;
+                        while (rank == 0 && i <= round.no) {
+                            rank = a.time[round.no - i] - b.time[round.no - i];
+                            if (isNaN(rank)) throw new Error("speed not vailed");
+                            i++;
+                        }
                     } catch (e) {
                         rank = 0;
                     }

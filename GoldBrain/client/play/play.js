@@ -12,7 +12,8 @@ var data = {
     page: '',
     slides: true,
     answerTeam: null,
-    answerResult: {}
+    answerResult: {},
+    debug: false
 }
 window.data = data;
 var io = window.io;

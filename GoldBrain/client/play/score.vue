@@ -13,7 +13,7 @@
                     }">
                         <td class="number">{{team.name}}</td>
                         <td class="score">{{team.score}} 分</td>
-                        <td class="score">{{team.round}}</td>
+                        <td v-if="debug" class="score">{{team.round}}</td>
                     </tr>
                 </li>
             </template>
@@ -25,9 +25,10 @@
 <R/>
 <script>
     export default {
-        props: ['teams', 'round'],
+        props: ['teams', 'round', 'debug'],
         data() {
-            return {};
+            return {
+            };
         }
     };
 </script>

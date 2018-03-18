@@ -106,28 +106,7 @@ function Round(contest, viewKey, io) {
             }
 
 
-            function sendState(sockets, state) {
 
-                for (var i in sockets) {
-                    var socket = sockets[i];
-
-
-                    if (socket.team) {
-
-                        if (socket.team.round < state.round) {
-                            socket.emit(actions.showinfo, {
-                                content: '你不屬於這一輪',
-                                backgroundColor: colors.error
-                            });
-                            continue;
-                        }
-
-                        state.team = socket.team.no;
-                    }
-                    else state.team = -1;
-                    socket.emit(actions.state, state);
-                }
-            }
 
             // TEAM Login
 
@@ -164,7 +143,7 @@ function Round(contest, viewKey, io) {
                 socket.login = true;
                 sockets.push(socket);
                 var state = me.state_any();
-                sendState(io.in(contestID).connected, state)
+                me.sendState(io.in(contestID).connected, me.state_any());
                 // up to date
 
                 socket.emit(actions.race, me.raceTeams);
@@ -211,10 +190,34 @@ function Round(contest, viewKey, io) {
     /**@type {type_contest} */
     this.contest = contest;
 
+
+    this.sendState = function (sockets, state) {
+
+        for (var i in sockets) {
+            var socket = sockets[i];
+
+
+            if (socket.team) {
+
+                if (socket.team.round < me.state.round.no) {
+                    socket.emit(actions.showinfo, {
+                        content: '你已經被淘汰了',
+                        backgroundColor: colors.error
+                    });
+                    continue;
+                }
+
+                state.team = socket.team.no;
+            }
+            else state.team = -1;
+            socket.emit(actions.state, state);
+        }
+    }
+
     this.setRound = function (round) {
         try {
 
-            me.state.round = round;
+            //me.state.round = round;
             me.state.problem.no = 0;
             me.state.problem.info = null;
             var round_info = contest.rounds[round];
@@ -228,6 +231,8 @@ function Round(contest, viewKey, io) {
             me.state.round = obj;
             me.state.race = -1;
             room.emit(actions.round, obj);
+
+            me.sendState(io.in(contestID).connected, me.state_any());
         } catch (e) {
             console.error(e)
         }
@@ -316,7 +321,10 @@ function Round(contest, viewKey, io) {
 
     this.race = function (no, answer) {
         // check if already raced
-        if (me.raceTeams.filter(x => x.no == no).length == 0) {
+
+        if (me.contest.teams[no].round < me.state.round.no) return;
+
+        if (!me.raceTeams.some(x => x.no == no)) {
 
             me.raceTeams.push({
                 no, answer, time: new Date().getTime() - me.state.raceStartTime
@@ -333,7 +341,7 @@ function Round(contest, viewKey, io) {
      */
     this.teamRound = function (teams, round) {
         me.contest.teams.map(team => {
-            if (teams.indexOf(team.no) == -1) return;
+            if (teams.indexOf(team.no) == -1 && team.round < round) return;
             team.round = round;
         })
         console.log(teams, round)
@@ -353,6 +361,11 @@ function Round(contest, viewKey, io) {
 
     /**@param {Array.<{correct: Boolean, team: String, message: String, score:Number, hidden:Boolean}>} data*/
     this.answer = function (data) {
+
+        me.state.page = "answered";
+
+        if (data == null) return; // 搶答
+
         data.filter(reply => reply.correct).map(reply => {
             var team = me.contest.teams[reply.team];
             if (team.record == null) team.record = [];
@@ -385,7 +398,6 @@ function Round(contest, viewKey, io) {
             })
         })
 
-        me.state.page = "answered";
     }
 
     this.stop = function () {

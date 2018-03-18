@@ -13,10 +13,15 @@
     .block {
         float: left;
         width: 200px;
+        height: 250px;
         padding: 8px;
         border: solid 1px;
         page-break-after: always;
         page-break-inside: avoid;
+    }
+
+    img {
+        margin: 0px;
     }
 </style>
 
@@ -26,6 +31,8 @@
 
         <div class="block" v-for="team in content">
             <h1>{{team.name}}</h1>
+            <small v-if="debug">{{team.key}}</small>
+            <p>請用手機掃描下面 QRCODE 安裝及登入比賽專用 APP</p>
             <img :src="team.qrcode" alt="">
         </div>
     </div>
@@ -36,6 +43,7 @@
 
             key: '',
             content: {},
+            debug: false,
             login() {
                 dog.request('get', '/api/member/contest/qrcode/key/' + data.key).then(content => {
                     data.content = JSON.parse(content);
