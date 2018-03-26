@@ -283,7 +283,7 @@
 
                         </template>
 
-                        <template v-if="page=='racestart'">
+                        <template v-else-if="page=='racestart'">
                             <h3>
                                 <h2>{{Math.floor(problemc.timeout - problemTime/1000)}}</h2>
                                 <cir w="128px" bc="orange">{{races.length}} / {{players.length}}</cir> 已作答
