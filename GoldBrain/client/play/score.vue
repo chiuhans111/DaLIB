@@ -3,7 +3,7 @@
 
         <transition-group name="list" tag="div">
             <template v-for="(team, i) in teams">
-                <li :key="team.no" style="display:block;margin:4px">
+                <li :key="team.no" style="display:block;margin:4px;text-align:center;direction:ltr">
                     <tr :class="{
                         first: team.rank==0,
                         second: team.rank==1,
@@ -11,8 +11,12 @@
                         same: team.type==1,
                         out: team.round&lt;round
                     }">
-                        <td class="number">{{team.name}}</td>
-                        <td class="score">{{team.score}} 分</td>
+
+                        <td class="number">
+                            {{team.name}}
+                        </td>
+                        <td class="score" v-if="team.online">{{team.score}} 分</td>
+                        <td v-else style="color:red; background-color:white">離線</td>
                         <td v-if="debug" class="score">{{team.round}}</td>
                     </tr>
                 </li>
@@ -61,7 +65,12 @@
     }
 
     .score-main {
-        margin: 16px;
+        height: 100%;
+
+        overflow-x: visible;
+        overflow-y: auto;
+
+        direction: rtl;
     }
 
     .out {

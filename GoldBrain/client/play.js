@@ -17,27 +17,44 @@ Vue.component('slides', slides);
 Vue.component('fbtn', fbtn);
 
 var raceCountDown = -1;
+var problemTimestamp = 0;
+var onProblemTimeout;
 
 var timestamp = 0;
 
 function update() {
     var now = new Date().getTime();
-    if (now - timestamp >= 1000) {
 
-        timestamp = now;
+    // countdown for races
+    if (raceCountDown >= 0) {
+        if (now - timestamp >= 1000) {
 
-        if (raceCountDown >= 0) {
+            timestamp = now;
+
             console.log("countdown", raceCountDown)
             play.emit('startrace', raceCountDown);
             raceCountDown -= 1000;
         }
     }
-    setTimeout(() => {
-        update();
-    }, 16);
+
+    // countdown for problems
+    if (onProblemTimeout instanceof Function) {
+        data.problemTime = now - problemTimestamp;
+        if (data.problemTime / 1000 >= app.problemc.timeout) {
+            console.log("timesup!");
+            onProblemTimeout();
+            onProblemTimeout = null;
+        }
+    }
+
+
+    requestAnimationFrame(update);
 }
 update();
 play.login();
+
+// mixins to the play data
+play.data.problemTime = 0;
 
 var app = new Vue({
     data: play.data,
@@ -48,8 +65,9 @@ var app = new Vue({
             if (this.round.no == -1) play.emit('round', 0);
         },
         roundStart() {
+            raceCountDown = -1;
             play.emit('problem', 0);
-            console.log('start')
+            console.log('start');
         },
         goRound(round) {
             if (round == null) round = this.round.no;
@@ -60,21 +78,26 @@ var app = new Vue({
                 round
             });
 
-
+            raceCountDown = -1;
             play.emit('round', round);
         },
-        problemStart(race) {
-            timestamp = -1000;
+        problemStart(race, type) {
+            if (type == 1)
+                onProblemTimeout = function () {
+                    app.answer(type);
+                }
+            problemTimestamp = new Date().getTime();
             raceCountDown = race;
         },
         nextProblem() {
-            play.emit('problem', this.problem.no + 1)
+            play.emit('problem', this.problem.no + 1);
+            raceCountDown = -1;
         },
         nextRound() {
-            this.goRound(this.round.no + 1)
+            this.goRound(this.round.no + 1);
         },
         prevRound() {
-            this.goRound(this.round.no - 1)
+            this.goRound(this.round.no - 1);
         },
 
 
@@ -126,6 +149,9 @@ var app = new Vue({
 
     },
     computed: {
+
+
+
         races() {
             var obj = {};
             if (this.race.filter)
@@ -151,7 +177,8 @@ var app = new Vue({
                 name: x.name,
                 round: x.round,
                 score: x.score,
-                record: x.record
+                record: x.record,
+                online: x.online
             }))
 
 

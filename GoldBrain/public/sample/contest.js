@@ -11,7 +11,7 @@ function sampleContest() {
                         "title": "",
                         "content": "",
                         "choice": [],
-                        "timeout": 0, // 作答時間
+                        "timeout": 10, // 作答時間
                         "answer": {
                             "value": "", // 答案
                             "description": "" // 原因

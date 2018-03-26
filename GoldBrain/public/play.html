@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>比賽投影畫面</title>
     <link rel="stylesheet" href="/style/main.css">
     <script src="/socket.io/socket.io.js"></script>
 
@@ -53,12 +53,12 @@
     }
 
     h1 {
-        font-size: 4em;
+        font-size: 3em;
         margin: 8px;
     }
 
     h2 {
-        font-size: 3em;
+        font-size: 2.5em;
         margin: 6px;
     }
 
@@ -87,7 +87,8 @@
     }
 
     .back {
-        z-index: -1;
+        width: 20%;
+        height: 100%;
     }
 
     .main {
@@ -174,12 +175,12 @@
                     <!-- button part -->
                     <div class="dright">
                         <template v-if="round.usebutton">
-                            <fbtn r="1" main="1" @click="problemStart(3000)">搶答倒數</fbtn>
+                            <fbtn r="1" main="1" @click="problemStart(3000, 2)">搶答倒數</fbtn>
                             <fbtn r="1" :class="{main:races.length>0}" @click="answer(2)">答案揭曉</fbtn>
                             <!-- answer button for 搶答 -->
                         </template>
                         <template v-else>
-                            <fbtn r="1" main="1" @click="problemStart(0)" v-if="racestart==-1">開始作答</fbtn>
+                            <fbtn r="1" main="1" @click="problemStart(0, 1)" v-if="racestart==-1">開始作答</fbtn>
                             <template v-if="racestart==0">
                                 <fbtn r="1" :main="races.length>0" @click="answer(1)">答案揭曉</fbtn>
                                 <!-- answer button for 選擇題 -->
@@ -282,12 +283,11 @@
 
                         </template>
 
-                        <template v-else>
-                            <template v-if="racestart==0">
-                                <h3 v-if="page!='answer'">
-                                    <cir w="128px" bc="orange">{{races.length}} / {{players.length}}</cir> 已作答
-                                </h3>
-                            </template>
+                        <template v-if="page=='racestart'">
+                            <h3>
+                                <h2>{{Math.floor(problemc.timeout - problemTime/1000)}}</h2>
+                                <cir w="128px" bc="orange">{{races.length}} / {{players.length}}</cir> 已作答
+                            </h3>
                         </template>
 
                     </div>

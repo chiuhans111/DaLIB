@@ -15,7 +15,7 @@
                             "content": "選項內容" // 內容
                         }
                     ],
-                    "timeout": 0, // 作答時間
+                    "timeout": 10, // 作答時間
                     "answer": {
                         "value": "A", // 答案
                         "description": "作答原因" // 原因

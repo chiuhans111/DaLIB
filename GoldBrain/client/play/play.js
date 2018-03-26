@@ -21,6 +21,7 @@ var io = window.io;
 var socket = io('/round');
 
 socket.on('state', state => {
+    console.log('state', state);
     var s = {};
     if (state.team != null)
         s.team = state.team;

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>編輯比賽</title>
     <link rel="stylesheet" href="/style/main.css">
 
 </head>
@@ -155,6 +155,10 @@
 
                                             <v-text-field label="請在此輸入" multi-line auto-grow v-model="textInput"></v-text-field>
 
+                                            <v-layout row v-if="textInput.length>1000">
+                                                <v-btn primary @click="parseText()">確認</v-btn>
+                                            </v-layout>
+
                                         </div>
                                     </template>
 
@@ -263,7 +267,7 @@
                                                         <v-text-field label="得分" v-model="content.rounds[round].problems[problem].score" type="number" suffix="分"></v-text-field>
                                                     </v-flex>
                                                     <v-flex sm6>
-                                                        <v-text-field label="作答時間" v-model="content.rounds[round].problems[problem].timeout" type="number" suffix="毫秒"></v-text-field>
+                                                        <v-text-field label="作答時間" v-model="content.rounds[round].problems[problem].timeout" type="number" suffix="秒"></v-text-field>
                                                     </v-flex>
                                                 </v-layout>
                                                 <p class="mb-0 primary--text">
@@ -387,10 +391,12 @@
             key: '',
             content: "",
             login() {
+                data.loading = true;
                 dog.request('get', '/api/member/contest/view/key/' + data.key).then(content => {
                     data.content = JSON.parse(content);
                     data.state = 1;
                     data.saved = content;
+                    data.loading = false;
                 })
             },
             saved: "",
@@ -573,7 +579,7 @@
 
                 }
                 this.content.rounds = rounds;
-
+                this.state = 1;
 
             }
 
@@ -588,6 +594,7 @@
             },
             methods: {
                 begin() {
+                    data.loading = true;
                     dog.keyrequest('get', '/api/member/round/start').then(result => {
                         console.log(result)
                         location.href = '/play.html?/key/' + dog.key;
