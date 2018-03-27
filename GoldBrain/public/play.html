@@ -125,7 +125,8 @@
         <transition-group name="list">
             <div class="slide" key="slides" v-if="slides">
                 <div class="dleft">
-                    <fbtn main="1" @click.native="go()">關閉</fbtn>
+                    <span v-if="content.rounds==null">正在載入...</span>
+                    <fbtn v-else main="1" @click.native="go()">開始比賽</fbtn>
                 </div>
 
                 <slides></slides>
@@ -209,10 +210,25 @@
                             <h2 key="answertitle" v-if="page=='answer'" style="color:green">正確答案：</h2>
                             <template v-for="(c, i) in problem.choice">
                                 <h2 style="display:inline-block; margin:16px; position:relative" :key="i+':'+problem.no" v-if="problemc.answer.value.indexOf(c.value)!=-1||page!='answer'">
-                                    <cir w="64px" c="white" :bc="['red','orange','green','blue','purple','brown'][i]||'black'">
-                                        {{c.value}}
-                                    </cir>
-                                    {{lineBreakFixer(c.content)}}
+                                    <table>
+                                        <tr>
+                                            <td :style="{
+                                                width: '64px',
+                                                height: '64px',
+                                                borderRadius: '64px',
+                                                backgroundColor: ['red','orange','green','blue','purple','brown'][i]||'black'
+                                            }">
+                                                <h2>
+                                                    {{c.value}}
+                                                </h2>
+                                            </td>
+                                            <td style="text-align:left; background-color:transparent; color:black">
+                                                <h2>
+                                                    {{lineBreakFixer(c.content)}}
+                                                </h2>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </h2>
                             </template>
 
@@ -284,10 +300,15 @@
                         </template>
 
                         <template v-else-if="page=='racestart'">
-                            <h3>
-                                <h2>{{Math.floor(problemc.timeout - problemTime/1000)}}</h2>
-                                <cir w="128px" bc="orange">{{races.length}} / {{players.length}}</cir> 已作答
-                            </h3>
+                            <h2>
+                                {{Math.floor(problemc.timeout - problemTime/1000)}}
+                                <small>
+                                    . {{((problemc.timeout - problemTime/1000)%1).toString().substr(2,1)}} 秒
+                                </small>
+                                <span style="margin-left:16px">
+                                    {{races.length}} / {{players.length}} 組已作答
+                                </span>
+                            </h2>
                         </template>
 
                     </div>
