@@ -1,0 +1,4 @@
+module.exports.db = "mongodb://user:pass@url:port/name";
+module.exports.port = 80;
+
+// edit this file and rename as "config.js"
