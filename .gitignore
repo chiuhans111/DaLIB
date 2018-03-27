@@ -46,4 +46,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.log
-GoldBrain/server/config/config.js
+
+# config files
+*/config.js
