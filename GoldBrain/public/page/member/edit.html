@@ -15,6 +15,27 @@
         <v-app>
 
             <v-container>
+                <v-layout v-if="state!=0">
+                    <v-flex md8 offset-md2 sm10 offset-sm1 xs12>
+
+                        <v-btn primary @click="begin()">
+                            開始比賽
+                        </v-btn>
+
+                        <v-btn flat :href="'/page/member/print.html?/key/'+key">
+                            列印QRCODE
+                        </v-btn>
+
+                        <v-btn flat :href="'/page/member/sheet.html?/key/'+key">
+                            列印題目卷
+                        </v-btn>
+
+                        <v-btn flat color="red" @click="resetPlay()">
+                            清除比賽紀錄
+                        </v-btn>
+                        <hr>
+                    </v-flex>
+                </v-layout>
                 <v-layout>
                     <v-flex md8 offset-md2 sm10 offset-sm1 xs12>
                         <v-card>
@@ -66,20 +87,10 @@
 
                                         </template>
 
-                                        <v-btn v-if="state==1" flat :href="'/page/member/print.html?/key/'+key">
-                                            列印QRCODE
-                                        </v-btn>
-
-                                        <v-btn v-if="state==1" primary @click="state='txt'">
+                                        <v-btn v-if="state==1" flat primary @click="state='txt'">
                                             文字編輯模式
                                         </v-btn>
-                                        <v-btn v-if="state==1" primary @click="begin()">
-                                            開始比賽
-                                        </v-btn>
 
-                                        <v-btn v-if="state==1" danger @click="resetPlay()">
-                                            清除比賽紀錄
-                                        </v-btn>
 
                                     </h3>
 
