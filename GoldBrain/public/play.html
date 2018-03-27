@@ -438,7 +438,7 @@
                                                 {{isNaN(team.scores[no])?'':team.scores[no]+' 分'}}
                                             </td>
                                             <td>
-                                                {{isNaN(team.time[no])?'':team.time[no]+' ms'}}
+                                                {{isNaN(team.time[no])?'':Math.round(team.time[no])+' ms'}}
                                             </td>
                                         </template>
                                     </template>
