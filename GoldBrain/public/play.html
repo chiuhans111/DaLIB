@@ -300,15 +300,21 @@
                         </template>
 
                         <template v-else-if="page=='racestart'">
-                            <h2>
+                            <span :style="{
+                                fontSize: '5em',
+                                color: (problemc.timeout - problemTime/1000&lt;4)?'red':'green'
+                            }">
                                 {{Math.floor(problemc.timeout - problemTime/1000)}}
                                 <small>
-                                    . {{((problemc.timeout - problemTime/1000)%1).toString().substr(2,1)}} 秒
+                                    . {{((problemc.timeout - (problemTime+0.1)/1000)%1).toString().substr(2,1)}} 秒
                                 </small>
-                                <span style="margin-left:16px">
+
+                            </span>
+                            <span style="position: absolute; left:300px">
+                                <h2>
                                     {{races.length}} / {{players.length}} 組已作答
-                                </span>
-                            </h2>
+                                </h2>
+                            </span>
                         </template>
 
                     </div>
