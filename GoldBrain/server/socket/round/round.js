@@ -49,7 +49,7 @@ function Round(contest, viewKey, io) {
         if (socket.login) return true;
         console.log('login', key);
         var passed;
-        
+
         if (key == me.viewKey) {
             // VIEWER Login
 
@@ -144,28 +144,31 @@ function Round(contest, viewKey, io) {
 
 
             // up to date
-            socket.emit(actions.race, me.raceTeams);
-            if (me.state.page == '') return;
-            socket.emit(actions.round, me.state.round);
-            if (me.state.page == 'round') return;
-            socket.emit(actions.problem, me.state.problem);
-            if (me.state.page == 'problem') return;
+            (function () {
+                socket.emit(actions.race, me.raceTeams);
+                if (me.state.page == '') return;
+                socket.emit(actions.round, me.state.round);
+                if (me.state.page == 'round') return;
+                socket.emit(actions.problem, me.state.problem);
+                if (me.state.page == 'problem') return;
 
-            if (me.state.page == 'race') {
-                socket.emit(actions.racestart, Number(me.state.race));
-                return;
-            } else if (me.state.page == 'answered') {
-                socket.emit(actions.showinfo, {
-                    content: "歡迎回來，請稍後將您加入比賽",
-                    backgroundColor: colors.ok
-                })
-            }
+                if (me.state.page == 'race') {
+                    socket.emit(actions.racestart, Number(me.state.race));
+                    return;
+                } else if (me.state.page == 'answered') {
+                    socket.emit(actions.showinfo, {
+                        content: "歡迎回來，請稍後將您加入比賽",
+                        backgroundColor: colors.ok
+                    })
+                }
+            })();
         }
 
         if (!socket.login) {
             return false;
         }
 
+        console.log("register disconnect part");
         socket.on('disconnect', () => {
             console.log('some one disconnected')
             if (socket.team) {

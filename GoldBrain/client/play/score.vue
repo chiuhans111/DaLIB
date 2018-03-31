@@ -12,11 +12,14 @@
                         out: team.round&lt;round
                     }">
 
-                        <td v-if="!team.online" style="color:red; background-color:white">離線</td>
                         <td class="number">
                             {{team.name}}
                         </td>
                         <td class="score">{{team.score}} 分</td>
+                        <td :class="{
+                            online: team.online,
+                            offline: !team.online
+                        }">{{team.online?"":"離線"}}</td>
                         <td v-if="debug" class="score">{{team.round}}</td>
                     </tr>
                 </li>
@@ -40,6 +43,17 @@
     .team {
         margin: 2px;
     }
+
+    .offline {
+        color: red;
+        background-color: #fff;
+    }
+
+    .online {
+        width: 0px;
+        padding: 0px;
+    }
+
 
     .first>.number {
         border-left: solid 16px gold;
@@ -87,7 +101,7 @@
         background-color: #444;
         font-size: 18px;
         transition: all 0.2s;
-        transition-delay: 0.3s;
+        transition-delay: 0.1s;
         opacity: 1;
     }
 
