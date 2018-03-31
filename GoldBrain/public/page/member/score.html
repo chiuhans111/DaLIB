@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>解答卷</title>
+    <title>成績單</title>
     <link rel="stylesheet" href="/style/main.css">
 
 </head>
@@ -24,10 +24,73 @@
         margin: 0px;
         font-weight: 100;
     }
+
+    .noWarp {
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 4px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .bottomline {
+        border-bottom: solid 1px black;
+    }
 </style>
 
 <body>
     <div id="app">
+
+        <div class="page">
+            <h1>所有題目答題狀況</h1>
+
+            <div v-for="round in content.rounds">
+                <h1>{{round.name}}</h1>
+                <table>
+                    <template v-for="(problem, i) in round.problems">
+                        <tr>
+                            <td class="noWarp">
+                                第{{i+1}}題
+                            </td>
+                            <td>
+                                {{lineBreakFixer(problem.content)}}
+                            </td>
+                            <td class="noWarp">
+                                得分：{{problem.score}}分
+                            </td>
+                            <td class="noWarp">
+                                作答時間：{{problem.timeout}}秒
+                            </td>
+                        </tr>
+                        <tr class="bottomline">
+                            <td colspan="4">
+                                <table>
+                                    <tr>
+                                        <td v-for="choice in problem.choice">
+                                            ({{choice.value}}) {{lineBreakFixer(choice.content)}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td v-for="choice in problem.choice">
+                                            <span v-if="problem.answer.value.includes(choice.value)">
+                                                正確答案
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </template>
+                </table>
+
+            </div>
+
+        </div>
 
     </div>
     <script src="/dist/general.js"></script>
@@ -43,16 +106,23 @@
                     data.content = JSON.parse(content);
                 })
             },
-            computed: {
-                rank() {
 
-                }
-            }
+
 
         }
 
         var app = done({
             data,
+            computed: {
+                rank() {
+
+                }
+            },
+            methods: {
+                lineBreakFixer(text) {
+                    return text.replace(/[^，,。、\s]/g, "$&\u2060");
+                }
+            }
         });
 
         var key = dog.key;
