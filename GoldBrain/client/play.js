@@ -210,13 +210,15 @@ var app = new Vue({
 
                     try {
                         var i = 0;
-                        while (rank == 0 && i <= round.no) {
-                            rank = a.time[round.no - i] - b.time[round.no - i];
-                            if (isNaN(rank)) throw new Error("speed not vailed");
+                        while (rank == 0 && i <= this.round.no) {
+                            rank = a.time[this.round.no - i] - b.time[this.round.no - i];
+                            if (isNaN(rank)) throw new Error("speed not valid");
                             i++;
                         }
                     } catch (e) {
                         rank = 0;
+                        if (e.message != 'speed not valid')
+                            console.error(e)
                     }
                 }
                 if (rank == 0) rank = a.no - b.no;
