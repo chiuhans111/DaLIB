@@ -9,7 +9,7 @@ body {
     /* -webkit-overflow-scrolling: touch; */
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url("../img/background.svg");
+    background-image: url("../assets/background.jpg");
     background-position: center;
     transform: translateZ(0);
     perspective: 1000;
