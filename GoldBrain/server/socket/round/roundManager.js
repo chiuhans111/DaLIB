@@ -8,7 +8,12 @@ var crypt = require('tool/crypt');
 var type_contest = model_contest.type;
 var type_contest_team = new model_contest.type().teams[0];
 
+var socket = require('socket.io');
+var type_socket_io = socket();
+var type_socket = type_socket_io.sockets.connected[''];
+
 var Round = require('./round');
+var action = require('./actions');
 
 var rounds = {};
 
@@ -26,9 +31,33 @@ var work = {
     start: new Promise(done => done())
 }
 
+var waiting = [];
+
+
 io.then(io => {
     io.of('/round').on('connection', socket => {
-        for (var i in rounds) rounds[i].connection(socket);
+
+        socket.on(action.login, key => {
+
+            for (var i in rounds) {
+                if (rounds[i].login(socket, key)) return;
+            }
+
+            if (!socket.login) {
+                socket.emit(action.showinfo, {
+                    content: "你的比賽還沒開始，請耐心等候~~",
+                    backgroundColor: "white"
+                })
+            }
+
+            // put in wait
+            socket.key = key;
+            waiting.push(socket);
+            socket.on("disconnect", () => {
+                socket.key = null;
+                waiting = waiting.filter(s => s != socket);
+            })
+        })
     })
 })
 
@@ -40,6 +69,12 @@ exports.start = function (contest) {
             var viewKey = crypt.SKeygen(Math.floor(Math.random() * 5000) + (incr++ % 5000), secret);
             var round = Round(contest, viewKey, io.of('/round'));
             rounds[contest._id] = round;
+
+            waiting = waiting.filter(socket => {
+                // return false for removing socket from waiting line
+                if (round.login(socket, socket.key)) return false;
+                return true;
+            })
 
             return { round, viewKey };
         })

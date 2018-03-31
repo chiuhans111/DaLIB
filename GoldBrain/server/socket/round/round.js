@@ -38,147 +38,144 @@ function Round(contest, viewKey, io) {
     // FIRST SETUP IO!
     var event_connection;
     /**@param {type_socket} socket */
-    this.connection = function (socket) {
+    this.login = function (socket, key) {
         socket.emit('actions', actions);
 
 
         console.log('got connection');
 
         //// LOGIN
-        socket.on(actions.login, key => {
-            if (socket.login) return;
+
+        if (socket.login) return true;
+        console.log('login', key);
+        var passed;
+        
+        if (key == me.viewKey) {
             // VIEWER Login
-            console.log('login');
 
-            if (key == me.viewKey) {
-                socket.join(contestID);
-                socket.join(contestID_member);
-                // up to date
-                socket.emit(actions.state, me.state_any());
-                socket.emit(actions.round, me.state.round);
-                socket.emit(actions.problem, me.state.problem);
-                socket.emit(actions.race, me.raceTeams);
-                socket.emit(actions.racestart, me.state.race);
+            socket.join(contestID);
+            socket.join(contestID_member);
+            // up to date
+            socket.emit(actions.state, me.state_any());
+            socket.emit(actions.round, me.state.round);
+            socket.emit(actions.problem, me.state.problem);
+            socket.emit(actions.race, me.raceTeams);
+            socket.emit(actions.racestart, me.state.race);
 
-                socket.login = true;
-                sockets.push(socket);
-                return;
-            }
+            socket.login = true;
+            sockets.push(socket);
 
-
+        } else if (key == contest.key) {
+            console.log("MEMBER LOGINNED")
             // MEMBER Login
 
-            if (key == contest.key) {
-                socket.join(contestID);
-                socket.join(contestID_member);
-                socket.member = true;
-                // MEMBER COMMUNICATION
+            socket.join(contestID);
+            socket.join(contestID_member);
+            socket.member = true;
+            // MEMBER COMMUNICATION
 
-                socket.on(actions.round, me.setRound);
-                socket.on(actions.problem, me.setProblem);
-                socket.on(actions.startrace, me.startRace);
-                socket.on(actions.answer, me.answer);
-                socket.on(actions.update, me.update);
-                socket.on(actions.teamRound, data => {
-                    me.teamRound(data.teams, data.round)
-                })
-                    // up to date
-                    ;
-                (function () {
-                    socket.emit(actions.state, me.state_any());
-                    if (me.state.page == '') return;
-                    socket.emit(actions.round, me.state.round);
-                    if (me.state.page == 'round') return;
-                    socket.emit(actions.problem, me.state.problem);
-                    if (me.state.page == 'problem') return;
-                    if (me.state.page == 'race') {
-                        socket.emit(actions.racestart, Number(me.state.race));
-                        socket.emit(actions.race, me.raceTeams);
-                    }
-                })();
-
-
-
-
-                socket.login = true;
-                sockets.push(socket);
-                return;
-            }
-
-
-
-
-            // TEAM Login
-
-            var passed = contest.teams.filter(team => key.includes(team.key));
-            if (passed.length == 1) {
-                var team = passed[0];
-
-                if (me.onlineTeams[team.no]) {
-                    socket.emit(actions.showinfo, {
-                        content: '請嘗試5秒後重新登入，並確保無其他登入中的裝置，',
-                        backgroundColor: colors.error
-                    });
-                    socket.disconnect()
-                    return;
-                }
-
-                /*
-                if (team.round < me.state.round) {
-                    socket.emit(actions.showinfo, {
-                        content: '你不屬於這一輪',
-                        backgroundColor: colors.error
-                    });
-                    return;
-                }*/
-
-                socket.team = team;
-
-                socket.join(contestID);
-                socket.on(actions.race, answer => me.race(team.no, answer));
-                me.onlineTeams[team.no] = socket;                 // online
-                console.log('a team has joined us!!');
-
-                // TEAM COMMUNICATION!
-                socket.login = true;
-                sockets.push(socket);
-                var state = me.state_any();
-                me.sendState(io.in(contestID).connected, me.state_any());
+            socket.on(actions.round, me.setRound);
+            socket.on(actions.problem, me.setProblem);
+            socket.on(actions.startrace, me.startRace);
+            socket.on(actions.answer, me.answer);
+            socket.on(actions.update, me.update);
+            socket.on(actions.teamRound, data => {
+                me.teamRound(data.teams, data.round)
+            })
                 // up to date
-
-                socket.emit(actions.race, me.raceTeams);
-
+                ;
+            (function () {
+                socket.emit(actions.state, me.state_any());
                 if (me.state.page == '') return;
                 socket.emit(actions.round, me.state.round);
                 if (me.state.page == 'round') return;
                 socket.emit(actions.problem, me.state.problem);
                 if (me.state.page == 'problem') return;
-
                 if (me.state.page == 'race') {
                     socket.emit(actions.racestart, Number(me.state.race));
-                    return;
-                } else if (me.state.page == 'answered') {
-                    socket.emit(actions.showinfo, {
-                        content: "歡迎回來，請稍後將您加入比賽",
-                        backgroundColor: colors.ok
-                    })
+                    socket.emit(actions.race, me.raceTeams);
                 }
+            })();
 
 
 
+
+            socket.login = true;
+            sockets.push(socket);
+
+        } else if ((passed = contest.teams.filter(team => key.includes(team.key))).length == 1) {
+            // TEAM Login
+            console.log("TEAM LOGINNED")
+
+            var team = passed[0];
+
+            if (me.onlineTeams[team.no]) {
+                socket.emit(actions.showinfo, {
+                    content: '請嘗試5秒後重新登入，並確保無其他登入中的裝置，',
+                    backgroundColor: colors.error
+                });
+                socket.disconnect()
+                return true;
             }
 
-        })
 
+            if (team.round < me.state.round) {
+                socket.emit(actions.showinfo, {
+                    content: 'QQ 你已經被淘汰了',
+                    backgroundColor: colors.error
+                });
+                socket.disconnect();
+                return true;
+            }
+
+            socket.team = team;
+
+            socket.join(contestID);
+            socket.on(actions.race, answer => me.race(team.no, answer));
+            me.onlineTeams[team.no] = socket;                 // online
+            console.log('a team has joined us!!');
+
+            // TEAM COMMUNICATION!
+            socket.login = true;
+            sockets.push(socket);
+            var state = me.state_any();
+            me.sendState(io.in(contestID).connected, me.state_any());
+
+
+
+            // up to date
+            socket.emit(actions.race, me.raceTeams);
+            if (me.state.page == '') return;
+            socket.emit(actions.round, me.state.round);
+            if (me.state.page == 'round') return;
+            socket.emit(actions.problem, me.state.problem);
+            if (me.state.page == 'problem') return;
+
+            if (me.state.page == 'race') {
+                socket.emit(actions.racestart, Number(me.state.race));
+                return;
+            } else if (me.state.page == 'answered') {
+                socket.emit(actions.showinfo, {
+                    content: "歡迎回來，請稍後將您加入比賽",
+                    backgroundColor: colors.ok
+                })
+            }
+        }
+
+        if (!socket.login) {
+            return false;
+        }
 
         socket.on('disconnect', () => {
             console.log('some one disconnected')
             if (socket.team) {
                 me.onlineTeams[socket.team.no] = false;          // offline
-                console.log('a team has lost connection.. QQ');
+                console.log('team left:', socket.team.no);
                 room.emit(actions.state, me.state_any());
             }
         })
+
+        return true;
 
     }
 
@@ -198,14 +195,16 @@ function Round(contest, viewKey, io) {
 
 
             if (socket.team) {
-
+                /*
                 if (socket.team.round < me.state.round.no) {
                     socket.emit(actions.showinfo, {
                         content: '你已經被淘汰了',
                         backgroundColor: colors.error
                     });
+
+
                     continue;
-                }
+                }*/
 
                 state.team = socket.team.no;
             }
