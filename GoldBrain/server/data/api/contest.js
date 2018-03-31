@@ -40,7 +40,9 @@ db.then(mongoose => {
         collection.findOne(req.contestID, { "teams.key": 1, "teams.name": 1, "teams.no": 1 }, function (err, doc) {
 
             var all = Promise.all(doc.teams.map(team => {
-                return qrcode.png(team.key).then(code => {
+                return qrcode.png(
+                    `https://fh49r.app.goo.gl/?link=https%3A%2F%2Fbrain.dacsc.club%2Fstudent%3Ftoken%3D${team.key}&apn=org.kesshou.answerchallenge`
+                ).then(code => {
                     return {
                         no: team.no,
                         name: team.name,
