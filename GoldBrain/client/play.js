@@ -6,9 +6,13 @@ import answer from './play/answer.vue';
 import score from './play/score.vue';
 import slides from './play/slides.vue';
 import fbtn from './play/fbtn.vue';
+
 import play from './play/play';
+import ranking from './play/ranking';
+
 import { setInterval } from 'timers';
 import { teamRound } from '../server/socket/round/actions';
+
 
 Vue.component('cir', cir);
 Vue.component('answer', answer);
@@ -21,6 +25,7 @@ var problemTimestamp = 0;
 var onProblemTimeout;
 
 var timestamp = 0;
+
 
 function update() {
     var now = new Date().getTime();
@@ -181,6 +186,11 @@ var app = new Vue({
                 online: x.online
             }))
 
+            // from ranking.js
+            teams = ranking.rank(teams, this.content.rounds.length);
+
+            /*
+            // moved to ranking.js
 
             teams.map(team => {
                 team.time = [];
@@ -224,7 +234,7 @@ var app = new Vue({
                 if (rank == 0) rank = a.no - b.no;
 
                 return rank;
-            });
+            });*/
 
             var players = 1;
             if (this.round.no + 1 < this.content.rounds.length)
