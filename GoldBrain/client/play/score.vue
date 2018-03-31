@@ -12,11 +12,11 @@
                         out: team.round&lt;round
                     }">
 
+                        <td v-if="!team.online" style="color:red; background-color:white">離線</td>
                         <td class="number">
                             {{team.name}}
                         </td>
-                        <td class="score" v-if="team.online">{{team.score}} 分</td>
-                        <td v-else style="color:red; background-color:white">離線</td>
+                        <td class="score">{{team.score}} 分</td>
                         <td v-if="debug" class="score">{{team.round}}</td>
                     </tr>
                 </li>
