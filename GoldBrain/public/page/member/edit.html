@@ -475,7 +475,11 @@
             dialog_ok: function () { },
 
             roundop() {
-                return arr(data.content, 'rounds', _ => sampleContest().rounds[0])
+                return arr(data.content, 'rounds', _ => {
+                    var round = sampleContest().rounds[0];
+                    round.players = data.content.teams.length;
+                    return round;
+                })
             },
             problemop() {
                 return arr(data.content.rounds[data.round], 'problems', _ => {
@@ -534,11 +538,13 @@
                 function newRound() {
                     CurrentRound = sampleContest().rounds[0];
                     CurrentRound.problems = [];
+                    CurrentRound.players = data.content.teams.length;
                     rounds.push(CurrentRound);
                 }
 
                 function newProblem() {
                     CurrentProblem = sampleContest().rounds[0].problems[0];
+                    CurrentProblem.choice = [];
                     CurrentRound.problems.push(CurrentProblem);
                 }
 
@@ -571,6 +577,7 @@
                         CurrentProblem.answer.description = desc[1];
 
                     } else if (choice) {
+                        console.log(CurrentRound.problems.length, CurrentProblem.choice)
                         CurrentProblem.choice.push({
                             value: choice[1],
                             content: choice[2]

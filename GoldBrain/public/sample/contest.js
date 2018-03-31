@@ -10,7 +10,10 @@ function sampleContest() {
                     {
                         "title": "",
                         "content": "",
-                        "choice": [],
+                        "choice": [{
+                            "value": "A",
+                            "content": ""
+                        }],
                         "timeout": 10, // 作答時間
                         "answer": {
                             "value": "", // 答案

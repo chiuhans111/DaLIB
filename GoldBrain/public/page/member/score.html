@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>解答卷</title>
+    <link rel="stylesheet" href="/style/main.css">
+
+</head>
+<style>
+    .block {
+        page-break-inside: avoid;
+        padding: 8px;
+    }
+
+    .page {
+        page-break-after: always;
+        padding: 4% 8% 0%;
+    }
+
+    h2 {
+        margin: 0px;
+        font-weight: 100;
+    }
+</style>
+
+<body>
+    <div id="app">
+
+    </div>
+    <script src="/dist/general.js"></script>
+
+    <script>
+        var data = {
+
+            key: '',
+            content: {},
+            debug: false,
+            login() {
+                dog.request('get', '/api/member/contest/view/key/' + data.key).then(content => {
+                    data.content = JSON.parse(content);
+                })
+            },
+            computed: {
+                rank() {
+
+                }
+            }
+
+        }
+
+        var app = done({
+            data,
+        });
+
+        var key = dog.key;
+
+        if (key) {
+            console.log('has key')
+            data.key = key;
+            data.login();
+        }
+
+        window.data = data;
+    </script>
+</body>
+
+</html>
