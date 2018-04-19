@@ -21,6 +21,8 @@ var Vue = Vuetify({
 
 Vue.component('my-dialog', my_dialog);
 
+// hi
+
 window.Vue = Vue;
 window.done = function (obj) {
     if (!obj.el) obj.el = '#app';
