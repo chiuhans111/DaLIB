@@ -81,11 +81,11 @@
 
                                             <v-tooltip right>
                                                 <v-btn icon slot="activator" @click.stop="save()">
-                                                    <v-icon :color="changed?'primary':'gray'">save</v-icon>
+                                                    <v-icon>save</v-icon>
                                                 </v-btn>
                                                 <span>儲存變更</span>
                                             </v-tooltip>
-                                            <small style="color:gray; font-size:0.5em">{{changed?"有變更尚未儲存":"所有變更都已儲存"}}</small>
+                                            <small style="color:gray; font-size:0.5em">{{saveMessage}}</small>
 
 
 
@@ -213,6 +213,10 @@
                                                     <v-btn icon @click.stop="problemop().add()">
                                                         <v-icon>add</v-icon>
                                                     </v-btn>
+                                                    <v-btn icon @click.stop="problemop().add()">
+                                                        <v-icon>edit</v-icon>
+                                                    </v-btn>
+
                                                 </p>
 
                                                 <v-list two-line>
@@ -232,17 +236,27 @@
                                                                     </v-list-tile-sub-title>
                                                                 </v-list-tile-content>
 
-                                                                <v-btn icon @click.stop="problemop().move(index,-1)">
-                                                                    <v-icon>keyboard_arrow_up</v-icon>
-                                                                </v-btn>
 
-                                                                <v-btn icon @click.stop="problemop().move(index,+1)">
-                                                                    <v-icon>keyboard_arrow_down</v-icon>
-                                                                </v-btn>
+                                                                <v-list-tile-action>
+                                                                    <v-btn icon @click.stop="problemop().move(index,-1)">
+                                                                        <v-icon>keyboard_arrow_up</v-icon>
+                                                                    </v-btn>
 
-                                                                <v-btn icon @click.stop="problemop().del(index)">
-                                                                    <v-icon>delete</v-icon>
-                                                                </v-btn>
+                                                                </v-list-tile-action>
+                                                                <v-list-tile-action>
+                                                                    <v-btn icon @click.stop="problemop().move(index,+1)">
+                                                                        <v-icon>keyboard_arrow_down</v-icon>
+                                                                    </v-btn>
+
+
+
+
+                                                                </v-list-tile-action>
+                                                                <v-list-tile-action>
+                                                                    <v-btn icon @click.stop="problemop().del(index)">
+                                                                        <v-icon>delete</v-icon>
+                                                                    </v-btn>
+                                                                </v-list-tile-action>
 
                                                             </v-list-tile>
                                                         </template>
@@ -425,12 +439,16 @@
                     data.loading = false;
                 })
             },
+            autoSave: false,
+            saveMessage: "自動儲存已開啟",
             saved: "",
+            savetime: new Date().getTime(),
             save() {
                 data.loading = true;
                 dog.request('post', '/api/member/contest/update/key/' + data.key, data.content).then(x => {
                     data.saved = JSON.stringify(data.content)
                     data.loading = false;
+                    data.savetime = new Date().getTime();
                 })
             },
 
@@ -670,6 +688,37 @@
                 },
 
             }
+        }
+
+        function autoSave() {
+            var currentJson = JSON.stringify(data.content);
+
+            if (currentJson != data.saved) {
+                if (data.autoSave) {
+                    data.save();
+                    data.saveMessage = "自動儲存..";
+                }
+                else data.saveMessage = "有變更尚未儲存";
+            } else {
+                var savetilnow = new Date().getTime() - data.savetime;
+                var second = savetilnow = Math.round(savetilnow / 1000);
+                var minute = Math.round(second / 60);
+                var hour = Math.round(minute / 60);
+                if (second < 60)
+                    data.saveMessage = second + " 秒前已儲存所有變更";
+                else if (minute < 60) {
+                    data.saveMessage = minute + " 分鐘前已儲存所有變更";
+                } else data.saveMessage = hour + " 小時前已儲存所有變更";
+            }
+
+            setTimeout(() => {
+                autoSave();
+            }, 1000);
+        }
+        autoSave();
+
+        window.onbeforeunload = function () {
+            if (data.saved != JSON.stringify(data.content)) return "有變更尚未儲存，確定要捨棄這些變更嗎?";
         }
     </script>
 </body>
