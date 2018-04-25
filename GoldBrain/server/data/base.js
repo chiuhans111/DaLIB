@@ -22,8 +22,11 @@ function connect(url) {
     function tryConnect() {
         mongoose.connect(url).then(_ => {
             console.log('mongoose connected');
-            mongoose.db = db.connect(url);
+            return db.connect(url); // note: This returns a Promise !!
+        }).then(db=>{
+            mongoose.db = db;
             promise_return(mongoose);
+
         }).catch(error => {
             console.error("connecting DB error");
             console.error("please check is DB opened");

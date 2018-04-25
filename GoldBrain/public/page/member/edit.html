@@ -102,17 +102,25 @@
                                     <template v-if="state==0">
 
                                         <v-layout :key="1">
-                                            <p>請先登入</p>
+
+
+                                            <v-flex md8>
+                                                <v-container>
+                                                    <p>請使用你的密碼登入</p>
+                                                    <v-text-field label="密碼" v-model="key"></v-text-field>
+                                                    <v-btn primary @click=" window.location.href = '/page/member/edit.html?/key/' + key;">下一步</v-btn>
+                                                </v-container>
+                                            </v-flex>
+
+                                            <v-flex>
+                                                <v-container>
+                                                    <p>還沒有帳號嗎?</p>
+                                                    <v-btn primary href="./create.html">建立新的比賽</v-btn>
+                                                </v-container>
+                                            </v-flex>
+
                                         </v-layout>
 
-                                        <v-layout :key="2">
-                                            <v-text-field label="您的管理者金鑰" v-model="key"></v-text-field>
-                                        </v-layout>
-                                        <v-layout :key="3">
-
-                                            <v-btn primary @click=" window.location.href = '/page/member/edit.html?/key/' + key;">下一步</v-btn>
-                                            <v-btn @click="cancel()">取消</v-btn>
-                                        </v-layout>
                                     </template>
 
                                     <template v-if="state==1">
