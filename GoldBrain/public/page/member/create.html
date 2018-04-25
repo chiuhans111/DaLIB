@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>健力比賽</title>
+    <title>建立比賽</title>
     <link rel="stylesheet" href="/style/main.css">
 
 </head>
@@ -20,8 +20,8 @@
 
 
                 <v-layout>
-                    <v-flex md8 offset-md2>
-                        <v-card class="mt-5 white">
+                    <v-flex md10 offset-md1>
+                        <v-card class="mt-4 white">
                             <v-container>
 
                                 <v-card-title primary-title>
@@ -53,10 +53,28 @@
                                         </template>
                                         <template v-else-if=" state==1 ">
                                             <div key="2 ">
+                                                <p>選擇使用下面其中一種登入方法...</p>
+                                                <v-layout>
 
-                                                <p>請複製此密碼並儲存以後登入使用</p>
-                                                <v-text-field label="比賽管理員登入用金鑰 " ref="key " v-model="key" readonly @click="selectKey "></v-text-field>
+                                                    <v-flex>
+                                                        <v-container>
+                                                            <h2>您的專屬連結</h2>
+                                                            <p>使用這個連結直接開啟編輯介面</p>
+                                                            <v-text-field label="連結網址 " :value="location.origin+'/page/member/edit.html?/key/' + this.key" ref='a' readonly @click="select('a') ">
+                                                            </v-text-field>
+                                                        </v-container>
+                                                    </v-flex>
+                                                    <v-flex>
+                                                        <v-container>
+
+                                                            <h2>您的登入金鑰</h2>
+                                                            <p>使用這個金鑰來登入並編輯比賽</p>
+                                                            <v-text-field label="專屬金鑰 " v-model="key" ref='b' readonly @click="select('b') "></v-text-field>
+                                                        </v-container>
+                                                    </v-flex>
+                                                </v-layout>
                                                 <v-btn primary @click="go() ">繼續建立比賽</v-btn>
+
                                             </div>
                                         </template>
 
@@ -80,17 +98,19 @@
             count: 40,
             key: " ",
             setCount() {
-                dog.request('get', '/api/contest/create/' + data.count).then(key => {
-                    data.key = key;
+                if (!debug)
+                    dog.request('get', '/api/contest/create/' + data.count).then(key => {
+                        data.key = key;
+                        data.state = 1;
+                    })
+                else {
+                    data.key = 'dev-0-0'
                     data.state = 1;
-                    setTimeout(function () {
-                        data.selectKey();
-                    }, 500)
-                })
+                }
             },
-            selectKey() {
-                var input = app.$refs.key.$el.querySelector('input');
-                input.select(0, input.value.length);
+            select(name) {
+                var ele = app.$refs[name].$el.querySelector('input');
+                ele.select(0, ele.value.length);
             },
             go() {
                 location.href = "/page/member/edit.html?/key/" + this.key;
@@ -100,7 +120,11 @@
             }
         }
 
-        var app = done({ data });
+        var app = done({
+            data
+        });
+
+        if (location.href.match('debug')) debug = true;
 
     </script>
 </body>

@@ -197,6 +197,7 @@
                 {
                     input: {
                         name: 'input',
+                        multi: true,
                         value: JSON.stringify(item[field]),
                         label: field,
                         rules: [

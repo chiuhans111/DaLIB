@@ -15,30 +15,36 @@
         <v-app>
 
             <v-container>
-                <v-layout v-if="state!=0">
-                    <v-flex md8 offset-md2 sm10 offset-sm1 xs12>
 
-                        <v-btn primary @click="begin()">
-                            開始比賽
-                        </v-btn>
-
-                        <v-btn flat :href="'/page/member/print.html?/key/'+key">
-                            列印QRCODE
-                        </v-btn>
-
-                        <v-btn flat :href="'/page/member/sheet.html?/key/'+key">
-                            列印題目卷
-                        </v-btn>
-
-                        <v-btn flat color="red" @click="resetPlay()">
-                            清除比賽紀錄
-                        </v-btn>
-                        <hr>
-                    </v-flex>
-                </v-layout>
                 <v-layout>
-                    <v-flex md8 offset-md2 sm10 offset-sm1 xs12>
-                        <v-card>
+                    <v-flex md10 offset-md1 sm10 offset-sm1 xs12>
+                        <v-card class="mt-4">
+                            <template v-if="state!=0">
+                                <v-layout>
+
+
+                                    <v-btn primary @click="begin()">
+                                        開始比賽
+                                    </v-btn>
+
+                                    <v-btn flat :href="'/page/member/print.html?/key/'+key">
+                                        列印QRCODE
+                                    </v-btn>
+
+                                    <v-btn flat :href="'/page/member/sheet.html?/key/'+key">
+                                        列印題目卷
+                                    </v-btn>
+
+                                    <v-btn flat color="red" @click="resetPlay()">
+                                        清除比賽紀錄
+                                    </v-btn>
+
+                                </v-layout>
+                                <hr>
+                            </template>
+
+
+
                             <v-card-title primary-title>
                                 <div>
 
@@ -114,8 +120,9 @@
 
                                             <v-flex>
                                                 <v-container>
-                                                    <p>還沒有帳號嗎?</p>
+                                                    <p>或是?</p>
                                                     <v-btn primary href="./create.html">建立新的比賽</v-btn>
+                                                    <v-btn @click="cancel()">取消</v-btn>
                                                 </v-container>
                                             </v-flex>
 

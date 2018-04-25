@@ -12,15 +12,15 @@
 <style>
     .block {
         float: left;
-        width: 220px;
+        width: 200px;
         padding: 8px;
         border: solid 1px;
-        page-break-after: always;
         page-break-inside: avoid;
     }
 
     img {
         margin: 0px;
+        width: 100%;
     }
 </style>
 
@@ -29,9 +29,12 @@
 
 
         <div class="block" v-for="team in content">
-            <h1>{{team.name}}</h1>
-            <small v-if="debug">{{team.key}}</small>
-            <p>請用手機掃描下面 QRCODE 安裝及登入比賽專用 APP</p>
+            <div style="margin:0 16px">
+
+                <h1>{{team.name}}</h1>
+                <small v-if="debug">{{team.key}}</small>
+                <p>使用手機掃描 QRCODE 安裝比賽專用 APP</p>
+            </div>
             <img :src="team.qrcode" alt="">
         </div>
     </div>
