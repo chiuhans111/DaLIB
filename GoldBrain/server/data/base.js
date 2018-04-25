@@ -20,11 +20,11 @@ function connect(url) {
     })
 
     function tryConnect() {
-        try {
-            mongoose.connect(url);
+        mongoose.connect(url).then(_ => {
+            console.log('mongoose connected');
             mongoose.db = db.connect(url);
-            promise_return(done);
-        } catch (e) {
+            promise_return(mongoose);
+        }).catch(error => {
             console.error("connecting DB error");
             console.error("please check is DB opened");
             console.error("try again in 5 second");
@@ -32,9 +32,9 @@ function connect(url) {
                 console.log('after five seconds...')
                 tryConnect();
             }, 5000);
-        }
+        })
     }
-    
+
     tryConnect();
     return promise;
 }
