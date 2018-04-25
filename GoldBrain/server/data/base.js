@@ -12,7 +12,8 @@ var config = require('../config/config');
 var url = config.db;
 
 function connect(url) {
-    return mongoose.connect(url, { useMongoClient: true }).then(_ => {
+    console.log('connecting to db...')
+    return mongoose.connect(url).then(_ => {
         console.log('connected');
         return db.connect(url);
     }).then(db => {
@@ -21,13 +22,15 @@ function connect(url) {
     }).catch(retry);
 }
 
-function retry() {
+function retry(error) {
+    mongoose.disconnect();
     console.error("connecting DB error");
     console.error("please check is DB opened");
     console.error("try again in 5 second");
     return new Promise(done => {
         setTimeout(function () {
-            done(connect())
+            var result = connect();
+            done(result);
         }, 5000);
     })
 }
