@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>圖書室搶答系統</title>
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body hidden>
+	<div id="app">
+		<v-app>
+
+			<v-toolbar app style="background-color:#ffA000; color:white">
+				<v-toolbar-title>
+					{{team=='null'?'比賽還沒開始喔':`第${team+1}隊`}}
+				</v-toolbar-title>
+				<v-spacer></v-spacer>
+
+				{{round.title?round.title:''}}
+				<v-spacer></v-spacer>
+				Score: {{score}} 分
+				<v-spacer></v-spacer>
+
+			</v-toolbar>
+
+			<v-content>
+				<v-container fluid>
+					<v-layout>
+						<v-flex xs12 align-center justify-center wrap>
+
+							<template v-if="page=='problem'||page=='racestart'">
+
+								<h1>第{{problem.no+1}}題
+									<span v-if="round.usebutton">
+										<template v-if="racestart!=0">
+											倒數 {{racestart/1000}}
+										</template>
+									</span>
+								</h1>
+								<p>
+									{{problem.content}}
+								</p>
+								<p v-if="round.usebutton">
+									按下任一個選項搶答，與實際作答無關
+								</p>
+
+								<template v-for="(c,i) in problem.choice ">
+									<v-flex @click='answer(c.value)' xs12>
+
+										<v-card :ripple='answerable' class="ma-2 " style="color:white " :color="(answerable||answered==c.value||!round.usebutton)?[
+										 'red', 'orange', 'green', 'blue', 'purple', 'brown'][i]|| 'black': 'grey' ">
+											<v-container>
+
+												({{c.value}}) {{c.content}}
+
+											</v-container>
+
+										</v-card>
+									</v-flex>
+								</template>
+							</template>
+
+							<template v-else-if="page=='round' ">
+								<div style="margin:auto; margin-top:50px ">
+									<h1>{{round.title}}</h1>
+									<p>
+										比賽模式： {{round.usebutton?'搶答':'選擇題'}}
+									</p>
+									<p>
+										等待比賽開始...
+									</p>
+								</div>
+							</template>
+							<template v-else-if="page=='info' ">
+								<v-card :color="(page=='info' ?info.backgroundColor: 'white') " style="color:white ">
+									<v-container>
+										{{info.content}}
+									</v-container>
+								</v-card>
+							</template>
+						</v-flex>
+					</v-layout>
+				</v-container>
+			</v-content>
+			<v-footer app></v-footer>
+
+		</v-app>
+	</div>
+</body>
+<script src="/dist/socketTest.js "></script>
+
+</html>

@@ -437,6 +437,10 @@
                     data.state = 1;
                     data.saved = content;
                     data.loading = false;
+
+                    window.onbeforeunload = function () {
+                        if (data.saved != JSON.stringify(data.content)) return "有變更尚未儲存，確定要捨棄這些變更嗎?";
+                    }
                 })
             },
             autoSave: false,
@@ -717,9 +721,7 @@
         }
         autoSave();
 
-        window.onbeforeunload = function () {
-            if (data.saved != JSON.stringify(data.content)) return "有變更尚未儲存，確定要捨棄這些變更嗎?";
-        }
+
     </script>
 </body>
 

@@ -107,7 +107,7 @@ var app = new Vue({
 
 
         answer(type) {
-
+            onProblemTimeout = null;
             if (type == 1) {
                 var result = this.races.map(x => ({
                     correct: x.answer == this.problemc.answer.value,
