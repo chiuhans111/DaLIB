@@ -13,8 +13,9 @@ paht: `/round`
 2. desplay something
 
 
-# Socket methods (Client)
+# Socket methods
 
+## Client
 |method|event name|data|description|
 |-----:|:---------|----|-----------|
 |__`emit`__|`login`|__`String`__ key|send team `key` in `string` format|
@@ -28,7 +29,7 @@ paht: `/round`
 |__`on`__|`hey`|__`Number`__ time| after you say hey, server will reply hey with server `time` in millisecond|
 |__`on`__|`close`|__`String`__ reason| the contest is closed or not open, because of some `reason`.|
 
-# Socket methods (Member)
+## Member
 |method|event name|data|description|
 |-----:|:---------|----|-----------|
 |__`emit`__|`login`|__`String`__ key|login|
