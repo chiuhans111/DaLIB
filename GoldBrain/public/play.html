@@ -118,12 +118,19 @@
     }
 </style>
 
-<body>
+<body hidden>
 
     <div id="app">
 
         <transition-group name="list">
-            <div class="slide" key="slides" v-if="slides">
+            <div class="slide" key="closedpage" v-if="page=='closed'">
+                <div class="center">
+                    <h1>{{closeReason}}</h1>
+                    <p>比賽目前是關閉狀態</p>
+                    <h3>如果要開始比賽，請到教師介面點選開始比賽</h3>
+                </div>
+            </div>
+            <div class="slide" key="slides" v-else-if="slides">
                 <div class="dleft">
                     <span v-if="content.rounds==null">正在載入...</span>
                     <fbtn v-else main="1" @click.native="go()">開始比賽</fbtn>
@@ -464,6 +471,8 @@
 
                             </template>
                         </table>
+                        <button @click="goRound()">返回場次</button>
+                        <button style="color:red" @click="logout()">結束比賽</button>
                     </div>
 
 

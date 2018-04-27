@@ -13,7 +13,8 @@ var data = {
     slides: true,
     answerTeam: null,
     answerResult: {},
-    debug: false
+    debug: false,
+    closeReason: '結束了',
 }
 window.data = data;
 var io = window.io;
@@ -49,14 +50,16 @@ socket.on('racestart', ms => {
         data.page = 'racestart';
     console.log(data.racestart = ms)
 });
-socket.on('showinfo', info => {
-    if (data.round.no != -1)
-        data.page = 'showinfo';
-    console.log(data.info = info)
-});
+
+// socket.on('showinfo', info => {
+//     if (data.round.no != -1)
+//         data.page = 'showinfo';
+//     console.log(data.info = info)
+// });
 
 socket.on('close', reason => {
     data.page = 'closed';
+    data.closeReason = reason;
 })
 window.socket = socket;
 
@@ -76,5 +79,8 @@ export default {
         dog.keyrequest('get', '/api/member/contest/view/').then(dog.json).then(obj => {
             data.content = obj;
         })
+    },
+    logout: function () {
+        dog.keyrequest('get', '/api/member/round/stop/');
     }
 };

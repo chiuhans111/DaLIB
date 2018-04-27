@@ -31,6 +31,7 @@ function Round(contest, viewKey, io) {
     var room_member = io.in(contestID_member);
 
     this.viewKey = viewKey;
+    this.running = true;
 
     /**@type {Array.<type_socket>} */
     var sockets = [];
@@ -406,11 +407,12 @@ function Round(contest, viewKey, io) {
 
     this.stop = function () {
         console.log('round', viewKey, 'stopped');
-        room.emit(actions.close, 'force stopped');
+        room.emit(actions.close, '比賽結束了');
         me.showinfo('比賽已結束，若要重新連線請重新登入。');
         sockets.map(socket => {
             socket.disconnect(true);
         });
+        me.running = false;
     }
 }
 

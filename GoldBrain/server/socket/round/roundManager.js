@@ -40,11 +40,12 @@ io.then(io => {
         socket.on(actions.login, key => {
 
             for (var i in rounds) {
-                if (rounds[i].login(socket, key)) return;
+                if (!rounds[i].running) delete rounds[i];
+                else if (rounds[i].login(socket, key)) return;
             }
 
             if (!socket.login) {
-                socket.emit(actions.close, 'not opened');
+                socket.emit(actions.close, '比賽還沒開始');
 
                 socket.emit(actions.showinfo, {
                     content: "你的比賽還沒開始，請耐心等候~~",

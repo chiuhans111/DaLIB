@@ -150,6 +150,9 @@ var app = new Vue({
         },
         lineBreakFixer(text) {
             return text.replace(/[^，,。、\s]/g, "$&\u2060");
+        },
+        logout() {
+            play.logout();
         }
 
     },
@@ -177,14 +180,20 @@ var app = new Vue({
             return this.roundc.problems[this.problem.no]
         },
         rank() {
-            var teams = this.state.teams.map(x => ({
-                no: x.no,
-                name: x.name,
-                round: x.round,
-                score: x.score,
-                record: x.record,
-                online: x.online
-            }))
+            var teams = [];
+            try {
+
+                teams = this.state.teams.map(x => ({
+                    no: x.no,
+                    name: x.name,
+                    round: x.round,
+                    score: x.score,
+                    record: x.record,
+                    online: x.online
+                }))
+            } catch (e) {
+                console.error(e);
+            }
 
             // from ranking.js
             teams = ranking.rank(teams, this.content.rounds.length);
@@ -298,3 +307,6 @@ var app = new Vue({
 window.app = app;
 
 if (location.href.match(/\?skip/)) app.go();
+
+
+document.body.hidden = false;
