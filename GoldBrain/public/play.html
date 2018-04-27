@@ -157,13 +157,23 @@
                     </div>
 
                     <div class="center">
-                        <h1>{{round.title}}</h1>
-                        <h2 v-if="round.usebutton">請準備好搶答按鈕</h2>
-                        <h3>{{roundc.players}} 隊
-                            <template v-if="round.no&lt;content.rounds.length-1">
-                                取 {{content.rounds[round.no+1].players}} 隊
-                            </template>
-                        </h3>
+                        <div style="
+                        display:inline-block; 
+                        backgroundColor:white;
+                        border:2px solid black;
+                        border-radius:20px;
+                        ">
+                            <div style="margin:20px">
+
+                                <h1>{{round.title}}</h1>
+                                <h2 v-if="round.usebutton">請準備好搶答按鈕</h2>
+                                <h3>{{roundc.players}} 隊
+                                    <template v-if="round.no&lt;content.rounds.length-1">
+                                        取 {{content.rounds[round.no+1].players}} 隊
+                                    </template>
+                                </h3>
+                            </div>
+                        </div>
 
 
                     </div>
@@ -231,8 +241,10 @@
                                     </table>
                                 </h2>
                             </template>
+                            <!-- 錯誤答案 -->
 
                             <template v-if="page=='answer'">
+
                                 <hr key="hr">
                                 <template v-for="(c, i) in problem.choice">
                                     <h3 style="display:inline-block; margin:16px; position:relative" :key="i+':'+problem.no" v-if="problemc.answer.value.indexOf(c.value)==-1">
