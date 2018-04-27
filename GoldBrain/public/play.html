@@ -213,7 +213,7 @@
                         </h1>
                         <h1>
 
-                            {{lineBreakFixer(problem.content)}}
+                            {{problem.content}}
                         </h1>
 
                         <transition-group name="list">
@@ -234,7 +234,7 @@
                                             </td>
                                             <td style="text-align:left; background-color:transparent; color:black">
                                                 <h2>
-                                                    {{lineBreakFixer(c.content)}}
+                                                    {{c.content}}
                                                 </h2>
                                             </td>
                                         </tr>
@@ -251,7 +251,7 @@
                                         <cir w="32px" c="white" bc="gray">
                                             {{c.value}}
                                         </cir>
-                                        {{lineBreakFixer(c.content)}}
+                                        {{c.content}}
                                     </h3>
                                 </template>
                             </template>
@@ -263,7 +263,7 @@
                         <template v-if="page=='answer'">
                             <h3 style="color:orange">解析</h3>
 
-                            <h3>{{lineBreakFixer(problemc.answer.description)}}</h3>
+                            <h3>{{problemc.answer.description}}</h3>
                             <template v-if="!round.usebutton">
                                 <h2>
                                     答對人數{{answerResult.filter(x=>x.correct).length}}/{{answerResult.length}}
