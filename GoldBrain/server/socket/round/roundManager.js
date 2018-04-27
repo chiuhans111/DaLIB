@@ -13,7 +13,7 @@ var type_socket_io = socket();
 var type_socket = type_socket_io.sockets.connected[''];
 
 var Round = require('./round');
-var action = require('./actions');
+var actions = require('./actions');
 
 var rounds = {};
 
@@ -37,14 +37,16 @@ var waiting = [];
 io.then(io => {
     io.of('/round').on('connection', socket => {
 
-        socket.on(action.login, key => {
+        socket.on(actions.login, key => {
 
             for (var i in rounds) {
                 if (rounds[i].login(socket, key)) return;
             }
 
             if (!socket.login) {
-                socket.emit(action.showinfo, {
+                socket.emit(actions.close, 'not opened');
+
+                socket.emit(actions.showinfo, {
                     content: "你的比賽還沒開始，請耐心等候~~",
                     backgroundColor: "white"
                 })
@@ -56,7 +58,10 @@ io.then(io => {
             socket.on("disconnect", () => {
                 socket.key = null;
                 waiting = waiting.filter(s => s != socket);
-            })
+            });
+
+
+
         })
     })
 })
@@ -64,6 +69,7 @@ io.then(io => {
 exports.start = function (contest) {
     return io.then(io => {
         return work.start = work.start.then(function () {
+            if (contest == null) return { round: '?', viewKey: '?' };
 
             if (rounds[contest._id] != null) rounds[contest._id].stop();
             var viewKey = crypt.SKeygen(Math.floor(Math.random() * 5000) + (incr++ % 5000), secret);
@@ -81,4 +87,15 @@ exports.start = function (contest) {
     })
 }
 
+
+exports.stop = function (contest) {
+    return work.start = work.start.then(function () {
+
+        if (contest == null) {
+            console.log('contest not define');
+            return;
+        }
+        if (rounds[contest._id] != null) rounds[contest._id].stop();
+    })
+}
 

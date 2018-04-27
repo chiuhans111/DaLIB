@@ -30,6 +30,15 @@ db.then(mongoose => {
             })
     })
 
+    _member.get('/stop', (req, res) => {
+        collection.findById(req.contestID)
+            .exec((err, doc) => {
+                roundManager.stop(doc).then(info => {
+                    res.send('stopped');
+                })
+            })
+    })
+
     // TEAM
     _team.get('/', (req, res) => {
 

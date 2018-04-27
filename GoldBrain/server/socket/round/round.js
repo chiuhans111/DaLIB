@@ -110,6 +110,8 @@ function Round(contest, viewKey, io) {
             var team = passed[0];
 
             if (me.onlineTeams[team.no]) {
+
+
                 socket.emit(actions.showinfo, {
                     content: '請嘗試5秒後重新登入，並確保無其他登入中的裝置，',
                     backgroundColor: colors.error
@@ -403,9 +405,12 @@ function Round(contest, viewKey, io) {
     }
 
     this.stop = function () {
-        console.log('round', viewKey, 'stopped')
-        room.emit(actions.close);
-        sockets.map(socket => socket.disconnect(true));
+        console.log('round', viewKey, 'stopped');
+        room.emit(actions.close, 'force stopped');
+        me.showinfo('比賽已結束，若要重新連線請重新登入。');
+        sockets.map(socket => {
+            socket.disconnect(true);
+        });
     }
 }
 

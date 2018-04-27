@@ -16,3 +16,5 @@ exports.team = 'team';
 exports.teamRound = 'teamRound';
 
 exports.update = 'update';
+
+exports.close = 'close';

@@ -54,6 +54,10 @@ socket.on('showinfo', info => {
         data.page = 'showinfo';
     console.log(data.info = info)
 });
+
+socket.on('close', reason => {
+    data.page = 'closed';
+})
 window.socket = socket;
 
 // login

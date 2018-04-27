@@ -26,6 +26,7 @@ paht: `/round`
 |__`on`__|`showinfo`|__`JSON`__ [info](#info)| the server want to display some information on client|
 |__`emit`__|`hey`|__`any`__| say hey to the server|
 |__`on`__|`hey`|__`Number`__ time| after you say hey, server will reply hey with server `time` in millisecond|
+|__`on`__|`close`|__`String`__ reason| the contest is closed or not open, because of some `reason`.|
 
 # Socket methods (Member)
 |method|event name|data|description|
