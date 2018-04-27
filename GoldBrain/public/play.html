@@ -127,7 +127,8 @@
                 <div class="center">
                     <h1>{{closeReason}}</h1>
                     <p>比賽目前是關閉狀態</p>
-                    <h3>如果要開始比賽，請到教師介面點選開始比賽</h3>
+                    <h3>如果要開始比賽，請到
+                        <a :href="'/page/member/edit.html?key/'+dog.key">教師介面</a> 點選開始比賽</h3>
                 </div>
             </div>
             <div class="slide" key="slides" v-else-if="slides">

@@ -117,7 +117,7 @@ function Round(contest, viewKey, io) {
                     content: '請嘗試5秒後重新登入，並確保無其他登入中的裝置，',
                     backgroundColor: colors.error
                 });
-                socket.disconnect()
+                socket.removeAllListeners();
                 return true;
             }
 
@@ -408,9 +408,9 @@ function Round(contest, viewKey, io) {
     this.stop = function () {
         console.log('round', viewKey, 'stopped');
         room.emit(actions.close, '比賽結束了');
-        me.showinfo('比賽已結束，若要重新連線請重新登入。');
+        me.showinfo('比賽已結束。');
         sockets.map(socket => {
-            socket.disconnect(true);
+            socket.leave(room);
         });
         me.running = false;
     }
