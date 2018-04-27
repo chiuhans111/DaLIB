@@ -50,7 +50,7 @@
 								<template v-for="(c,i) in problem.choice ">
 									<v-flex @click='answer(c.value)' xs12>
 
-										<v-card :ripple='answerable' class="ma-2 " style="color:white " :color="(answerable||answered==c.value||!round.usebutton)?[
+										<v-card :ripple='answerable' class="ma-2 " style="color:white " :color="(answerable||answered==c.value||round.usebutton)?[
 										 'red', 'orange', 'green', 'blue', 'purple', 'brown'][i]|| 'black': 'grey' ">
 											<v-container>
 
@@ -75,9 +75,11 @@
 								</div>
 							</template>
 							<template v-else-if="page=='info' ">
-								<v-card :color="(page=='info' ?info.backgroundColor: 'white') " style="color:white ">
+								<v-card :color="(page=='info' ?info.backgroundColor: 'white') " :style="{color:info.backgroundColor=='white'?'black':'white'} ">
 									<v-container>
-										{{info.content}}
+										<h3>
+											{{info.content}}
+										</h3>
 									</v-container>
 								</v-card>
 							</template>
