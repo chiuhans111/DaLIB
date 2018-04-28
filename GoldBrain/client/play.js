@@ -198,69 +198,26 @@ var app = new Vue({
             // from ranking.js
             teams = ranking.rank(teams, this.content.rounds.length);
 
-            /*
-            // moved to ranking.js
-
-            teams.map(team => {
-                team.time = [];
-                team.scores = [];
-                for (var i in this.content.rounds) {
-                    try {
-
-                        var t = team.record.filter(r => r.round == i && r.correct)
-
-                        var ts = t.map(x => x.time).reduce((a, b) => a + b, 0);
-
-                        var s = t.map(x => x.score).reduce((a, b) => a + b, 0);
-                        ts /= t.length;
-
-                        team.time[i] = ts;
-                        team.scores[i] = s;
-
-                    } catch (e) {
-                        team.time[i] = null;
-                    }
-                }
-            })
-
-            teams.sort((a, b) => {
-                var rank = b.score - a.score;
-                if (rank == 0) {
-
-                    try {
-                        var i = 0;
-                        while (rank == 0 && i <= this.round.no) {
-                            rank = a.time[this.round.no - i] - b.time[this.round.no - i];
-                            if (isNaN(rank)) throw new Error("speed not valid");
-                            i++;
-                        }
-                    } catch (e) {
-                        rank = 0;
-                        if (e.message != 'speed not valid')
-                            console.error(e)
-                    }
-                }
-                if (rank == 0) rank = a.no - b.no;
-
-                return rank;
-            });*/
-
             var players = 1;
+            // if still have next round, 'players' can win is determin by next round's players count
             if (this.round.no + 1 < this.content.rounds.length)
                 players = this.content.rounds[this.round.no + 1].players;
 
+
             var same = [];
             var other = [];
+
+            // if score is equall to the lowest player's score, you still have chance
             if (teams.length > players)
                 teams.slice(players).map(team => {
                     if (team.score == teams[players - 1].score) same.push(team);
                     else other.push(team);
                 });
+
             teams = teams.slice(0, players);
 
             var all = [];
             var i = -1;
-            var last = null;
 
             teams.map(team => {
                 team.type = 0;
@@ -277,13 +234,14 @@ var app = new Vue({
                 all.push(team);
             })
 
-            all.map(team => {
-                if (last != team.score) {
-                    last = team.score;
-                    i++;
-                }
-                team.rank = i;
-            })
+            var last = null;
+            var currentRank = all.length;
+            // from bottom to top, same score, same rank
+            for (var i = all.length - 1; i >= 0; i--) {
+                if (all[i].score != last) currentRank = i;
+                all[i].rank = currentRank;
+                last = all[i].score;
+            }
 
             return {
                 teams,

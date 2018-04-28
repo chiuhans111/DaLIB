@@ -26,7 +26,7 @@
         margin: 0px;
         position: relative;
         display: block;
-        left: 330px;
+        left: 250px;
         top: 16px;
         text-align: left;
         min-width: 80%;
@@ -63,8 +63,10 @@
     }
 
     h3 {
-        font-size: 2em;
+        font-size: 1.5em;
         margin: 0px;
+        font-weight: 400;
+        line-height: 1.6em;
     }
 
     body {
@@ -87,7 +89,7 @@
     }
 
     .back {
-        width: 20%;
+        width: 240px;
         height: 100%;
     }
 
@@ -167,19 +169,19 @@
                     <div class="center">
                         <div style="
                         display:inline-block; 
-                        backgroundColor:white;
+                        background-Color:white;
                         border:2px solid black;
                         border-radius:20px;
                         ">
                             <div style="margin:20px">
 
-                                <h1>{{round.title}}</h1>
+                                <h1 style="font-size: 5em">{{round.title}}</h1>
                                 <h2 v-if="round.usebutton">請準備好搶答按鈕</h2>
-                                <h3>{{roundc.players}} 隊
+                                <h1>{{roundc.players}} 隊
                                     <template v-if="round.no&lt;content.rounds.length-1">
                                         取 {{content.rounds[round.no+1].players}} 隊
                                     </template>
-                                </h3>
+                                </h1>
                             </div>
                         </div>
 
@@ -225,7 +227,6 @@
                         </h1>
 
                         <transition-group name="list">
-                            <h2 key="answertitle" v-if="page=='answer'" style="color:green">正確答案：</h2>
                             <template v-for="(c, i) in problem.choice">
                                 <h2 style="display:inline-block; margin:16px; position:relative" :key="i+':'+problem.no" v-if="problemc.answer.value.indexOf(c.value)!=-1||page!='answer'">
                                     <table>
@@ -234,6 +235,7 @@
                                                 width: '64px',
                                                 height: '64px',
                                                 borderRadius: '64px',
+                                                color:'white',
                                                 backgroundColor: ['red','orange','green','blue','purple','brown'][i]||'black'
                                             }">
                                                 <h2>

@@ -45,8 +45,8 @@
     }
 
     .offline {
-        color: red;
-        background-color: #fff;
+        color: white;
+        background-color: rgb(192, 37, 37);
     }
 
     .online {
@@ -57,19 +57,19 @@
 
     .first>.number {
         border-left: solid 16px gold;
-        font-size: 32px;
+        font-size: 24px;
         width: 120px;
     }
 
     .second>.number {
         border-left: solid 16px silver;
-        font-size: 30px;
+        font-size: 22px;
         width: 110px;
     }
 
     .third>.number {
         border-left: solid 16px coral;
-        font-size: 28px;
+        font-size: 16px;
         width: 100px;
     }
 
@@ -97,8 +97,8 @@
 
     td {
         padding: 4px 8px;
-        color: white;
-        background-color: #444;
+        color: black;
+        background-color: #aaa;
         font-size: 18px;
         transition: all 0.2s;
         transition-delay: 0.1s;
@@ -106,8 +106,8 @@
     }
 
     .number {
-        color: black;
-        background-color: lightgray;
+        color: white;
+        background-color: #444;
         width: 96px;
     }
 
