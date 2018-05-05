@@ -25,15 +25,40 @@ var ranking = require('../../../client/play/ranking.js');
  * @param {type_contest} contest 
  * @param {type_socket_io} io
  */
+
+function Room(name) {
+    this.sockets = {};
+    /**@param {type_socket} socket */
+    this.join = function (socket) {
+        this.sockets[socket.id] = socket;
+    }
+    this.leave = function (socket) {
+        this.sockets[socket.id] = null;
+        delete this.sockets[socket.id];
+    }
+    this.emit = function (title, data) {
+        for (var i in this.sockets) {
+            var socket = this.sockets[i];
+            if (socket)
+                socket.emit(title, data);
+        }
+    }
+}
+
+
 function Round(contest, viewKey, io) {
     console.log('starting new round');
-    var contestID = contest._id;
-    var contestID_member = 'memberonly_' + contest._id;
-    var contestID_client = 'clientonly_' + contest._id;
+    // var contestID = contest._id;
+    // var contestID_member = 'memberonly_' + contest._id + '01';
+    // var contestID_client = 'clientonly_' + contest._id + '02';
     //console.log(contestID, contestID_member);
-    var room = io.in(contestID);
-    var room_member = io.in(contestID_member);
-    var room_client = io.in(contestID_client);
+    // var room = io.in(contestID);
+    // var room_member = io.in(contestID_member);
+    // var room_client = io.in(contestID_client);
+
+    var room = new Room('every body');
+    var room_member = new Room('member room');
+    var room_client = new Room('client room');
 
     this.viewKey = viewKey;
     this.running = true;
@@ -59,8 +84,12 @@ function Round(contest, viewKey, io) {
         if (key == me.viewKey) {
             // VIEWER Login
 
-            socket.join(contestID);
-            socket.join(contestID_member);
+            // socket.join(contestID);
+            // socket.join(contestID_member);
+            room.join(socket);
+            room_member.join(socket);
+
+
             // up to date
             socket.emit(actions.state, me.state_member());
             socket.emit(actions.round, me.state.round);
@@ -75,8 +104,12 @@ function Round(contest, viewKey, io) {
             console.log("MEMBER LOGINNED")
             // MEMBER Login
 
-            socket.join(contestID);
-            socket.join(contestID_member);
+            // socket.join(contestID);
+            // socket.join(contestID_member);
+            room.join(socket);
+            room_member.join(socket);
+
+
             socket.member = true;
             // MEMBER COMMUNICATION
 
@@ -138,8 +171,12 @@ function Round(contest, viewKey, io) {
 
             socket.team = team;
 
-            socket.join(contestID);
-            socket.join(contestID_client);
+            // socket.join(contestID);
+            // socket.join(contestID_client);
+            room.join(socket);
+            room_client.join(socket);
+
+
             socket.on(actions.race, answer => me.race(team.no, answer));
             me.onlineTeams[team.no] = socket;                 // online
             console.log('a team has joined us!!');
@@ -148,7 +185,7 @@ function Round(contest, viewKey, io) {
             socket.login = true;
             sockets.push(socket);
             // var state = me.state_any();
-            me.sendState(io.in(contestID).connected, me.state_any());
+            me.sendState(room.sockets, me.state_any());
 
 
 
@@ -179,7 +216,12 @@ function Round(contest, viewKey, io) {
 
         console.log("register disconnect part");
         socket.on('disconnect', () => {
-            console.log('some one disconnected')
+            console.log('some one disconnected');
+
+            room.leave(socket);
+            room_client.leave(socket);
+            room_member.leave(socket);
+
             if (socket.team) {
                 me.onlineTeams[socket.team.no] = false;          // offline
                 console.log('team left:', socket.team.no);
@@ -332,6 +374,8 @@ function Round(contest, viewKey, io) {
 
     /**emit state */
     this.state_emit = function () {
+        console.log('clients:', Object.keys(room_client.sockets));
+        console.log('members:', Object.keys(room_member.sockets));
         room_client.emit(actions.state, me.state_any());
         room_member.emit(actions.state, me.state_member());
     }
@@ -360,7 +404,7 @@ function Round(contest, viewKey, io) {
         me.state.race = ms;
         if (ms == 0) {
             me.raceTeams = [];
-            io.in(contestID_member).emit(actions.race, me.raceTeams);
+            room_member.emit(actions.race, me.raceTeams);
             me.state.raceStartTime = new Date().getTime();
         }
         room.emit(actions.racestart, ms);
@@ -376,7 +420,7 @@ function Round(contest, viewKey, io) {
             me.raceTeams.push({
                 no, answer, time: new Date().getTime() - me.state.raceStartTime
             })
-            io.in(contestID_member).emit(actions.race, me.raceTeams);
+            room_member.emit(actions.race, me.raceTeams);
         }
     }
 
@@ -408,6 +452,7 @@ function Round(contest, viewKey, io) {
 
     /**@param {Array.<{correct: Boolean, team: String, message: String, score:Number, hidden:Boolean}>} data*/
     this.answer = function (data) {
+        if (data == null) return; // 搶答
 
         // finding the team with no answer
         for (var i in me.onlineTeams) {
@@ -423,7 +468,6 @@ function Round(contest, viewKey, io) {
 
         me.state.page = "answered";
 
-        if (data == null) return; // 搶答
 
         data.filter(reply => reply.correct).map(reply => {
             var team = me.contest.teams[reply.team];
@@ -445,7 +489,6 @@ function Round(contest, viewKey, io) {
 
         me.contest.save();
         me.state_emit();
-        // room.emit(actions.state, me.state_any());
 
 
 

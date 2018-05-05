@@ -24,7 +24,7 @@ var data = {
 
 
 socket.on('state', state => {
-
+    console.log('state', state);
     if (state.team != null)
         data.team = state.team;
 
@@ -33,23 +33,23 @@ socket.on('state', state => {
 })
 
 socket.on('round', round => {
-    console.log(data.round = round);
+    console.log('round', data.round = round);
     data.page = 'round';
 });
 socket.on('problem', problem => {
-    console.log(data.problem = problem);
+    console.log('problem', data.problem = problem);
     data.page = 'problem';
     data.answered = null;
 });
 socket.on('race', race => {
-    console.log(data.race = race);
+    console.log('race', data.race = race);
 });
 socket.on('racestart', ms => {
-    console.log(data.racestart = ms);
+    console.log('racestart', data.racestart = ms);
     data.page = 'racestart';
 });
 socket.on('showinfo', info => {
-    console.log(data.info = info);
+    console.log('info', data.info = info);
     data.page = 'info';
 });
 window.socket = socket;
