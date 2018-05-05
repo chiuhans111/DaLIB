@@ -377,7 +377,8 @@ function Round(contest, viewKey, io) {
        // console.log('clients:', Object.keys(room_client.sockets));
        // console.log('members:', Object.keys(room_member.sockets));
         room_client.emit(actions.state, me.state_any());
-        room_member.emit(actions.state, me.state_member());
+        // room_member.emit(actions.state, me.state_member());
+        me.sendState(room_member.sockets, me.state_any());
     }
 
 
