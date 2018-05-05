@@ -29,9 +29,11 @@ function Round(contest, viewKey, io) {
     console.log('starting new round');
     var contestID = contest._id;
     var contestID_member = 'memberonly_' + contest._id;
+    var contestID_client = 'clientonly_' + contest._id;
     //console.log(contestID, contestID_member);
     var room = io.in(contestID);
     var room_member = io.in(contestID_member);
+    var room_client = io.in(contestID_client);
 
     this.viewKey = viewKey;
     this.running = true;
@@ -60,7 +62,7 @@ function Round(contest, viewKey, io) {
             socket.join(contestID);
             socket.join(contestID_member);
             // up to date
-            socket.emit(actions.state, me.state_any());
+            socket.emit(actions.state, me.state_member());
             socket.emit(actions.round, me.state.round);
             socket.emit(actions.problem, me.state.problem);
             socket.emit(actions.race, me.raceTeams);
@@ -137,6 +139,7 @@ function Round(contest, viewKey, io) {
             socket.team = team;
 
             socket.join(contestID);
+            socket.join(contestID_client);
             socket.on(actions.race, answer => me.race(team.no, answer));
             me.onlineTeams[team.no] = socket;                 // online
             console.log('a team has joined us!!');
@@ -144,7 +147,7 @@ function Round(contest, viewKey, io) {
             // TEAM COMMUNICATION!
             socket.login = true;
             sockets.push(socket);
-            var state = me.state_any();
+            // var state = me.state_any();
             me.sendState(io.in(contestID).connected, me.state_any());
 
 
@@ -180,7 +183,8 @@ function Round(contest, viewKey, io) {
             if (socket.team) {
                 me.onlineTeams[socket.team.no] = false;          // offline
                 console.log('team left:', socket.team.no);
-                room.emit(actions.state, me.state_any());
+                me.state_emit();
+                // room.emit(actions.state, me.state_any());
             }
         })
 
@@ -240,7 +244,8 @@ function Round(contest, viewKey, io) {
             me.state.race = -1;
             room.emit(actions.round, obj);
 
-            me.sendState(io.in(contestID).connected, me.state_any());
+            me.state_emit();
+            // me.sendState(io.in(contestID).connected, me.state_any());
         } catch (e) {
             console.error(e)
         }
@@ -309,8 +314,14 @@ function Round(contest, viewKey, io) {
         }))
 
         var rank = ranking.rank(teams, me.contest.rounds.length);
-        for (var i in rank) {
-            rank[i].rank = i;
+
+        var last = null;
+        var currentRank = rank.length;
+        // from bottom to top, same score, same rank
+        for (var i = rank.length - 1; i >= 0; i--) {
+            if (rank[i].score != last) currentRank = i;
+            rank[i].rank = currentRank;
+            last = rank[i].score;
         }
 
         //console.log(teams);
@@ -319,14 +330,21 @@ function Round(contest, viewKey, io) {
         return obj;
     }
 
+    /**emit state */
+    this.state_emit = function () {
+        room_client.emit(actions.state, me.state_any());
+        room_member.emit(actions.state, me.state_member());
+    }
+
+
     this.state_any = function () {
         var obj = me.state_all();
-        /*
+
         obj.teams.map(team => {
             delete team.record;
             delete team.time;
             delete team.scores;
-        })*/
+        })
         return obj;
     }
 
@@ -375,7 +393,8 @@ function Round(contest, viewKey, io) {
         })
         console.log(teams, round)
         me.contest.save();
-        room.emit(actions.state, me.state_any());
+        me.state_emit();
+        // room.emit(actions.state, me.state_any());
     }
 
 
@@ -425,7 +444,8 @@ function Round(contest, viewKey, io) {
         })
 
         me.contest.save();
-        room.emit(actions.state, me.state_any());
+        me.state_emit();
+        // room.emit(actions.state, me.state_any());
 
 
 

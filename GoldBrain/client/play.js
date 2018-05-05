@@ -240,7 +240,7 @@ var app = new Vue({
                 team.type = 2;
                 all.push(team);
             })
-
+            /*
             var last = null;
             var currentRank = all.length;
             // from bottom to top, same score, same rank
@@ -248,7 +248,7 @@ var app = new Vue({
                 if (all[i].score != last) currentRank = i;
                 all[i].rank = currentRank;
                 last = all[i].score;
-            }
+            }*/
 
             return {
                 teams,
