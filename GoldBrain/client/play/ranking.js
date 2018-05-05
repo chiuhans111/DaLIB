@@ -1,6 +1,7 @@
 // this file specifies the ranking algorithm
 
 /**
+ * WARING: will modify teams
  * @param teams {Array<{no:Number, name:String, round:Number, score:Number, record:Array<{ round:Number, problem:Number, correct:Boolean,  time:Number,  score:Number}>}>} 
  * @param rounds {Number}
  * */
@@ -22,6 +23,7 @@ function rank(teams, rounds) {
 
                 team.time[i] = ts;
                 team.scores[i] = s;
+                //console.log('time', team.time);
 
             } catch (e) {
                 team.time[i] = null;
@@ -57,6 +59,4 @@ function rank(teams, rounds) {
     });
 }
 
-export default {
-    rank
-}
+exports.rank = rank;

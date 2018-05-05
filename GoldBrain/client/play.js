@@ -8,7 +8,7 @@ import slides from './play/slides.vue';
 import fbtn from './play/fbtn.vue';
 
 import play from './play/play';
-import ranking from './play/ranking';
+// import ranking from './play/ranking';
 
 import { setInterval } from 'timers';
 import { teamRound } from '../server/socket/round/actions';
@@ -179,6 +179,8 @@ var app = new Vue({
         problemc() {
             return this.roundc.problems[this.problem.no]
         },
+
+        
         rank() {
             var teams = [];
             try {
@@ -189,14 +191,19 @@ var app = new Vue({
                     round: x.round,
                     score: x.score,
                     record: x.record,
-                    online: x.online
+                    online: x.online,
+                    rank: x.rank,
+                    scores: x.scores,
+                    time: x.time
                 }))
             } catch (e) {
                 console.error(e);
             }
 
+            /* // implemented rank in server, remove client ranking.
             // from ranking.js
             teams = ranking.rank(teams, this.content.rounds.length);
+            */
 
             var players = 1;
             // if still have next round, 'players' can win is determin by next round's players count

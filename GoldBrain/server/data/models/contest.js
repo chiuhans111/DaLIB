@@ -62,7 +62,9 @@ exports.schema = new Schema({
             }]
         }
     ]
-});
+}, {
+        usePushEach: true
+    });
 
 /**
  * 

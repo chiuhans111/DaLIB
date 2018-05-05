@@ -10,6 +10,9 @@ var crypt = require('tool/crypt');
 
 var actions = require('./actions');
 var colors = require('tool/colors');
+
+var ranking = require('../../../client/play/ranking.js');
+
 /**
  * @typedef {Object} type_racer
  * @property {Number} no
@@ -86,7 +89,7 @@ function Round(contest, viewKey, io) {
                 // up to date
                 ;
             (function () {
-                socket.emit(actions.state, me.state_any());
+                socket.emit(actions.state, me.state_member());
                 if (me.state.page == '') return;
                 socket.emit(actions.round, me.state.round);
                 if (me.state.page == 'round') return;
@@ -293,9 +296,10 @@ function Round(contest, viewKey, io) {
         raceStartTime: 0
     }
 
-    this.state_any = function () {
+
+    this.state_all = function () {
         var obj = {}
-        obj.teams = contest.teams.map(team => ({
+        var teams = contest.teams.map(team => ({
             name: team.name,
             no: team.no,
             score: team.score,
@@ -303,11 +307,31 @@ function Round(contest, viewKey, io) {
             record: team.record,
             online: me.onlineTeams[team.no] ? true : false
         }))
+
+        var rank = ranking.rank(teams, me.contest.rounds.length);
+        for (var i in rank) {
+            rank[i].rank = i;
+        }
+
+        //console.log(teams);
+        obj.teams = teams;
+
+        return obj;
+    }
+
+    this.state_any = function () {
+        var obj = me.state_all();
+        /*
+        obj.teams.map(team => {
+            delete team.record;
+            delete team.time;
+            delete team.scores;
+        })*/
         return obj;
     }
 
     this.state_member = function () {
-        var obj = me.state_any();
+        var obj = me.state_all();
         obj.raceTeams = me.raceTeams;
         return obj;
     }
@@ -353,7 +377,6 @@ function Round(contest, viewKey, io) {
         me.contest.save();
         room.emit(actions.state, me.state_any());
     }
-
 
 
     // OTHER IMPORTANT THINGS
