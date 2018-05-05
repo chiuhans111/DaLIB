@@ -374,8 +374,8 @@ function Round(contest, viewKey, io) {
 
     /**emit state */
     this.state_emit = function () {
-        console.log('clients:', Object.keys(room_client.sockets));
-        console.log('members:', Object.keys(room_member.sockets));
+       // console.log('clients:', Object.keys(room_client.sockets));
+       // console.log('members:', Object.keys(room_member.sockets));
         room_client.emit(actions.state, me.state_any());
         room_member.emit(actions.state, me.state_member());
     }
@@ -435,7 +435,7 @@ function Round(contest, viewKey, io) {
             if (teams.indexOf(team.no) == -1 && team.round < round) return;
             team.round = round;
         })
-        console.log(teams, round)
+        // console.log(teams, round)
         me.contest.save();
         me.state_emit();
         // room.emit(actions.state, me.state_any());
