@@ -65,7 +65,7 @@ new Vue({
     data,
     computed: {
         score() {
-            if (this.state.teams) return this.state.teams[this.team].score;
+            if (this.state.teams) return this.state.teams.filter(team => team.no == team)[0].score;
         },
         answerable() {
             return this.page == 'racestart' && this.racestart == 0 && this.answered == null;
