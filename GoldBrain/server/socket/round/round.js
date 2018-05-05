@@ -367,6 +367,18 @@ function Round(contest, viewKey, io) {
     /**@param {Array.<{correct: Boolean, team: String, message: String, score:Number, hidden:Boolean}>} data*/
     this.answer = function (data) {
 
+        // finding the team with no answer
+        for (var i in me.onlineTeams) {
+            if (!data.some(reply => reply.team == i)) {
+                data.push({
+                    correct: false,
+                    team: i,
+                    message: '下次再加油~',
+                    score: 0
+                })
+            }
+        }
+
         me.state.page = "answered";
 
         if (data == null) return; // 搶答
@@ -392,13 +404,21 @@ function Round(contest, viewKey, io) {
         me.contest.save();
         room.emit(actions.state, me.state_any());
 
+
+
         data.map(reply => {
 
             var team = me.onlineTeams[reply.team];
             if (team === false) return;
 
+            var message = '';
+            if (reply.message != null && reply.message.length > 0) message = reply.message;
+            else if (reply.correct) message = '答對了! +' + reply.score + '分';
+            else message = '答錯了..';
+
+
             if (!reply.hidden) team.emit(actions.showinfo, {
-                content: `${reply.correct ? reply.score + '分\n恭喜答對' : '答錯了'}\n${reply.message}`,
+                content: message,
                 backgroundColor: reply.correct ? colors.ok : colors.error
             })
         })
