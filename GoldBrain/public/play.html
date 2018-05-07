@@ -2,642 +2,951 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>比賽投影畫面</title>
-    <link rel="stylesheet" href="/style/main.css">
-    <script src="/socket.io/socket.io.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>比賽投影畫面</title>
+  <link rel="stylesheet" href="/style/main.css">
+  <script src="/socket.io/socket.io.js"></script>
 
 </head>
 <style>
-    .center {
-        margin: 0px;
-        position: relative;
-        display: block;
-        left: 50%;
-        top: 10%;
-        text-align: center;
-        min-width: 80%;
-        transform: translate(-50%, 0)
-    }
+  p,
+  td {
+    transition: all 0.3s;
+    transition-delay: 0;
+  }
 
-    .centerleft {
-        margin: 0px;
-        position: relative;
-        display: block;
-        left: 300px;
-        top: 16px;
-        text-align: left;
-        min-width: 80%;
-        transform: translate(0, 0)
-    }
+  .first>.number {
+    border-left: solid 16px gold;
+    font-size: 64px;
+    width: 120px;
+  }
 
-    button {
-        transition: all 0.2s;
-        font-size: 1em;
-        border: none;
-        padding: 10px;
-        border-radius: 100px;
-        margin: 8px;
-    }
+  .second>.number {
+    border-left: solid 16px silver;
+    font-size: 36px;
+    width: 110px;
+  }
 
-    button:hover {
-        transform: scale(1.2);
-    }
+  .third>.number {
+    border-left: solid 16px coral;
+    font-size: 32px;
+    width: 100px;
+  }
 
-    .bb {
-        color: orange;
-        font-size: 20em;
-        margin: 0;
-    }
+  .table-space td {
+    padding: 8px;
+    vertical-align: middle;
+  }
 
-    h1 {
-        font-size: 2.5em;
-        margin: 8px;
-    }
+  .table-space: .center {
+    margin: 0px;
+    position: relative;
+    display: block;
+    left: 50%;
+    top: 10%;
+    text-align: center;
+    min-width: 80%;
+    transform: translate(-50%, 0)
+  }
 
-    h2 {
-        font-size: 2em;
-        margin: 6px;
-    }
+  .centerleft {
+    margin: 0px;
+    position: relative;
+    display: block;
+    left: 300px;
+    top: 16px;
+    text-align: left;
+    min-width: 80%;
+    transform: translate(0, 0)
+  }
 
-    h3 {
-        font-size: 1.5em;
-        margin: 0px;
-        font-weight: 400;
-        line-height: 1.6em;
-    }
+  button {
+    transition: all 0.2s;
+    font-size: 1em;
+    border: none;
+    padding: 10px;
+    border-radius: 100px;
+    margin: 8px;
+  }
 
-    body {
-        position: fixed;
-        background: #eee;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        font-family: 微軟正黑體, Arial, Helvetica, sans-serif
-    }
+  button:hover {
+    transform: scale(1.2);
+  }
 
-    .slide {
+  .bb {
+    color: orange;
+    font-size: 20em;
+    margin: 0;
+  }
 
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
+  h1 {
+    font-size: 2.5em;
+    margin: 8px;
+  }
 
-    .back {
-        width: 300px;
-        height: 100%;
-    }
+  h2 {
+    font-size: 2em;
+    margin: 6px;
+  }
 
-    .main {
-        background-color: orange;
-    }
+  h3 {
+    font-size: 1.5em;
+    margin: 0px;
+    font-weight: 400;
+    line-height: 1.6em;
+  }
 
-    .blob {
-        border-radius: 999px;
-        padding: 4px;
-        margin: 16px;
-    }
+  body {
+    position: fixed;
+    background: #eee;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 微軟正黑體, Arial, Helvetica, sans-serif
+  }
 
-    .dright {
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        z-index: 99;
-    }
+  .slide {
 
-    .dleft {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100px;
-        height: 200px;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
 
-    }
+  .back {
+    width: 300px;
+    height: 100%;
+  }
 
-    /* new style */
+  .main {
+    background-color: orange;
+  }
 
-    .full {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-    }
+  .blob {
+    border-radius: 999px;
+    padding: 4px;
+    margin: 16px;
+  }
 
-    table,
-    tr,
-    td {
-        border-collapse: collapse;
-        border: none;
-        margin: 0;
-        padding: 0;
-        vertical-align: top;
-    }
+  .dright {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+  }
 
-    .bg-light {
-        background-color: #fafafa;
-    }
+  .dleft {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100px;
+    height: 200px;
 
-    .bg-dark {
-        background-color: #212121;
-    }
+  }
 
-    .bg-primary {
-        background-color: #ff9800;
-    }
+  /* new style */
 
-    .text-light {
-        color: #fafafa;
-    }
+  .full {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
 
-    .text-primary {
-        color: #ff9800;
-    }
+  table,
+  tr,
+  td {
+    border-collapse: collapse;
+    border: none;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+  }
 
-    .align-right {
-        text-align: right;
-        right: 0;
-    }
+  .bg-light {
+    background-color: #fafafa;
+  }
 
-    .align-bottom {
-        position: absolute;
-        bottom: 0;
-    }
+  .bg-dark {
+    background-color: #212121;
+  }
 
-    .title-mid {
-        font-size: 72px;
-        margin: 0;
-        padding: 0;
-        line-height: 72px;
-        font-weight: bold;
-    }
+  .bg-darkgray {
+    background-color: #424242;
+  }
 
-    .title-big {
-        font-size: 128px;
-        margin: 0;
-        padding: 0;
-        line-height: 128px;
-    }
 
-    .title-small {
-        font-size: 36px;
-        margin: 0;
-        padding: 0;
-        line-height: 36px;
-    }
+  .bg-primary {
+    background-color: #ff9800;
+  }
 
-    .content-small {
-        font-size: 24px;
-        margin: 0;
-        padding: 0;
-    }
+  .text-light {
+    color: #fafafa;
+  }
 
-    .circle {
-        transition: all .2s;
-        font-size: 32px;
-        margin: 10px;
-        padding: 0;
-        display: inline-block;
-        width: 56px;
-        height: 56px;
-        border-radius: 56px;
-        background-color: white;
-    }
+  .text-primary {
+    color: #ff9800;
+  }
 
-    .center {
-        position: relative;
-        display: block;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
+  .align-right {
+    text-align: right;
+    right: 0;
+  }
 
-    }
+  .align-bottom {
+    position: absolute;
+    bottom: 0;
+  }
 
-    .circle-offline {
-        background-color: #757575;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) inset;
-    }
+  .title-mid {
+    font-size: 72px;
+    margin: 0;
+    padding: 0;
+    line-height: 72px;
+    font-weight: bold;
+  }
 
-    .circle-online {
-        background-color: #fafafa;
-        color: #ff9800;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    }
+  .title {
+    font-size: 64px;
+    margin: 0;
+    padding: 0;
+    line-height: 64px;
+  }
 
-    .circle-kick {
-        background-color: transparent;
-        color: #757575;
-    }
+  .title-big {
+    font-size: 128px;
+    margin: 0;
+    padding: 0;
+    line-height: 128px;
+  }
 
-    .btn-rect {
-        display: inline-block;
-        width: 160px;
-        height: 160px;
-        border-radius: 10px;
-        text-align: center;
-    }
+  .title-small {
+    font-size: 36px;
+    margin: 0;
+    padding: 0;
+    line-height: 36px;
+  }
+
+  .content-big {
+    font-size: 60px;
+    line-height: 96px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .content-mid {
+    font-size: 52px;
+    line-height: 60px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .content-mids {
+    font-size: 44px;
+    line-height: 50px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .content-small {
+    font-size: 24px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .circle {
+    transition: all .2s;
+    font-size: 32px;
+    margin: 10px;
+    padding: 0;
+    display: inline-block;
+    width: 56px;
+    height: 56px;
+    border-radius: 56px;
+    background-color: white;
+  }
+
+  .center {
+    position: relative;
+    display: block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .center-text {
+    text-align: center;
+  }
+
+  .circle-offline {
+    background-color: #757575;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) inset;
+  }
+
+  .circle-online {
+    background-color: #fafafa;
+    color: #ff9800;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .circle-kick {
+    background-color: transparent;
+    color: #757575;
+  }
+
+  .btn-rect {
+    display: inline-block;
+    width: 160px;
+    height: 160px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .clickable {
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+
+  .clickable:hover {
+    transform: scale(1.05);
+  }
+
+
+  .clickable:active {
+    transform: scale(0.95);
+  }
+
+  .fx-countdown-wrapper {
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    pointer-events: none;
+  }
+
+  .fx-countdown {
+    font-size: 400px;
+    color: orange;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  .countdown-enter-active,
+  .countdown-leave-active {
+    transition: all 1s ease-out;
+  }
+
+  .countdown-enter {
+    font-size: 600px;
+
+  }
+
+  .countdown-leave-to {
+    left: 100%;
+
+    opacity: 0;
+  }
+
+
+  .animate-enter-active,
+  .animate-leave-active {
+    transition: all 0.4s;
+    overflow: hidden;
+  }
+
+  .animate-enter {
+    transform: translate(50%, 0);
+    opacity: 0;
+  }
+
+  .animate-leave-to {
+
+    opacity: 0;
+  }
 </style>
 
 <body hidden>
 
-    <div id="app">
+  <div id="app">
 
-        <div class="slide" key="closedpage" v-if="page=='closed'">
-            <div class="center">
-                <h1>{{closeReason}}</h1>
-                <p>比賽目前是關閉狀態</p>
-                <h3>如果要開始比賽，請到
-                    <a :href="'/page/member/edit.html?key/'+dog.key">教師介面</a> 點選開始比賽</h3>
-            </div>
-        </div>
+    <div class="slide" key="closedpage" v-if="page=='closed'">
+      <div class="center">
+        <h1>{{closeReason}}</h1>
+        <p>比賽目前是關閉狀態</p>
+        <h3>如果要開始比賽，請到
+          <a :href="'/page/member/edit.html?key/'+dog.key">教師介面</a> 點選開始比賽</h3>
+      </div>
+    </div>
 
-        <div class="slide" key="slides" v-else-if="slides">
-            <div class="dleft">
-                <span v-if="content.rounds==null">正在載入...</span>
-                <fbtn v-else main="1" @click.native="go()">開始比賽</fbtn>
-            </div>
+    <div class="slide" key="slides" v-else-if="slides">
+      <div class="dleft">
+        <span v-if="content.rounds==null">正在載入...</span>
+        <fbtn v-else main="1" @click.native="go()">開始比賽</fbtn>
+      </div>
 
-            <slides></slides>
-        </div>
+      <slides></slides>
+    </div>
 
-        <template v-if="!slides">
+    <template v-if="!slides">
 
-            <!--
+      <!--
                     <span @click="slides=true" key="backtoSlides">
                         <fbtn>比賽規則</fbtn>
                     </span>
                 -->
 
+      <transition-group name="animate">
+
+        <div class="slide" :key="'round'+round.no" v-if="page=='round'">
 
 
-            <div class="slide" :key="'round'+round.no" v-if="page=='round'">
+          <table class="full" style="table-layout:fixed; empty-cells: show;">
+            <tr style="height: 360px" class="bg-light">
+              <td colspan="12">
+                .
+              </td>
+            </tr>
+            <tr style="height: 180px" class="bg-light">
 
+              <td colspan="3" class="align-right" style="position: relative;">
+                <p class="title-mid text-primary">
+                  第 {{round.no+1}} 輪
+                </p>
+                <div class="align-bottom align-right">
+                  <template v-if="round.usebutton">
+                    <p class="content-small"> 請準備好搶答按鈕 </p>
+                    <p class="content-small"> 顯示請搶答即可搶答 </p>
+                  </template>
+                  <template v-else>
+                    <p class="content-small"> 當開始作答後 </p>
+                    <p class="content-small"> 請在時間內作答完畢 </p>
+                  </template>
+                </div>
+              </td>
+              <td colspan="1">
 
-                <table class="full" style="table-layout:fixed; empty-cells: show;">
-                    <tr style="height: 360px" class="bg-light">
-                        <td colspan="12">
-                            .
-                        </td>
-                    </tr>
-                    <tr style="height: 180px" class="bg-light">
+              </td>
+              <td colspan="5" style="position:relative">
+                <p class="title-big">{{round.title}}</p>
+                <p class="content-small align-bottom">
+                  共 {{roundc.problems.length}} 題
 
-                        <td colspan="3" class="align-right" style="position: relative;">
-                            <p class="title-mid text-primary">
-                                第 {{round.no+1}} 輪
-                            </p>
-                            <div class="align-bottom align-right">
-                                <template v-if="round.usebutton">
-                                    <p class="content-small"> 請準備好搶答按鈕 </p>
-                                    <p class="content-small"> 顯示請搶答即可搶答 </p>
-                                </template>
-                                <template v-else>
-                                    <p class="content-small"> 當開始作答後 </p>
-                                    <p class="content-small"> 請在時間內作答完畢 </p>
-                                </template>
-                            </div>
-                        </td>
-                        <td colspan="1">
+                </p>
+              </td>
+              <td colspan="2">
+                <span class="btn-rect clickable bg-primary text-light" style="margin: auto; position: relative;" @click="roundStart()">
+                  <div class="center title-small" style="line-height: 46px">
+                    <div> 開 始 </div>
+                    <div> 比 賽 </div>
+                  </div>
+                </span>
+              </td>
+              <td colspan="1">
 
-                        </td>
-                        <td colspan="5" style="position:relative">
-                            <p class="title-big">{{round.title}}</p>
-                            <p class="content-small align-bottom">
-                                共 {{roundc.problems.length}} 題
+                <fbtn r="1" @click="prevRound()" v-if="hasPrevRound">←倒退</fbtn>
+                <fbtn r="1" v-if="hasNextRound" @click="nextRound()">跳過→</fbtn>
 
-                            </p>
-                        </td>
-                        <td colspan="2">
-                            <span class="btn-rect bg-primary text-light" style="margin: auto; position: relative;" @click="roundStart()">
-                                <div class="center title-small" style="line-height: 46px">
-                                    <div> 開 始 </div>
-                                    <div> 比 賽 </div>
-                                </div>
-                            </span>
-                        </td>
-                        <td colspan="1">
+              </td>
+            </tr>
+            <tr style="height: 90px" class="bg-light">
+              <td colspan="12">
 
-                            <fbtn r="1" @click="prevRound()" v-if="hasPrevRound">←倒退</fbtn>
-                            <fbtn r="1" v-if="hasNextRound" @click="nextRound()">跳過→</fbtn>
+              </td>
+            </tr>
+            <tr style="height: 90px" class="bg-dark">
+              <td colspan="12">
 
-                        </td>
-                    </tr>
-                    <tr style="height: 90px" class="bg-light">
-                        <td colspan="12">
+              </td>
+            </tr>
+            <tr style="height: 360px" class="bg-dark">
 
-                        </td>
-                    </tr>
-                    <tr style="height: 90px" class="bg-dark">
-                        <td colspan="12">
+              <td colspan="3" class="align-right text-light">
+                <p class="title-small">{{roundc.players}} 隊
 
-                        </td>
-                    </tr>
-                    <tr style="height: 360px" class="bg-dark">
+                  <template v-if="round.no&lt;content.rounds.length-1">
+                    <span class="text-primary">
+                      取 {{content.rounds[round.no+1].players}} 隊
+                    </span>
+                  </template>
+                </p>
+                <p>同分者以速度取勝</p>
+              </td>
+              <td colspan="1">
 
-                        <td colspan="3" class="align-right text-light">
-                            <p class="title-small">{{roundc.players}} 隊
-
-                                <template v-if="round.no&lt;content.rounds.length-1">
-                                    <span class="text-primary">
-                                        取 {{content.rounds[round.no+1].players}} 隊
-                                    </span>
-                                </template>
-                            </p>
-                            <p>同分者以速度取勝</p>
-                        </td>
-                        <td colspan="1">
-
-                        </td>
-                        <td colspan="5">
-                            <p class="title-small text-primary">
-                                參賽隊伍
-                            </p>
-                            <template v-for="team in state.teams">
-                                <span :class="{
+              </td>
+              <td colspan="5">
+                <p class="title-small text-primary">
+                  參賽隊伍
+                </p>
+                <template v-for="team in state.teams">
+                  <span :class="{
                                     circle: true,
                                     'circle-offline': !team.online,
                                     'circle-online': team.online,
                                     'circle-kick': team.round&lt;round.no
                                 }">
-                                    <span class="center">
-                                        {{team.no+1}}
-                                    </span>
-                                </span>
-                            </template>
-                        </td>
-                        <td colspan="2">
-                            <span class="btn-rect bg-light" @click="page='score'">
-                                <div class="center title-small" style="line-height: 46px">
-                                    <div> 分 數 </div>
-                                    <div> 結 算 </div>
-                                </div>
-                            </span>
-                        </td>
-                        <td colspan="1">
+                    <span class="center">
+                      {{team.no+1}}
+                    </span>
+                  </span>
+                </template>
+              </td>
+              <td colspan="2">
+                <span class="btn-rect clickable bg-light" @click="page='score'">
+                  <div class="center title-small" style="line-height: 46px">
+                    <div> 分 數 </div>
+                    <div> 結 算 </div>
+                  </div>
+                </span>
+              </td>
+              <td colspan="1">
 
-                        </td>
-                    </tr>
-                </table>
-
-
-
-                <div class="dright">
-                </div>
-
-            </div>
+              </td>
+            </tr>
+          </table>
 
 
 
-            <div class="slide" key="problem" v-if="page=='problem'||page=='racestart'||page=='answer'||page=='answer2'">
+          <div class="dright">
+          </div>
 
-                <!-- button part -->
-                <div class="dright">
-                    <template v-if="round.usebutton">
-                        <fbtn r="1" main="1" @click="problemStart(3000, 2)">搶答倒數</fbtn>
-                        <fbtn r="1" :class="{main:races.length>0}" @click="answer(2)">答案揭曉</fbtn>
-                        <!-- answer button for 搶答 -->
-                    </template>
-                    <template v-else>
-                        <fbtn r="1" main="1" @click="problemStart(0, 1)" v-if="racestart==-1">開始作答</fbtn>
-                        <template v-if="racestart==0">
-                            <fbtn r="1" :main="races.length>0" @click="answer(1)">答案揭曉</fbtn>
-                            <!-- answer button for 選擇題 -->
-                        </template>
+        </div>
 
-                    </template>
-                    <template v-if="page=='answer'">
-                        <fbtn r="1" main="1" v-if="hasNextProblem" @click="nextProblem()">下一題</fbtn>
-                        <fbtn r="1" main="1" v-else-if="hasNextRound" @click="nextRound()">下一輪</fbtn>
-                    </template>
-                    <fbtn r="1" @click="goRound()">返回場次</fbtn>
-                </div>
 
-                <!-- content part -->
-                <div class="centerleft" style="max-width:800px;">
-                    <h1>
-                        <small style="color:gray"> 第{{problem.no+1}}題</small>
-                        <small style="color:orange">{{problem.score}}分</small>
-                    </h1>
-                    <h1>
 
+        <div key='problem' class="slide" key="problem" v-if="page=='problem'||page=='racestart'||page=='answer'||page=='answer2'">
+
+
+          <table class="full">
+            <tr style="height: 90px" class="bg-light">
+              <td style="width: 1600px" :class="{
+                            'bg-light': page!='answer',
+                            'bg-darkgray': page=='answer',
+                            'text-dark': page!='answer',
+                            'text-light': page=='answer',
+                        }">
+                <table class="full">
+                  <tr style="height: 90px">
+                    <td colspan="2">
+
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 160px" class="center-text content-small">
+                      <p>題</p>
+                      <p>目</p>
+                    </td>
+                    <td>
+                      <p :class="{
+                      'content-big': page!='answer',
+                      'content-mid': page=='answer',
+                    }">
                         {{problem.content}}
-                    </h1>
+                      </p>
+                    </td>
+                    <td style="width: 40px">
 
-                    <transition-group name="list">
-                        <template v-for="(c, i) in problem.choice">
-                            <h2 style="display:inline-block; margin:16px; position:relative" :key="i+':'+problem.no" v-if="problemc.answer.value.indexOf(c.value)!=-1||page!='answer'">
-                                <table>
-                                    <tr>
-                                        <td :style="{
-                                                width: '64px',
-                                                height: '64px',
-                                                borderRadius: '64px',
-                                                color:'white',
-                                                backgroundColor: ['red','orange','green','blue','purple','brown'][i]||'black'
-                                            }">
-                                            <h2>
-                                                {{c.value}}
-                                            </h2>
-                                        </td>
-                                        <td style="text-align:left; background-color:transparent; color:black">
-                                            <h2>
-                                                {{c.content}}
-                                            </h2>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </h2>
-                        </template>
-                        <!-- 錯誤答案 -->
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 160px" class="center-text content-small">
+                      <p>選</p>
+                      <p>項</p>
+                    </td>
+                    <td>
 
+                      <template v-for="(c, i) in problem.choice">
+                        <span style="display: inline-block;margin-right: 160px; margin-bottom: 45px">
+                          <table>
+                            <tr>
+                              <td :style="{
+                              width: page=='answer'?'64px':'90px',
+                              height:  page=='answer'?'64px':'90px',
+                              borderRadius: '90px',
+                              color: page=='answer'&amp;&amp;!problemc.answer.value.match(c.value)? '#757575':'white',
+                              backgroundColor: page=='answer'&amp;&amp;!problemc.answer.value.match(c.value)? 'transparent':['red','orange','green','blue','purple','brown'][i]||'black'
+                          }">
+                                <p :class="{
+                                  'center': true,
+                                  'content-mid': page!='answer',
+                                  'content-mids': page=='answer',
+                              }">
+                                  {{c.value}}
+                                </p>
+
+                              </td>
+                              <td style="width:60px; position: relative">
+                                <template v-if="!round.usebutton">
+                                  <p v-if="page=='answer'" class="content-small" style="bottom: 0px; right:4px; position: absolute;">
+                                    <template v-if="answerResult instanceof Array">
+                                      {{ answerResult.filter(x=>x.value==c.value).length}} 組
+                                    </template>
+                                  </p>
+                                </template>
+                              </td>
+                              <td style="text-align:left; vertical-align: middle; background-color:transparent;">
+                                <p :class="{
+                                  'content-mid': page!='answer',
+                                  'content-mids': page=='answer'
+                              }" :style="{
+                                color:  page=='answer'&amp;&amp;!problemc.answer.value.match(c.value)? '#757575': null
+                              }">
+                                  {{c.content}}
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        </span>
+                      </template>
+                    </td>
+                  </tr>
+
+                  <tr v-if="page=='answer'">
+                    <td style="width: 160px" class="center-text content-small">
+                      <p>解</p>
+                      <p>析</p>
+                    </td>
+                    <td>
+                      <p class="content-small">
+                        {{problemc.answer.description}}
+                      </p>
+                    </td>
+                    <td style="width: 40px">
+
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td style="width: 320px; position: relative;" class="bg-dark">
+                <table class="full">
+                  <tr style="height: 90px">
+                  </tr>
+                  <tr style="height: 180px">
+                    <td>
+                      <p class="title center-text text-primary">
+                        第 {{problem.no+1}} 題
+                      </p>
+                      <p class="content-small center-text text-light">
+                        共 {{roundc.problems.length}} 題 |
+                        <span @click="goRound()" class="clickable">
+                          返回場次
+                        </span>
+                      </p>
+                    </td>
+                  </tr>
+                  <!-- 選擇題階段 側邊欄 -->
+                  <template v-if="!round.usebutton">
+                    <tr style="height: 270px">
+                      <td class="center-text text-primary">
+                        <span class="title-big ">{{problem.score}}</span>
+                        <span class="title-small">
+                          分
+                        </span>
+                      </td>
+                    </tr>
+                    <tr style="height: 270px">
+                      <td class="center-text text-light">
                         <template v-if="page=='answer'">
-
-                            <hr key="hr">
-                            <template v-for="(c, i) in problem.choice">
-                                <h3 style="display:inline-block; margin:16px; position:relative" :key="i+':'+problem.no" v-if="problemc.answer.value.indexOf(c.value)==-1">
-                                    <cir w="32px" c="white" bc="gray">
-                                        {{c.value}}
-                                    </cir>
-                                    {{c.content}}
-                                </h3>
-                            </template>
+                          <template v-if="hasNextProblem">
+                            <span class="btn-rect clickable bg-primary text-light" @click="nextProblem()">
+                              <div class="center title-small" style="line-height: 46px">
+                                <div> 繼 續 </div>
+                                <div> 下 題 </div>
+                              </div>
+                            </span>
+                          </template>
+                          <template v-else-if="hasNextRound">
+                            <span class="btn-rect clickable bg-primary text-light" @click="nextRound()">
+                              <div class="center title-small" style="line-height: 46px">
+                                <div> 下 個 </div>
+                                <div> 階 段 </div>
+                              </div>
+                            </span>
+                          </template>
+                        </template>
+                        <template v-else-if="racestart==-1">
+                          <p class="title-small">
+                            作答時間
+                          </p>
+                          <span :style="{
+                            color: (problemTime_second&lt;4)?'red':'white'
+                        }">
+                            <span class="title-big ">{{problemTime_text_big}}</span>
+                            <span class="title-small">
+                              {{problemTime_text_small}}
+                            </span>
+                          </span>
+                        </template>
+                        <template v-else-if="problemTime_isBegin">
+                          <p class="title-small">
+                            剩餘時間
+                          </p>
+                          <span :style="{
+                            color: (problemTime_second&lt;4)?'red':'white'
+                        }">
+                            <span class="title-big ">{{problemTime_text_big}}</span>
+                            <span class="title-small">
+                              {{problemTime_text_small}}
+                            </span>
+                          </span>
                         </template>
 
-                    </transition-group>
-                    <hr>
 
-                    <!-- 解析 -->
-                    <template v-if="page=='answer'">
-                        <h3 style="color:orange">解析</h3>
-
-                        <h3>{{problemc.answer.description}}</h3>
-                        <template v-if="!round.usebutton">
-                            <h2>
-                                答對人數{{answerResult.filter(x=>x.correct).length}}/{{answerResult.length}}
-                            </h2>
+                      </td>
+                    </tr>
+                    <tr style="height: 270px">
+                      <td class="center-text text-primary">
+                        <template v-if="page=='answer'">
+                          <span class="title-big ">{{answerResult.filter(x=>x.correct).length}}</span>
+                          <span class="title-small">
+                            / {{answerResult.length}}
+                          </span>
+                          <p class="title-small">
+                            答對
+                          </p>
                         </template>
-                    </template>
+                        <template v-else-if="racestart==-1">
 
-                    <!-- 搶答器 -->
-                    <template v-if="round.usebutton&amp;&amp;page!='answer'">
-                        <template v-if="racestart!=0||races.length==0">
-                            <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
-                            <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
+                          <!-- answer button for 選擇題 -->
+                          <span class="btn-rect clickable bg-primary text-light" @click="problemStart(0, 1)">
+                            <div class="center title-small" style="line-height: 46px">
+                              <div> 開 始 </div>
+                              <div> 作 答 </div>
+                            </div>
+                          </span>
+
                         </template>
+                        <template v-else-if="races.length==players.length">
+                          <span class="btn-rect clickable bg-light" @click="answer(1)">
+                            <div class="center title-small" style="line-height: 46px">
+                              <div> 答 案 </div>
+                              <div> 揭 曉 </div>
+                            </div>
+                          </span>
+                        </template>
+                        <template v-else>
 
-                        <!-- race teams -->
-                        <div v-if="racestart==0">
+                          <span class="title-big ">{{races.length}}</span>
+                          <span class="title-small">
+                            / {{players.length}}
+                          </span>
+                          <p class="title-small">
+                            已作答
+                          </p>
+                        </template>
+                      </td>
+                    </tr>
+                  </template>
+                  <!-- 搶答題階段 側邊欄 -->
+                  <template v-else>
+
+
+                    <tr style="height: 180px;">
+                      <td class="center-text text-light">
+                        <!-- answer button for 搶答 -->
+                        <template v-if="racestart==-1">
+                          <span class="btn-rect clickable bg-primary" @click="problemStart(3000, 2)">
+                            <div class="center title-small" style="line-height: 46px">
+                              <div> 開 始 </div>
+                              <div> 搶 答 </div>
+                            </div>
+                          </span>
+                        </template>
+                        <template v-else>
+                          <p class="title-small" @click="problemStart(3000, 2)">
+                            重新搶答
+                          </p>
+                        </template>
+                      </td>
+                    </tr>
+
+
+
+                    <tr style="height: 630px; overflow: scroll;">
+                      <td class="center-text text-light">
+                        <template v-if="page=='answer'">
+                          <template v-if="hasNextProblem">
+                            <span class="btn-rect clickable bg-primary text-light" @click="nextProblem()">
+                              <div class="center title-small" style="line-height: 46px">
+                                <div> 繼 續 </div>
+                                <div> 下 題 </div>
+                              </div>
+                            </span>
+                          </template>
+                          <template v-else-if="hasNextRound">
+                            <span class="btn-rect clickable bg-primary text-light" @click="nextRound()">
+                              <div class="center title-small" style="line-height: 46px">
+                                <div> 下 個 </div>
+                                <div> 階 段 </div>
+                              </div>
+                            </span>
+                          </template>
+                        </template>
+                        <template v-else>
+
+                          <template v-if="racestart==0">
                             <template v-if="page!='answer2'">
-                                <h3 v-for="(r,i) in races.slice(0,4)">
-                                    第 {{i+1}} 位：
-                                    <button :class="{main:i==0}" @click="answerTeam=r; page='answer2'">
-                                        第{{r.no+1}}組
-                                    </button>
-                                    <small> 速度 {{r.time}} ms</small>
+                              <template v-for="(r,i) in races.slice(0,4)">
+                                <p class="content-small"> 第 {{i+1}} 位： {{r.time}} ms</p>
+                                <h3>
+                                  <button :class="{main:i==0}" @click="answerTeam=r; page='answer2'">
+                                    第{{r.no+1}}組
+                                  </button>
                                 </h3>
+                              </template>
                             </template>
                             <!-- 回答 -->
                             <template v-else>
-                                <h2>
-                                    第{{answerTeam.no+1}}組
-                                    <small style="color:orange">請回答</small>
-                                </h2>
-                                <hr>
-                                <h2>
-                                    <button style="background:green; color:white" @click="answerCorrect(answerTeam.no)">
-                                        正解
-                                    </button>
-                                    <button style="background:red; color:white" @click="page='problem'">
-                                        錯誤
-                                    </button>
-                                </h2>
+                              <h2>
+                                第{{answerTeam.no+1}}組
+                                <small style="color:orange">請回答</small>
+                              </h2>
+                              <hr>
+                              <h2>
+                                <button style="background:green; color:white" @click="answerCorrect(answerTeam.no)">
+                                  正解
+                                </button>
+                                <button style="background:red; color:white" @click="page='problem'">
+                                  錯誤
+                                </button>
+                              </h2>
                             </template>
-                        </div>
-
-
-
-                    </template>
-
-                    <template v-else-if="page=='racestart'">
-                        <span :style="{
-                                fontSize: '5em',
-                                color: (problemc.timeout - problemTime/1000&lt;4)?'red':'green'
-                            }">
-                            {{Math.floor(problemc.timeout - problemTime/1000)}}
-                            <small>
-                                . {{((problemc.timeout - (problemTime+0.1)/1000)%1).toString().substr(2,1)}} 秒
-                            </small>
-
-                        </span>
-                        <span style="position: absolute; left:300px">
-                            <h2>
-                                {{races.length}} / {{players.length}} 組已作答
-                            </h2>
-                        </span>
-                    </template>
-
-                </div>
-            </div>
-
-            <div class="slide" key="answer" v-if="page=='score'">
-
-                <div class="center">
-                    <button @click="goRound()">返回場次</button>
-                    <table style="position:relative; left:50%; transform:translate(-50%,0)">
-                        <thead>
-                            <tr>
-                                <td rowspan="2">
-                                    <h3>隊伍</h3>
-                                </td>
-                                <td rowspan="2">
-                                    <h3>總分</h3>
-                                </td>
-
-                                <template v-for="round in content.rounds">
-                                    <td colspan="2">
-                                        <h3>
-                                            {{round.name}}
-                                        </h3>
-                                    </td>
-                                </template>
-                            </tr>
-                            <tr>
-                                <template v-for="round in content.rounds">
-                                    <td>
-                                        得分
-                                    </td>
-                                    <td>
-                                        時間
-                                    </td>
-                                </template>
-                            </tr>
-                        </thead>
-                        <template v-for="(team,i) in rank.all">
-                            <tr :class="{
-                                    first: team.rank==0,
-                                    second: team.rank==1,
-                                    third: team.rank==2,
-                                    same: team.type==1,
-                                    out: team.round&lt;round
-                                }">
-                                <td class="number" style="width:auto; font-size:1em">
-                                    <h2>
-                                        {{team.name}}
-                                    </h2>
-                                </td>
-                                <td>
-                                    <h2>
-                                        {{team.score}} 分
-                                    </h2>
-                                </td>
-                                <template v-for="(round,no) in content.rounds">
-                                    <template v-if="team.round>=no">
-
-                                        <td>
-                                            {{isNaN(team.scores[no])?'':team.scores[no]+' 分'}}
-                                        </td>
-                                        <td :title="team.time[no]">
-                                            {{isNaN(team.time[no])?'':Math.round(team.time[no])+' ms'}}
-                                        </td>
-                                    </template>
-                                </template>
-                            </tr>
-
+                          </template>
                         </template>
-                    </table>
-                    <button @click="goRound()">返回場次</button>
-                    <button style="color:red" @click="logout()">結束比賽</button>
+                      </td>
+                    </tr>
+                  </template>
+
+
+                </table>
+                <div class="fx-countdown-wrapper">
+                  <transition name="countdown">
+                    <p v-if="racestart==3000 &amp;&amp;round.usebutton" class="fx-countdown">
+                      3
+                    </p>
+                  </transition>
+                  <transition name="countdown">
+                    <p v-if="racestart==2000&amp;&amp;round.usebutton" class="fx-countdown">
+                      2
+                    </p>
+                  </transition>
+                  <transition name="countdown">
+                    <p v-if="racestart==1000&amp;&amp;round.usebutton" class="fx-countdown">
+                      1
+                    </p>
+                  </transition>
+                  <template v-if="racestart==0&amp;&amp;round.usebutton">
+
+
+                  </template>
+
                 </div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- button part -->
+          <div class="dright">
+            <template v-if="round.usebutton">
+
+              <fbtn r="1" :class="{main:races.length>0}" @click="answer(2)">答案揭曉</fbtn>
+              <!-- answer button for 搶答 -->
+            </template>
+          </div>
+        </div>
+
+        <div class="slide" key="scorboard" v-if="page=='score'">
+
+          <div class="center-text">
+            <button @click="goRound()">返回場次</button>
+            <table class="table-space" style="position:relative; left:50%; transform:translate(-50%,0)">
+              <thead>
+                <tr>
+                  <td rowspan="2">
+                    <h3>隊伍</h3>
+                  </td>
+                  <td rowspan="2">
+                    <h3>總分</h3>
+                  </td>
+
+                  <template v-for="round in content.rounds">
+                    <td colspan="2">
+                      <h3>
+                        {{round.name}}
+                      </h3>
+                    </td>
+                  </template>
+                </tr>
+                <tr>
+                  <template v-for="round in content.rounds">
+                    <td>
+                      得分
+                    </td>
+                    <td>
+                      時間
+                    </td>
+                  </template>
+                </tr>
+              </thead>
+              <template v-for="(team,i) in rank.all">
+                <tr :class="{
+                    first: team.rank==0,
+                    second: team.rank==1,
+                    third: team.rank==2,
+                    same: team.type==1,
+                    out: team.round&lt;round
+                }">
+                  <td class="number" style="width:auto; font-size:1em">
+                    <h2>
+                      {{team.name}}
+                    </h2>
+                  </td>
+                  <td>
+                    <h2>
+                      {{team.score}} 分
+                    </h2>
+                  </td>
+                  <template v-for="(round,no) in content.rounds">
+                    <template v-if="team.round>=no">
+
+                      <td>
+                        {{isNaN(team.scores[no])?'':team.scores[no]+' 分'}}
+                      </td>
+                      <td :title="team.time[no]">
+                        {{isNaN(team.time[no])?'':Math.round(team.time[no])+' ms'}}
+                      </td>
+                    </template>
+                  </template>
+                </tr>
+
+              </template>
+            </table>
+            <button @click="goRound()">返回場次</button>
+            <button style="color:red" @click="logout()">結束比賽</button>
+          </div>
 
 
-            </div>
+        </div>
 
-            <!--
-                <div class="slide back" key="background">
-                    <div class="center" v-if="page=='problem'||page=='racestart'">
-                        <br>
-                        <h1 v-if="racestart>0" class="bb">{{racestart/1000}}</h1>
-                        <h1 v-if="racestart==0" class="bb" style="color:lightGreen">GO</h1>
-                    </div>
-                </div>
+      </transition-group>
 
-                <div class="slide back" key="background" style="overflow:hidden">
-                    <score :teams="rank.all" :round="round.no" :debug="debug" v-if="page!='score'"></score>
-                </div>
-            -->
+    </template>
+  </div>
 
+  <script src=" /dist/play.js "></script>
+  <script>
 
-        </template>
-    </div>
-
-    <script src=" /dist/play.js "></script>
-    <script>
-
-    </script>
+  </script>
 </body>
 
 </html>

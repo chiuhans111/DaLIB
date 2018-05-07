@@ -94,6 +94,7 @@ var app = new Vue({
             problemTimestamp = new Date().getTime();
             raceCountDown = race;
         },
+
         nextProblem() {
             play.emit('problem', this.problem.no + 1);
             raceCountDown = -1;
@@ -115,7 +116,9 @@ var app = new Vue({
                     message: '',
                     score: this.problemc.score,
                     time: x.time,
+                    value: x.answer,
                     record: ({
+                        value: x.answer,
                         round: this.round.no,
                         problem: this.problem.no,
                         time: x.time,
@@ -180,7 +183,42 @@ var app = new Vue({
             return this.roundc.problems[this.problem.no]
         },
 
-        
+
+        problemTime_second() {
+            if (this.racestart == -1) return this.problemc.timeout;
+            else return this.problemc.timeout - this.problemTime / 1000
+        },
+        problemTime_isBegin() {
+            return this.problemTime / 1000 < this.problemc.timeout
+
+        },
+
+
+        problemTime_format() {
+            var time = this.problemTime_second
+            var centi = Math.floor(time * 10) % 10;
+            var sec = Math.floor(time) % 60;
+            var min = Math.floor(time / 60) % 60;
+            var hour = Math.floor(time / 60 / 60) % 60;
+            var unit = 'sec';
+            if (min > 0) unit = 'min'
+            if (hour > 0) unit = 'hour'
+            return {
+                centi, sec, min, hour, unit
+            }
+        },
+        problemTime_text_big() {
+            var time = this.problemTime_format
+            if (time.unit == 'hour') return time.hour
+            if (time.unit == 'min') return time.min
+            if (time.unit == 'sec') return time.sec
+        },
+        problemTime_text_small() {
+            var time = this.problemTime_format
+            if (time.unit == 'hour') return ':' + time.min + '分鐘'
+            if (time.unit == 'min') return ':' + time.sec + '秒'
+            if (time.unit == 'sec') return '.' + time.centi + '秒'
+        },
         rank() {
             var teams = [];
             try {
