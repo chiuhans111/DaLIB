@@ -434,16 +434,19 @@
 
               <td colspan="3" class="align-right" style="position: relative;">
                 <p class="title-mid text-primary">
-                  第 {{round.no+1}} 輪
+                  階段 {{round.no+1}}
                 </p>
                 <div class="align-bottom align-right">
                   <template v-if="round.usebutton">
-                    <p class="content-small"> 請準備好搶答按鈕 </p>
-                    <p class="content-small"> 顯示請搶答即可搶答 </p>
+                    <p class="content-small">準備好
+                      <strong>搶答按鈕</strong>
+                    </p>
+                    <p class="content-small">顯示請搶答即可搶答</p>
                   </template>
                   <template v-else>
-                    <p class="content-small"> 當開始作答後 </p>
-                    <p class="content-small"> 請在時間內作答完畢 </p>
+                    <p class="content-small">當開始作答後</p>
+                    <p class="content-small">請在
+                      <strong>時間內</strong> 作答完畢 </p>
                   </template>
                 </div>
               </td>
@@ -643,7 +646,7 @@
                       <p>析</p>
                     </td>
                     <td>
-                      <p class="content-small">
+                      <p class="content-mids">
                         {{problemc.answer.description}}
                       </p>
                     </td>
