@@ -3,7 +3,7 @@ import './mainStyle.css'
 
 import cir from './play/cir.vue';
 import answer from './play/answer.vue';
-import score from './play/score.vue';
+// import score from './play/score.vue';
 import slides from './play/slides.vue';
 import fbtn from './play/fbtn.vue';
 
@@ -16,7 +16,7 @@ import { teamRound } from '../server/socket/round/actions';
 
 Vue.component('cir', cir);
 Vue.component('answer', answer);
-Vue.component('score', score);
+// Vue.component('score', score);
 Vue.component('slides', slides);
 Vue.component('fbtn', fbtn);
 
@@ -84,6 +84,8 @@ var app = new Vue({
             });
 
             raceCountDown = -1;
+            onProblemTimeout = null;
+
             play.emit('round', round);
         },
         problemStart(race, type) {
@@ -98,6 +100,7 @@ var app = new Vue({
         nextProblem() {
             play.emit('problem', this.problem.no + 1);
             raceCountDown = -1;
+            onProblemTimeout = null;
         },
         nextRound() {
             this.goRound(this.round.no + 1);
@@ -132,6 +135,8 @@ var app = new Vue({
 
 
             this.page = 'answer';
+            raceCountDown = -1;
+            onProblemTimeout = null;
         },
         answerCorrect() {
             play.emit('answer', [

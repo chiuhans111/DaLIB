@@ -13,34 +13,48 @@
 <style>
   p,
   td {
-    transition: all 0.3s;
-    transition-delay: 0;
+    transition: all 0.2s;
+    transition-delay: 0s;
   }
 
   .first>.number {
-    border-left: solid 16px gold;
+    border-left: solid 16px orange;
     font-size: 64px;
     width: 120px;
   }
 
   .second>.number {
-    border-left: solid 16px silver;
+    border-left: solid 16px #212121;
     font-size: 36px;
     width: 110px;
   }
 
   .third>.number {
-    border-left: solid 16px coral;
+    border-left: solid 16px silver;
     font-size: 32px;
     width: 100px;
   }
 
   .table-space td {
-    padding: 8px;
+    padding: 8px 32px;
     vertical-align: middle;
+    font-size: 2em;
+    text-align: center;
   }
 
-  .table-space: .center {
+  .table-space tbody tr:nth-child(2n) {
+    background-color: #fafafa
+  }
+
+  .table-space tbody tr:nth-child(2n+1) {
+    background-color: white
+  }
+
+  .rborder {
+    border-right: solid 1px gray;
+  }
+
+  .center {
     margin: 0px;
     position: relative;
     display: block;
@@ -479,27 +493,30 @@
                     </span>
                   </template>
                 </p>
-                <p>同分者以速度取勝</p>
+                <p class="content-small">同分者以速度取勝</p>
               </td>
               <td colspan="1">
 
               </td>
               <td colspan="5">
-                <p class="title-small text-primary">
-                  參賽隊伍
-                </p>
-                <template v-for="team in state.teams">
-                  <span :class="{
-                                    circle: true,
-                                    'circle-offline': !team.online,
-                                    'circle-online': team.online,
-                                    'circle-kick': team.round&lt;round.no
-                                }">
-                    <span class="center">
-                      {{team.no+1}}
+                <div style="margin-right: 32px">
+
+                  <p class="title-small text-primary">
+                    參賽隊伍
+                  </p>
+                  <template v-for="team in state.teams">
+                    <span :class="{
+                      circle: true,
+                      'circle-offline': !team.online,
+                      'circle-online': team.online,
+                      'circle-kick': team.round&lt;round.no
+                    }">
+                      <span class="center">
+                        {{team.no+1}}
+                      </span>
                     </span>
-                  </span>
-                </template>
+                  </template>
+                </div>
               </td>
               <td colspan="2">
                 <span class="btn-rect clickable bg-light" @click="page='score'">
@@ -559,9 +576,18 @@
                     </td>
                   </tr>
                   <tr>
-                    <td style="width: 160px" class="center-text content-small">
-                      <p>選</p>
-                      <p>項</p>
+                    <td :style="{
+                      width: '160px',
+                      color: page=='answer'?'lightgreen':null
+                    }" class="center-text content-small">
+                      <template v-if="page=='answer'">
+                        <p>正</p>
+                        <p>解</p>
+                      </template>
+                      <template>
+                        <p>選</p>
+                        <p>項</p>
+                      </template>
                     </td>
                     <td>
 
@@ -872,7 +898,7 @@
             <table class="table-space" style="position:relative; left:50%; transform:translate(-50%,0)">
               <thead>
                 <tr>
-                  <td rowspan="2">
+                  <td rowspan="2" class="rborder">
                     <h3>隊伍</h3>
                   </td>
                   <td rowspan="2">
@@ -881,9 +907,7 @@
 
                   <template v-for="round in content.rounds">
                     <td colspan="2">
-                      <h3>
-                        {{round.name}}
-                      </h3>
+                      <h3>{{round.name.trim()}}</h3>
                     </td>
                   </template>
                 </tr>
@@ -898,38 +922,49 @@
                   </template>
                 </tr>
               </thead>
-              <template v-for="(team,i) in rank.all">
-                <tr :class="{
+              <tbody>
+
+                <template v-for="(team,i) in rank.all">
+                  <tr :class="{
                     first: team.rank==0,
                     second: team.rank==1,
                     third: team.rank==2,
                     same: team.type==1,
                     out: team.round&lt;round
                 }">
-                  <td class="number" style="width:auto; font-size:1em">
-                    <h2>
-                      {{team.name}}
-                    </h2>
-                  </td>
-                  <td>
-                    <h2>
-                      {{team.score}} 分
-                    </h2>
-                  </td>
-                  <template v-for="(round,no) in content.rounds">
-                    <template v-if="team.round>=no">
+                    <td class="number rborder" style="position:relative; width :auto; font-size:1em">
+                      <img height="64px" v-if="team.rank==0" style="
+                        position: absolute; 
+                        left: -96px; 
+                        top: 50%;
+                        transform:translate(0, -50%);
+                      " src="./assets/win.svg" alt="">
 
-                      <td>
-                        {{isNaN(team.scores[no])?'':team.scores[no]+' 分'}}
-                      </td>
-                      <td :title="team.time[no]">
-                        {{isNaN(team.time[no])?'':Math.round(team.time[no])+' ms'}}
-                      </td>
+                      <p class="title-small">
+                        {{team.name}}
+                      </p>
+                    </td>
+                    <td>
+                      <h2>
+                        {{team.score}}
+                        <span class="title-small">分</span>
+                      </h2>
+                    </td>
+                    <template v-for="(round,no) in content.rounds">
+                      <template v-if="team.round>=no">
+
+                        <td>
+                          {{isNaN(team.scores[no])?'':team.scores[no]+' 分'}}
+                        </td>
+                        <td :title="team.time[no]">
+                          {{isNaN(team.time[no])?'':Math.round(team.time[no])+' ms'}}
+                        </td>
+                      </template>
                     </template>
-                  </template>
-                </tr>
+                  </tr>
 
-              </template>
+                </template>
+              </tbody>
             </table>
             <button @click="goRound()">返回場次</button>
             <button style="color:red" @click="logout()">結束比賽</button>
