@@ -1,11 +1,10 @@
-# catching ups
+# Quick Start
 * `node app.js` run main server
-* `npm run dev` to launch webpack dev server
 * `npm run build` to build every thing
+* `npm run dev` to launch webpack dev server
 
 **mongodb is required**
 change db url at ./server/data/base.js
-
 
 # TODO 2017 11/17
 - [x] 成績表格
