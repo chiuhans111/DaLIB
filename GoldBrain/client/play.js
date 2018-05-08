@@ -3,7 +3,7 @@ import './mainStyle.css'
 
 import cir from './play/cir.vue';
 import answer from './play/answer.vue';
-import score from './play/score.vue';
+// import score from './play/score.vue';
 import slides from './play/slides.vue';
 import fbtn from './play/fbtn.vue';
 
@@ -16,7 +16,7 @@ import { teamRound } from '../server/socket/round/actions';
 
 Vue.component('cir', cir);
 Vue.component('answer', answer);
-Vue.component('score', score);
+// Vue.component('score', score);
 Vue.component('slides', slides);
 Vue.component('fbtn', fbtn);
 
@@ -26,6 +26,17 @@ var onProblemTimeout;
 
 var timestamp = 0;
 
+
+var audio = {
+    countdown: new Audio('./audio/countdown.mp3'),
+    answer: new Audio('./audio/answer.mp3')
+}
+
+audio.countdown.targetvolume = 0.5;
+audio.countdown.volume = 0;
+
+audio.answer.targetvolume = 0.5;
+audio.answer.loop = true;
 
 function update() {
     var now = new Date().getTime();
@@ -42,20 +53,43 @@ function update() {
         }
     }
 
+    // auto volume control
+    for (var i in audio) audio[i].volume += (audio[i].targetvolume - audio[i].volume) * 0.03;
+
     // countdown for problems
     if (onProblemTimeout instanceof Function) {
         data.problemTime = now - problemTimestamp;
+
+        // audio
+        audio.countdown.targetvolume = 0.5;
+        var targetTime = audio.countdown.duration - app.problemc.timeout + data.problemTime / 1000;
+        if (Math.abs(targetTime - audio.countdown.currentTime) > 0.1)
+            audio.countdown.currentTime = targetTime;
+        audio.countdown.play()
+        // audio end
+
         if (data.problemTime / 1000 >= app.problemc.timeout) {
             console.log("timesup!");
             onProblemTimeout();
             onProblemTimeout = null;
+            audio.countdown.pause();
+            audio.countdown.volume = 0;
         }
+    } else {
+        // audio
+        audio.countdown.targetvolume = 0;
     }
 
+    if (app.page == 'answer') {
+        audio.answer.play();
+        audio.answer.targetvolume = 0.5;
+    } else {
+        audio.answer.targetvolume = 0;
+    }
 
     requestAnimationFrame(update);
 }
-update();
+
 play.login();
 
 // mixins to the play data
@@ -84,6 +118,8 @@ var app = new Vue({
             });
 
             raceCountDown = -1;
+            onProblemTimeout = null;
+
             play.emit('round', round);
         },
         problemStart(race, type) {
@@ -94,9 +130,11 @@ var app = new Vue({
             problemTimestamp = new Date().getTime();
             raceCountDown = race;
         },
+
         nextProblem() {
             play.emit('problem', this.problem.no + 1);
             raceCountDown = -1;
+            onProblemTimeout = null;
         },
         nextRound() {
             this.goRound(this.round.no + 1);
@@ -115,7 +153,9 @@ var app = new Vue({
                     message: '',
                     score: this.problemc.score,
                     time: x.time,
+                    value: x.answer,
                     record: ({
+                        value: x.answer,
                         round: this.round.no,
                         problem: this.problem.no,
                         time: x.time,
@@ -129,6 +169,8 @@ var app = new Vue({
 
 
             this.page = 'answer';
+            raceCountDown = -1;
+            onProblemTimeout = null;
         },
         answerCorrect() {
             play.emit('answer', [
@@ -180,7 +222,42 @@ var app = new Vue({
             return this.roundc.problems[this.problem.no]
         },
 
-        
+
+        problemTime_second() {
+            if (this.racestart == -1) return this.problemc.timeout;
+            else return this.problemc.timeout - this.problemTime / 1000
+        },
+        problemTime_isBegin() {
+            return this.problemTime / 1000 < this.problemc.timeout
+
+        },
+
+
+        problemTime_format() {
+            var time = this.problemTime_second
+            var centi = Math.floor(time * 10) % 10;
+            var sec = Math.floor(time) % 60;
+            var min = Math.floor(time / 60) % 60;
+            var hour = Math.floor(time / 60 / 60) % 60;
+            var unit = 'sec';
+            if (min > 0) unit = 'min'
+            if (hour > 0) unit = 'hour'
+            return {
+                centi, sec, min, hour, unit
+            }
+        },
+        problemTime_text_big() {
+            var time = this.problemTime_format
+            if (time.unit == 'hour') return time.hour
+            if (time.unit == 'min') return time.min
+            if (time.unit == 'sec') return time.sec
+        },
+        problemTime_text_small() {
+            var time = this.problemTime_format
+            if (time.unit == 'hour') return ':' + time.min + '分鐘'
+            if (time.unit == 'min') return ':' + time.sec + '秒'
+            if (time.unit == 'sec') return '.' + time.centi + '秒'
+        },
         rank() {
             var teams = [];
             try {
@@ -275,3 +352,4 @@ if (location.href.match(/\?skip/)) app.go();
 
 
 document.body.hidden = false;
+update();
