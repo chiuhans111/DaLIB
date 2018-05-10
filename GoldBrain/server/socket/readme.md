@@ -85,8 +85,9 @@ paht: `/round`
 ### info
 ``` javascript
 {
-  content: String // html code
+  content: String // plain text
   backgroundColor: String // hex code #FFFFFF
+  description: String // plain text, newline with '\n'
 }
 ```
 
@@ -114,36 +115,3 @@ paht: `/round`
   }
 ]
 ```
-
-
-### state old
-``` javascript
-{
-  page: String // "round", "problem", "race", "info".  the current page need to be show
-  round: {
-    no: Number // round id
-    title: String
-    usebutton: Boolean // require physical button
-  }
-  problem: {  // current problem, could be null if problem have not set yet
-    no: Number // problem id
-    info: {
-      title: String // problem title
-      choice: [{ // array, or null if this is not a choice problem
-        value: String // A, B, C.... the id of the choice
-        content: String // the content of the choice
-      }]
-    }
-  }
-  info:{ // is info page is showing
-    content: String // html code
-    backgroundColor: String // hex code #FFFFFF
-  }
-  team: Number // my team number
-  teams: [{ // array of teams
-    name: String
-    no: Number // team id
-    score: Number
-    online: Boolean
-  }]
-}
