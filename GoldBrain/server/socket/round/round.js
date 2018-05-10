@@ -152,8 +152,9 @@ function Round(contest, viewKey, io) {
 
 
                 socket.emit(actions.showinfo, {
-                    content: '請嘗試5秒後重新登入，並確保無其他登入中的裝置，',
-                    backgroundColor: colors.error
+                    content: '只允許一台裝置登入',
+                    backgroundColor: colors.error,
+                    description: '目前有其他裝置登入中，\n若要使用這台裝置登入，請先登出其他裝置。'
                 });
                 socket.removeAllListeners();
                 return true;
@@ -162,8 +163,9 @@ function Round(contest, viewKey, io) {
 
             if (team.round < me.state.round) {
                 socket.emit(actions.showinfo, {
-                    content: 'QQ 你已經被淘汰了',
-                    backgroundColor: colors.error
+                    content: '您已被淘汰了..',
+                    backgroundColor: colors.error,
+                    description: `這個階段只允許${me.contest.rounds[me.state.round].players}組參賽，\n您的排名不足以參加這場比賽。`
                 });
                 socket.disconnect();
                 return true;
@@ -203,8 +205,9 @@ function Round(contest, viewKey, io) {
                     return;
                 } else if (me.state.page == 'answered') {
                     socket.emit(actions.showinfo, {
-                        content: "歡迎回來，請稍後將您加入比賽",
-                        backgroundColor: colors.ok
+                        content: "歡迎回來",
+                        backgroundColor: colors.ok,
+                        description: '由於已經公布答案，我們將在這題結束後自動將您加入比賽。'
                     })
                 }
             })();
@@ -273,7 +276,7 @@ function Round(contest, viewKey, io) {
 
             //me.state.round = round;
             me.state.problem.no = 0;
-            me.state.problem.info = null;
+            // me.state.problem.info = null;
             var round_info = contest.rounds[round];
             var obj = {
                 no: round,
@@ -302,7 +305,7 @@ function Round(contest, viewKey, io) {
                 title: problem_info.title,
                 choice: problem_info.choice,
                 score: problem_info.score,
-                content: problem_info.content
+                content: problem_info.content,
             }
             me.state.page = 'problem';
             me.state.problem = obj;
@@ -316,6 +319,9 @@ function Round(contest, viewKey, io) {
     this.update = function () {
 
     }
+
+
+    // STATE
 
     /**@type {Array.<type_socket>} */
     this.onlineTeams = {};
@@ -374,8 +380,8 @@ function Round(contest, viewKey, io) {
 
     /**emit state */
     this.state_emit = function () {
-       // console.log('clients:', Object.keys(room_client.sockets));
-       // console.log('members:', Object.keys(room_member.sockets));
+        // console.log('clients:', Object.keys(room_client.sockets));
+        // console.log('members:', Object.keys(room_member.sockets));
         // room_client.emit(actions.state, me.state_any());
         room_member.emit(actions.state, me.state_member());
         me.sendState(room_client.sockets, me.state_any());
@@ -506,7 +512,8 @@ function Round(contest, viewKey, io) {
 
             if (!reply.hidden) team.emit(actions.showinfo, {
                 content: message,
-                backgroundColor: reply.correct ? colors.ok : colors.error
+                backgroundColor: reply.correct ? colors.ok : colors.error,
+                description: '解析\n' + contest.rounds[me.state.round.no].problems[me.state.problem.no].answer.description
             })
         })
 
