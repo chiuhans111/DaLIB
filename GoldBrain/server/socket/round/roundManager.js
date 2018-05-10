@@ -48,8 +48,9 @@ io.then(io => {
                 socket.emit(actions.close, '比賽還沒開始');
 
                 socket.emit(actions.showinfo, {
-                    content: "你的比賽還沒開始，請耐心等候~~",
-                    backgroundColor: "white"
+                    content: "比賽還沒開始",
+                    backgroundColor: "white",
+                    description: "比賽開始後會自動將您登入喔~"
                 })
             }
 

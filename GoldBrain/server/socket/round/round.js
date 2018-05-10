@@ -187,23 +187,36 @@ function Round(contest, viewKey, io) {
             socket.login = true;
             sockets.push(socket);
             // var state = me.state_any();
-            me.sendState(room.sockets, me.state_any());
+            me.state_emit();
+
 
 
 
             // up to date
             (function () {
+
                 socket.emit(actions.race, me.raceTeams);
-                if (me.state.page == '') return;
+
+                if (me.state.page == '') {
+                    socket.emit(actions.showinfo, {
+                        content: "登入成功!",
+                        backgroundColor: colors.ok,
+                        description: '比賽即將開始，您登入的組別是：\n第' + team.no + '組\n'
+                    })
+                    return;
+                }
                 socket.emit(actions.round, me.state.round);
                 if (me.state.page == 'round') return;
                 socket.emit(actions.problem, me.state.problem);
                 if (me.state.page == 'problem') return;
 
+
                 if (me.state.page == 'race') {
                     socket.emit(actions.racestart, Number(me.state.race));
                     return;
-                } else if (me.state.page == 'answered') {
+                }
+
+                if (me.state.page == 'answered') {
                     socket.emit(actions.showinfo, {
                         content: "歡迎回來",
                         backgroundColor: colors.ok,
@@ -217,7 +230,6 @@ function Round(contest, viewKey, io) {
             return false;
         }
 
-        console.log("register disconnect part");
         socket.on('disconnect', () => {
             console.log('some one disconnected');
 
