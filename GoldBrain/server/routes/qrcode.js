@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express.Router();
-var qrcode = require('tool/qrcode');
+var qrcode = require('../data/qrcode');
 module.exports = app;
 
 app.get('/:code', (req, res) => {

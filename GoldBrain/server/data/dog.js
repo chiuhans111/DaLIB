@@ -4,7 +4,7 @@
 // 2. provide key varify method
 
 var express = require('express');
-var crypt = require('tool/crypt');
+var crypt = require('../crypt');
 
 
 exports.keygen = crypt.keygen;

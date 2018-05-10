@@ -6,10 +6,10 @@ var model_contest = require('../../data/models/contest');
 var type_contest = model_contest.type;
 var type_contest_team = new model_contest.type().teams[0];
 
-var crypt = require('tool/crypt');
+var crypt = require('../../crypt');
 
 var actions = require('./actions');
-var colors = require('tool/colors');
+var colors = require('./colors');
 
 var ranking = require('../../../client/play/ranking.js');
 

@@ -2,7 +2,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 
 var ObjectID = require("mongodb").ObjectID;
-var dog = require('tool/dog');
+var dog = require('../dog');
 
 var model = require('../models/contest.js');
 
