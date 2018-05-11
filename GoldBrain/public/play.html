@@ -825,7 +825,7 @@
 
                           <template v-if="racestart==0">
                             <template v-if="page!='answer2'">
-                              <template v-for="(r,i) in races.slice(0,4)">
+                              <template v-for="(r,i) in races">
                                 <p class="content-small"> 第 {{i+1}} 位： {{r.time}} ms</p>
                                 <h3>
                                   <button :class="{main:i==0}" @click="answerTeam=r; page='answer2'">
