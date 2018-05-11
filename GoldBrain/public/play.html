@@ -825,10 +825,10 @@
 
                           <template v-if="racestart==0">
                             <template v-if="page!='answer2'">
-                              <template v-for="(r,i) in races">
+                              <template v-for="(r,i) in races.slice(0, 5)">
                                 <p class="content-small"> 第 {{i+1}} 位： {{r.time}} ms</p>
                                 <h3>
-                                  <button :class="{main:i==0}" @click="answerTeam=r; page='answer2'">
+                                  <button :class="{main:i==0}" @click="raceAnswerStart(r)">
                                     第{{r.no+1}}組
                                   </button>
                                 </h3>
@@ -845,10 +845,21 @@
                                 <button style="background:green; color:white" @click="answerCorrect(answerTeam.no)">
                                   正解
                                 </button>
-                                <button style="background:red; color:white" @click="page='problem'">
-                                  錯誤
+                                <button style="background:red; color:white" @click="raceAnswerBack()">
+                                  返回
                                 </button>
                               </h2>
+                              <p class="title-small">
+                                剩餘時間
+                              </p>
+                              <span :style="{
+                                  color: (problemTime_second&lt;4)?'red':'white'
+                              }">
+                                <span class="title-big ">{{problemTime_text_big}}</span>
+                                <span class="title-small">
+                                  {{problemTime_text_small}}
+                                </span>
+                              </span>
                             </template>
                           </template>
                         </template>

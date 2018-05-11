@@ -123,14 +123,31 @@ var app = new Vue({
             play.emit('round', round);
         },
         problemStart(race, type) {
-            if (type == 1)
+            if (type == 1) {
                 onProblemTimeout = function () {
                     app.answer(type);
                 }
-            problemTimestamp = new Date().getTime();
+                problemTimestamp = new Date().getTime();
+            }
             raceCountDown = race;
         },
 
+        // for race answer team
+        raceAnswerStart(team) {
+            this.answerTeam = team;
+            this.page = 'answer2';
+            var target = this;
+            onProblemTimeout = function () {
+                target.raceAnswerBack()
+            }
+            problemTimestamp = new Date().getTime();
+        },
+        raceAnswerBack() {
+            this.page = "problem";
+            onProblemTimeout = null;
+        },
+
+        // bas
         nextProblem() {
             play.emit('problem', this.problem.no + 1);
             raceCountDown = -1;
@@ -229,7 +246,6 @@ var app = new Vue({
         },
         problemTime_isBegin() {
             return this.problemTime / 1000 < this.problemc.timeout
-
         },
 
 
