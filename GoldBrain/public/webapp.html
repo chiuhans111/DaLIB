@@ -27,7 +27,7 @@
 			</v-toolbar>
 
 			<v-content>
-				<v-container fluid>
+				<v-container fluid :style="{backgroundColor: page=='info'?info.backgroundColor:'white'}">
 					<v-layout>
 						<v-flex xs12 align-center justify-center wrap>
 
@@ -75,11 +75,16 @@
 								</div>
 							</template>
 							<template v-else-if="page=='info' ">
-								<v-card :color="(page=='info' ?info.backgroundColor: 'white') " :style="{color:info.backgroundColor=='white'?'black':'white'} ">
+								<v-card>
 									<v-container>
 										<h3>
 											{{info.content}}
 										</h3>
+										<hr>
+										<br>
+										<p v-for="line in info.description.split('\n')">
+											{{line}}
+										</p>
 									</v-container>
 								</v-card>
 							</template>

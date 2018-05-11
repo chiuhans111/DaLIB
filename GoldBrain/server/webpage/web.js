@@ -3,7 +3,7 @@ var express = require("express"),
     morgan = require('morgan'),
     http = require('http');
 
-var dog = require("tool/dog");
+var dog = require("../data/dog");
 
 var app = express();
 

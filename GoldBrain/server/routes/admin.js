@@ -1,5 +1,5 @@
 var express = require('express');
-var dog = require('tool/dog');
+var dog = require('../data/dog');
 
 var adminkey = "dev-0-0";//dog.keygen(20);
 

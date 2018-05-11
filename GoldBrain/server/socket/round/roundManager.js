@@ -2,7 +2,7 @@ var db = require('../../data/base');
 var io = require('../io');
 
 var model_contest = require('../../data/models/contest');
-var crypt = require('tool/crypt');
+var crypt = require('../../crypt');
 
 // TYPE HELPERS
 var type_contest = model_contest.type;
@@ -48,8 +48,9 @@ io.then(io => {
                 socket.emit(actions.close, '比賽還沒開始');
 
                 socket.emit(actions.showinfo, {
-                    content: "你的比賽還沒開始，請耐心等候~~",
-                    backgroundColor: "white"
+                    content: "比賽還沒開始",
+                    backgroundColor: "white",
+                    description: "比賽開始後會自動將您登入喔~"
                 })
             }
 

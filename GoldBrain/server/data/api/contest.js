@@ -2,12 +2,12 @@ var express = require('express');
 var mongoose = require('mongoose');
 
 var ObjectID = require("mongodb").ObjectID;
-var dog = require('tool/dog');
+var dog = require('../dog');
 
 var model = require('../models/contest.js');
 
 var db = require('../base');
-var qrcode = require('tool/qrcode');
+var qrcode = require('../qrcode');
 
 var _any = express.Router();
 var _member = express.Router();
