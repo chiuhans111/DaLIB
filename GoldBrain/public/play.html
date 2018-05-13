@@ -322,6 +322,7 @@
   }
 
   .clickable {
+    display: inline-block;
     transition: transform 0.2s;
     cursor: pointer;
   }
@@ -425,12 +426,12 @@
 
 
           <table class="full" style="table-layout:fixed; empty-cells: show;">
-            <tr style="height: 360px" class="bg-light">
+            <tr style="height: 33.33%" class="bg-light">
               <td colspan="12">
                 .
               </td>
             </tr>
-            <tr style="height: 180px" class="bg-light">
+            <tr style="height: 16.67%" class="bg-light">
 
               <td colspan="3" class="align-right" style="position: relative;">
                 <p class="title-mid text-primary">
@@ -475,17 +476,17 @@
 
               </td>
             </tr>
-            <tr style="height: 90px" class="bg-light">
+            <tr style="height: 8.33%" class="bg-light">
               <td colspan="12">
 
               </td>
             </tr>
-            <tr style="height: 90px" class="bg-dark">
+            <tr style="height: 8.33%" class="bg-dark">
               <td colspan="12">
 
               </td>
             </tr>
-            <tr style="height: 360px" class="bg-dark">
+            <tr style="height: 33.34%" class="bg-dark">
 
               <td colspan="3" class="align-right text-light">
                 <p class="title-small">{{roundc.players}} 隊
@@ -792,7 +793,7 @@
                           </span>
                         </template>
                         <template v-else>
-                          <p class="title-small" @click="problemStart(3000, 2)">
+                          <p class="title-small clickable" @click="problemStart(3000, 2)">
                             重新搶答
                           </p>
                         </template>
@@ -887,6 +888,9 @@
                   </transition>
                   <template v-if="racestart==0&amp;&amp;round.usebutton">
 
+                    <p class="fx-countdown" :style="{fontSize: race.length==0?'5em':0}">請
+                      <br>搶
+                      <br>答</p>
 
                   </template>
 
