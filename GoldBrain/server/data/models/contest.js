@@ -25,6 +25,7 @@ exports.schema = new Schema({
             players: Number,    // 多少人可以參加這一輪
             name: String,
             usebutton: Boolean,
+            skippable: Boolean, // 是否為加賽
             problems: [
                 {
                     title: String,
@@ -88,6 +89,7 @@ exports.schema = new Schema({
  * @property {Number} players
  * @property {String} name
  * @property {Boolean} usebutton
+ * @property {Boolean} skippable
  * @property {Array.<Problem>} problems
  * 
  * @typedef {Object} Team

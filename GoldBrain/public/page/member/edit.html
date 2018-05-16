@@ -174,7 +174,16 @@
                                                         <v-list-tile @click="editRound(index)" avatar :key="JSON.stringify(round)">
                                                             <v-list-tile-content>
                                                                 <v-list-tile-title>{{round.name}}</v-list-tile-title>
-                                                                <v-list-tile-sub-title>{{round.players}}人</v-list-tile-sub-title>
+                                                                <v-list-tile-sub-title>
+                                                                    共{{round.problems.length}}題
+                                                                    <span ma-5>|</span>
+                                                                    {{round.players}}人
+                                                                    <template v-if="round.skippable">
+                                                                        <span ma-5>|</span>
+                                                                        加賽
+                                                                    </template>
+                                                                </v-list-tile-sub-title>
+
                                                             </v-list-tile-content>
 
 
@@ -232,6 +241,7 @@
                                                 </v-flex>
                                                 <v-flex xs4>
                                                     <v-checkbox label="使用搶答按鈕?" v-model="content.rounds[round].usebutton"></v-checkbox>
+                                                    <v-checkbox label="此為加賽場次?" v-model="content.rounds[round].skippable"></v-checkbox>
                                                 </v-flex>
                                             </v-layout>
 
@@ -593,6 +603,7 @@
 
                 var CurrentRound = null;
                 var CurrentProblem = null;
+                var defaultScore = 3;
 
                 function matchKey(content, key) {
                     var regex = "^\\s*" + key + "\\s*[：:]\\s*(.*)\\s*$";
@@ -611,6 +622,7 @@
                     CurrentProblem = sampleContest().rounds[0].problems[0];
                     CurrentProblem.choice = [];
                     CurrentRound.problems.push(CurrentProblem);
+                    CurrentProblem.score = defaultScore
                 }
 
                 var inContent = false;
@@ -624,7 +636,9 @@
                     var answer = matchKey(line, "解答");
                     var desc = matchKey(line, "解析");
                     var usebutton = line.match("搶答");
+                    var skippable = line.match("加賽");
                     var choice = line.match(/^\s*[（\(]([A-Za-zＡ-Ｚａ-ｚ\s]+)[）\)]\s*(.+)\s*$/);
+                    var score = line.match(/^配分：(\d+)$/);
 
 
                     var matched = true;
@@ -632,7 +646,6 @@
                     if (round) {
                         newRound();
                         CurrentRound.name = round[1];
-
                     } else if (answer) {
                         var answers = CurrentProblem.choice.map(x => x.value)
                             .filter(x => answer[1].indexOf(x) != -1);
@@ -650,7 +663,10 @@
 
                     } else if (usebutton) {
                         CurrentRound.usebutton = true;
-
+                    } else if (skippable) {
+                        CurrentRound.skippable = true;
+                    } else if (score) {
+                        defaultScore = +score[1]
                     } else {
                         matched = false;
                         if (!inContent) newProblem();
@@ -719,8 +735,8 @@
                 },
                 check_issue(issue) {
                     data.state = 3
-                    data.round = issue.round_id
-                    data.problem = issue.problem_id
+                    data.round = +issue.round_id
+                    data.problem = +issue.problem_id
                 }
 
             }
