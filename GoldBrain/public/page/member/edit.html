@@ -39,6 +39,34 @@
                                         清除比賽紀錄
                                     </v-btn>
 
+                                    <v-menu bottom offset-y>
+                                        <v-btn slot="activator">
+                                            <v-icon :color="has_issue?'red':null">
+                                                bug_report
+                                            </v-icon>
+                                        </v-btn>
+                                        <v-list>
+                                            <v-list-tile v-for="(issue, i) in check_problem" :key="i" @click="check_issue(issue)">
+                                                <v-list-tile-title>
+                                                    <template v-if="issue.warning">
+                                                        <v-icon>
+                                                            warning
+                                                        </v-icon>
+                                                        {{issue.warning}}
+                                                    </template>
+                                                    <template v-if="issue.error">
+                                                        <v-icon>
+                                                            error
+                                                        </v-icon>
+                                                        {{issue.error}}
+                                                    </template>
+                                                </v-list-tile-title>
+                                            </v-list-tile>
+                                        </v-list>
+                                    </v-menu>
+
+
+
                                 </v-layout>
                                 <hr>
                             </template>
@@ -645,6 +673,40 @@
             computed: {
                 changed() {
                     return JSON.stringify(this.content) != this.saved;
+                },
+                has_issue() {
+                    return app.check_problem.length > 0
+                },
+                check_problem() {
+
+                    var content = data.content
+                    var issue = []
+
+                    for (var round_id in content.rounds) {
+                        var round = content.rounds[round_id]
+                        for (var problem_id in round.problems) {
+                            var problem = round.problems[problem_id]
+
+                            var correct_answer = problem.choice.filter(choice => {
+                                return problem.answer.value.indexOf(choice.value) != -1
+                            })
+                            // console.log(problem_id, problem.answer.value, correct_answer.length)
+                            if (correct_answer.length == 0) issue.push({
+                                warning: "沒有答案",
+                                round_id, problem_id
+                            })
+                            else if (correct_answer.length > 1 && !round.usebutton) issue.push({
+                                error: "選擇題目不可以多選",
+                                round_id, problem_id
+                            })
+                            if (problem.content.trim().length == 0) issue.push({
+                                warning: "沒有內容",
+                                round_id, problem_id
+                            })
+                        }
+                    }
+
+                    return issue
                 }
             },
             methods: {
@@ -654,7 +716,13 @@
                         console.log(result)
                         location.href = '/play.html?/key/' + dog.key;
                     })
+                },
+                check_issue(issue) {
+                    data.state = 3
+                    data.round = issue.round_id
+                    data.problem = issue.problem_id
                 }
+
             }
         });
         var key = dog.key;
