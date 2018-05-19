@@ -27,16 +27,16 @@ var onProblemTimeout;
 var timestamp = 0;
 
 
-var audio = {
-    countdown: new Audio('./audio/countdown.mp3'),
-    answer: new Audio('./audio/answer.mp3')
-}
+// var audio = {
+//     countdown: new Audio('./audio/countdown.mp3'),
+//     answer: new Audio('./audio/answer.mp3')
+// }
 
-audio.countdown.targetvolume = 0.5;
-audio.countdown.volume = 0;
+// audio.countdown.targetvolume = 0.5;
+// audio.countdown.volume = 0;
 
-audio.answer.targetvolume = 0.5;
-audio.answer.loop = true;
+// audio.answer.targetvolume = 0.5;
+// audio.answer.loop = true;
 
 function update() {
     var now = new Date().getTime();
@@ -54,38 +54,40 @@ function update() {
     }
 
     // auto volume control
-    for (var i in audio) audio[i].volume += (audio[i].targetvolume - audio[i].volume) * 0.03;
+    // for (var i in audio) audio[i].volume += (audio[i].targetvolume - audio[i].volume) * 0.03;
 
     // countdown for problems
     if (onProblemTimeout instanceof Function) {
         data.problemTime = now - problemTimestamp;
 
         // audio
-        audio.countdown.targetvolume = 0.5;
-        var targetTime = audio.countdown.duration - app.problemc.timeout + data.problemTime / 1000;
-        if (Math.abs(targetTime - audio.countdown.currentTime) > 0.1)
-            audio.countdown.currentTime = targetTime;
-        audio.countdown.play()
+        // audio.countdown.targetvolume = 0.5;
+        // var targetTime = audio.countdown.duration - app.problemc.timeout + data.problemTime / 1000;
+        // if (Math.abs(targetTime - audio.countdown.currentTime) > 0.1)
+        //     audio.countdown.currentTime = targetTime;
+        // audio.countdown.play()
         // audio end
 
         if (data.problemTime / 1000 >= app.problemc.timeout) {
             console.log("timesup!");
             onProblemTimeout();
             onProblemTimeout = null;
-            audio.countdown.pause();
-            audio.countdown.volume = 0;
+
+
+            // audio.countdown.pause();
+            // audio.countdown.volume = 0;
         }
     } else {
         // audio
-        audio.countdown.targetvolume = 0;
+        // audio.countdown.targetvolume = 0;
     }
 
-    if (app.page == 'answer') {
-        audio.answer.play();
-        audio.answer.targetvolume = 0.5;
-    } else {
-        audio.answer.targetvolume = 0;
-    }
+    // if (app.page == 'answer') {
+    //     audio.answer.play();
+    //     audio.answer.targetvolume = 0.5;
+    // } else {
+    //     audio.answer.targetvolume = 0;
+    // }
 
     requestAnimationFrame(update);
 }
@@ -138,7 +140,7 @@ var app = new Vue({
             this.page = 'answer2';
             var target = this;
             onProblemTimeout = function () {
-                target.raceAnswerBack()
+                target.raceAnswerWrong()
             }
             problemTimestamp = new Date().getTime();
         },
@@ -146,12 +148,23 @@ var app = new Vue({
             this.page = "problem";
             onProblemTimeout = null;
         },
+        raceAnswerWrong() {
+            this.page = "problem";
+            onProblemTimeout = null;
+            if (this.currentScore > 2)
+                this.currentScore -= 2;
+
+        },
 
         // bas
-        nextProblem() {
-            play.emit('problem', this.problem.no + 1);
+        goProblem(id) {
+            play.emit('problem', id);
             raceCountDown = -1;
             onProblemTimeout = null;
+        },
+
+        nextProblem() {
+            this.goProblem(this.problem.id + 1)
         },
         nextRound() {
             this.goRound(this.round.no + 1);
@@ -168,15 +181,15 @@ var app = new Vue({
                     correct: x.answer == this.problemc.answer.value,
                     team: x.no,
                     message: '',
-                    score: this.problemc.score,
+                    score: this.currentScore,
                     time: x.time,
                     value: x.answer,
                     record: ({
                         value: x.answer,
                         round: this.round.no,
-                        problem: this.problem.no,
+                        problem: this.problem.id,
                         time: x.time,
-                        score: this.problemc.score,
+                        score: this.currentScore,
                         correct: x.answer == this.problemc.answer.value
                     })
                 }))
@@ -195,12 +208,12 @@ var app = new Vue({
                     correct: true,
                     team: this.answerTeam.no,
                     message: '',
-                    score: this.problemc.score,
+                    score: this.currentScore,
                     record: ({
                         round: this.round.no,
-                        problem: this.problem.no,
+                        problem: this.problem.id,
                         time: this.answerTeam.time,
-                        score: this.problemc.score,
+                        score: this.currentScore,
                         correct: true
                     })
                 }
@@ -233,10 +246,12 @@ var app = new Vue({
             return this.state.teams.filter(x => x.online && x.round >= this.round.no)
         },
         roundc() {
-            return this.content.rounds[this.round.no];
+            return Object.assign({
+                problemCount: this.content.rounds[this.round.no].problems.filter(x => !x.placeholder).length
+            }, this.content.rounds[this.round.no]);
         },
         problemc() {
-            return this.roundc.problems[this.problem.no]
+            return this.roundc.problems[this.problem.id]
         },
 
 
@@ -351,7 +366,7 @@ var app = new Vue({
             }
         },
         hasNextProblem() {
-            return this.problem.no < this.roundc.problems.length - 1;
+            return this.problem.id < this.roundc.problems.length - 1;
         },
         hasNextRound() {
             return this.round.no < this.content.rounds.length - 1;

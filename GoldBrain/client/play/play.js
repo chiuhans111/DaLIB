@@ -15,6 +15,7 @@ var data = {
     answerResult: {},
     debug: false,
     closeReason: '結束了',
+    currentScore: 0
 }
 window.data = data;
 var io = window.io;
@@ -40,6 +41,7 @@ socket.on('problem', problem => {
     data.racestart = -1;
     if (data.round.no != -1)
         data.page = 'problem';
+    data.currentScore = problem.score
     console.log(data.problem = problem)
 });
 socket.on('race', race => {

@@ -24,7 +24,9 @@ exports.schema = new Schema({
         {
             players: Number,    // 多少人可以參加這一輪
             name: String,
+            smallHeader: String, // 小標題
             usebutton: Boolean,
+            racelimit: Number,
             skippable: Boolean, // 是否為加賽
             problems: [
                 {
@@ -41,7 +43,8 @@ exports.schema = new Schema({
                         value: String,      // 答案
                         description: String // 原因
                     },
-                    score: Number // 得分
+                    score: Number, // 得分
+                    placeholder: Boolean // 此題為空填(倒數)用
                 }
             ],
         }
@@ -84,6 +87,7 @@ exports.schema = new Schema({
  * @property {Number} timeout
  * @property {Answer} answer
  * @property {Number} score
+ * @property {Boolean} placeholder
  * 
  * @typedef {Object} Round
  * @property {Number} players

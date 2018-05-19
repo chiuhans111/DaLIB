@@ -161,11 +161,11 @@ function Round(contest, viewKey, io) {
             }
 
 
-            if (team.round < me.state.round) {
+            if (team.round < me.state.round.no) {
                 socket.emit(actions.showinfo, {
                     content: '您已被淘汰了..',
                     backgroundColor: colors.error,
-                    description: `這個階段只允許${me.contest.rounds[me.state.round].players}組參賽，\n您的排名不足以參加這場比賽。`
+                    description: `這個階段只允許${me.contest.rounds[me.state.round.no].players}組參賽，\n您的排名不足以參加這場比賽。`
                 });
                 socket.disconnect();
                 return true;
@@ -201,13 +201,14 @@ function Round(contest, viewKey, io) {
                     socket.emit(actions.showinfo, {
                         content: "登入成功!",
                         backgroundColor: colors.ok,
-                        description: '比賽即將開始，您登入的組別是：\n第' + team.no + '組\n'
+                        description: '比賽即將開始，您登入的組別是：\n第' + (team.no+1) + '組\n'
                     })
                     return;
                 }
                 socket.emit(actions.round, me.state.round);
                 if (me.state.page == 'round') return;
-                socket.emit(actions.problem, me.state.problem);
+                me.problem_client(socket)
+                // socket.emit(actions.problem, me.state.problem);
                 if (me.state.page == 'problem') return;
 
 
@@ -265,16 +266,16 @@ function Round(contest, viewKey, io) {
 
 
             if (socket.team) {
-                /*
-                if (socket.team.round < me.state.round.no) {
+
+                var team = socket.team
+                if (team.round < me.state.round.no) {
                     socket.emit(actions.showinfo, {
-                        content: '你已經被淘汰了',
-                        backgroundColor: colors.error
+                        content: '您已被淘汰了..',
+                        backgroundColor: colors.error,
+                        description: `這個階段只允許${me.contest.rounds[me.state.round.no].players}組參賽，\n您的排名不足以參加這場比賽。`
                     });
-
-
                     continue;
-                }*/
+                }
 
                 state.team = socket.team.no;
             }
@@ -288,6 +289,7 @@ function Round(contest, viewKey, io) {
 
             //me.state.round = round;
             me.state.problem.no = 0;
+            me.state.problem.id = 0;
             // me.state.problem.info = null;
             var round_info = contest.rounds[round];
             var obj = {
@@ -308,21 +310,36 @@ function Round(contest, viewKey, io) {
         }
     }
 
+    this.problem_client = function (socket) {
+        if (me.state.problem.placeholder) {
+            socket.emit(actions.showinfo, {
+                backgroundColor: "white",
+                content: me.state.problem.content,
+                description: ""
+            })
+        } else {
+            socket.emit(actions.problem, me.state.problem)
+        }
+    }
+
     this.setProblem = function (problem) {
         try {
 
             var problem_info = contest.rounds[me.state.round.no].problems[problem];
             var obj = {
-                no: problem,
+                id: problem,
+                no: contest.rounds[me.state.round.no].problems.slice(0, problem).filter(x => !x.placeholder).length,
                 title: problem_info.title,
                 choice: problem_info.choice,
                 score: problem_info.score,
                 content: problem_info.content,
+                placeholder: problem_info.placeholder
             }
             me.state.page = 'problem';
             me.state.problem = obj;
             me.state.race = -1;
-            room.emit(actions.problem, obj);
+            room_member.emit(actions.problem, me.state.problem);
+            for (var i in room_client.sockets) me.problem_client(room_client.sockets[i])
         } catch (e) {
             console.error(e)
         }
@@ -408,6 +425,7 @@ function Round(contest, viewKey, io) {
             delete team.time;
             delete team.scores;
         })
+
         return obj;
     }
 
@@ -471,6 +489,7 @@ function Round(contest, viewKey, io) {
 
     /**@param {Array.<{correct: Boolean, team: String, message: String, score:Number, hidden:Boolean}>} data*/
     this.answer = function (data) {
+        console.log(data)
         if (data == null) return; // 搶答
 
         // finding the team with no answer
@@ -525,7 +544,7 @@ function Round(contest, viewKey, io) {
             if (!reply.hidden) team.emit(actions.showinfo, {
                 content: message,
                 backgroundColor: reply.correct ? colors.ok : colors.error,
-                description: '解析\n' + contest.rounds[me.state.round.no].problems[me.state.problem.no].answer.description
+                description: '解析\n' + contest.rounds[me.state.round.no].problems[me.state.problem.id].answer.description
             })
         })
 

@@ -175,7 +175,7 @@
                                                             <v-list-tile-content>
                                                                 <v-list-tile-title>{{round.name}}</v-list-tile-title>
                                                                 <v-list-tile-sub-title>
-                                                                    共{{round.problems.length}}題
+                                                                    共{{round.problems.filter(x=>!x.placeholder).length}}題
                                                                     <span ma-5>|</span>
                                                                     {{round.players}}人
                                                                     <template v-if="round.skippable">
@@ -235,9 +235,11 @@
                                             <v-layout row>
                                                 <v-flex xs4>
                                                     <v-text-field label="場次名稱" v-model="content.rounds[round].name"></v-text-field>
+                                                    <v-text-field label="小標題" v-model="content.rounds[round].smallHeader"></v-text-field>
                                                 </v-flex>
                                                 <v-flex xs4>
                                                     <v-text-field label="組數" v-model="content.rounds[round].players"></v-text-field>
+                                                    <v-text-field label="搶答組數" v-model="content.rounds[round].racelimit"></v-text-field>
                                                 </v-flex>
                                                 <v-flex xs4>
                                                     <v-checkbox label="使用搶答按鈕?" v-model="content.rounds[round].usebutton"></v-checkbox>
@@ -263,13 +265,25 @@
                                                             <v-list-tile @click="editProblem(index)" avater :key="JSON.stringify(problem)">
                                                                 <v-list-tile-content>
                                                                     <v-list-tile-title>
-                                                                        <strong>{{index+1}}. {{problem.title}}</strong>
+                                                                        <strong>
+                                                                            <template v-if="!problem.placeholder">
+                                                                                {{content.rounds[round].problems.slice(0,index+1).filter(x=>!x.placeholder).length}}.
+                                                                            </template>
+                                                                            {{problem.title}}
+                                                                        </strong>
                                                                         {{problem.content}}
                                                                     </v-list-tile-title>
                                                                     <v-list-tile-sub-title>
-                                                                        {{problem.score}}分
-                                                                        <template v-for="c in problem.choice">
-                                                                            <span>({{c.value}}) {{c.content}} </span>
+
+                                                                        <template v-if="problem.placeholder">
+                                                                            計時 {{problem.timeout}} 秒
+                                                                        </template>
+                                                                        <template v-else>
+
+                                                                            {{problem.score}}分
+                                                                            <template v-for="c in problem.choice">
+                                                                                <span>({{c.value}}) {{c.content}} </span>
+                                                                            </template>
                                                                         </template>
                                                                     </v-list-tile-sub-title>
                                                                 </v-list-tile-content>
@@ -339,64 +353,73 @@
                                                     <v-flex sm12>
                                                         <v-text-field label="題目" v-model="content.rounds[round].problems[problem].content" multi-line auto-grow></v-text-field>
                                                     </v-flex>
+
                                                 </v-layout>
                                                 <v-layout row>
-                                                    <v-flex sm6 class="mr-5">
+                                                    <v-flex sm6 class="mr-5" v-if="!content.rounds[round].problems[problem].placeholder">
                                                         <v-text-field label="得分" v-model="content.rounds[round].problems[problem].score" type="number" suffix="分"></v-text-field>
                                                     </v-flex>
                                                     <v-flex sm6>
-                                                        <v-text-field label="作答時間" v-model="content.rounds[round].problems[problem].timeout" type="number" suffix="秒"></v-text-field>
+                                                        <v-text-field label="時間" v-model="content.rounds[round].problems[problem].timeout" type="number" suffix="秒"></v-text-field>
                                                     </v-flex>
                                                 </v-layout>
-                                                <p class="mb-0 primary--text">
-                                                    答案 | ANSWER
-                                                </p>
-                                                <v-layout row>
-                                                    <v-flex sm1 class="mr-5">
-                                                        <v-text-field label="選項" v-model="content.rounds[round].problems[problem].answer.value"></v-text-field>
-                                                    </v-flex>
-                                                    <v-flex sm10>
-                                                        <v-text-field label="說明" v-model="content.rounds[round].problems[problem].answer.description"></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
+                                                <template v-if="!content.rounds[round].problems[problem].placeholder">
+                                                    <p class="mb-0 primary--text">
+                                                        答案 | ANSWER
+                                                    </p>
+                                                    <v-layout row>
+                                                        <v-flex sm1 class="mr-5">
+                                                            <v-text-field label="選項" v-model="content.rounds[round].problems[problem].answer.value"></v-text-field>
+                                                        </v-flex>
+                                                        <v-flex sm10>
+                                                            <v-text-field label="說明" v-model="content.rounds[round].problems[problem].answer.description"></v-text-field>
+                                                        </v-flex>
+                                                    </v-layout>
+                                                </template>
+                                                <v-layou>
+                                                    <v-checkbox label="當作投影使用?" v-model="content.rounds[round].problems[problem].placeholder"></v-checkbox>
+                                                </v-layou>
                                             </blockquote>
-                                            <p class="mb-0 primary--text">
-                                                選項 | CHOICES
-                                                <v-btn icon @click.stop="choiceop().add()">
-                                                    <v-icon>add</v-icon>
-                                                </v-btn>
-                                            </p>
-                                            <template v-for="(choice, index) in content.rounds[round].problems[problem].choice">
+
+                                            <template v-if="!content.rounds[round].problems[problem].placeholder">
+                                                <p class="mb-0 primary--text">
+                                                    選項 | CHOICES
+                                                    <v-btn icon @click.stop="choiceop().add()">
+                                                        <v-icon>add</v-icon>
+                                                    </v-btn>
+                                                </p>
+                                                <template v-for="(choice, index) in content.rounds[round].problems[problem].choice">
 
 
-                                                <v-layout row wrap>
-                                                    <v-flex sm1>
-                                                        <v-text-field label="選項" v-model="choice.value"></v-text-field>
-                                                    </v-flex>
-                                                    <v-flex sm6>
-                                                        <v-text-field label="內容" v-model="choice.content"></v-text-field>
-                                                    </v-flex>
+                                                    <v-layout row wrap>
+                                                        <v-flex sm1>
+                                                            <v-text-field label="選項" v-model="choice.value"></v-text-field>
+                                                        </v-flex>
+                                                        <v-flex sm6>
+                                                            <v-text-field label="內容" v-model="choice.content"></v-text-field>
+                                                        </v-flex>
 
-                                                    <v-flex sm5>
-
-
-                                                        <v-btn icon @click.stop="choiceop().move(index,-1)">
-                                                            <v-icon>keyboard_arrow_up</v-icon>
-                                                        </v-btn>
-
-                                                        <v-btn icon @click.stop="choiceop().move(index,+1)">
-                                                            <v-icon>keyboard_arrow_down</v-icon>
-                                                        </v-btn>
-
-                                                        <v-btn icon @click.stop="choiceop().del(index)">
-                                                            <v-icon>delete</v-icon>
-                                                        </v-btn>
+                                                        <v-flex sm5>
 
 
-                                                    </v-flex>
+                                                            <v-btn icon @click.stop="choiceop().move(index,-1)">
+                                                                <v-icon>keyboard_arrow_up</v-icon>
+                                                            </v-btn>
 
-                                                </v-layout>
+                                                            <v-btn icon @click.stop="choiceop().move(index,+1)">
+                                                                <v-icon>keyboard_arrow_down</v-icon>
+                                                            </v-btn>
 
+                                                            <v-btn icon @click.stop="choiceop().del(index)">
+                                                                <v-icon>delete</v-icon>
+                                                            </v-btn>
+
+
+                                                        </v-flex>
+
+                                                    </v-layout>
+
+                                                </template>
                                             </template>
 
                                         </div>
@@ -633,10 +656,15 @@
                     if (line.trim().length == 0) continue;
 
                     var round = matchKey(line, "階段")
+                    var players = matchKey(line, "組數")
+                    var usebutton = matchKey(line, "搶答")
+
                     var answer = matchKey(line, "解答");
                     var desc = matchKey(line, "解析");
-                    var usebutton = line.match("搶答");
+                    var timeout = matchKey(line, "計時");
+                    console.log(timeout)
                     var skippable = line.match("加賽");
+
                     var choice = line.match(/^\s*[（\(]([A-Za-zＡ-Ｚａ-ｚ\s]+)[）\)]\s*(.+)\s*$/);
                     var score = line.match(/^配分：(\d+)$/);
 
@@ -645,17 +673,24 @@
 
                     if (round) {
                         newRound();
-                        CurrentRound.name = round[1];
+                        var roundNames = round[1].split(/[、,，]/)
+                        CurrentRound.name = roundNames[0]
+                        if (roundNames[1])
+                            CurrentRound.smallHeader = roundNames[1]
+
+                    } else if (players) {
+                        CurrentRound.players = +players[1]
                     } else if (answer) {
                         var answers = CurrentProblem.choice.map(x => x.value)
                             .filter(x => answer[1].indexOf(x) != -1);
                         CurrentProblem.answer.value = answers.join("");
 
+                    } else if (timeout) {
+                        CurrentProblem.timeout = +timeout[1]
                     } else if (desc) {
                         CurrentProblem.answer.description = desc[1];
 
                     } else if (choice) {
-                        console.log(CurrentRound.problems.length, CurrentProblem.choice)
                         CurrentProblem.choice.push({
                             value: choice[1],
                             content: choice[2]
@@ -663,11 +698,15 @@
 
                     } else if (usebutton) {
                         CurrentRound.usebutton = true;
+                        CurrentRound.racelimit = +usebutton[1]
                     } else if (skippable) {
                         CurrentRound.skippable = true;
                     } else if (score) {
                         defaultScore = +score[1]
                     } else {
+                        if (CurrentProblem)
+                            if (CurrentProblem.choice.length == 0)
+                                CurrentProblem.placeholder = true
                         matched = false;
                         if (!inContent) newProblem();
                         CurrentProblem.content += line + '\n';
@@ -707,14 +746,15 @@
                                 return problem.answer.value.indexOf(choice.value) != -1
                             })
                             // console.log(problem_id, problem.answer.value, correct_answer.length)
-                            if (correct_answer.length == 0) issue.push({
-                                warning: "沒有答案",
-                                round_id, problem_id
-                            })
-                            else if (correct_answer.length > 1 && !round.usebutton) issue.push({
-                                error: "選擇題目不可以多選",
-                                round_id, problem_id
-                            })
+                            if (!problem.placeholder)
+                                if (correct_answer.length == 0) issue.push({
+                                    warning: "沒有答案",
+                                    round_id, problem_id
+                                })
+                                else if (correct_answer.length > 1 && !round.usebutton) issue.push({
+                                    error: "選擇題目不可以多選",
+                                    round_id, problem_id
+                                })
                             if (problem.content.trim().length == 0) issue.push({
                                 warning: "沒有內容",
                                 round_id, problem_id

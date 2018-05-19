@@ -457,7 +457,7 @@
               <td colspan="5" style="position:relative">
                 <p class="title-big">{{round.title}}</p>
                 <p class="content-small align-bottom">
-                  共 {{roundc.problems.length}} 題
+                  共 {{roundc.problemCount}} 題
 
                 </p>
               </td>
@@ -596,12 +596,12 @@
                     <td>
 
                       <template v-for="(c, i) in problem.choice">
-                        <span style="display: inline-block;margin-right: 160px; margin-bottom: 45px">
+                        <span style="display: inline-block;margin-right: 80px; margin-bottom: 25px">
                           <table>
                             <tr>
                               <td :style="{
-                              width: page=='answer'?'64px':'90px',
-                              height:  page=='answer'?'64px':'90px',
+                              width: page=='answer'?'64px':'80px',
+                              height:  page=='answer'?'64px':'80px',
                               borderRadius: '90px',
                               color: page=='answer'&amp;&amp;!problemc.answer.value.match(c.value)? '#757575':'white',
                               backgroundColor: page=='answer'&amp;&amp;!problemc.answer.value.match(c.value)? 'transparent':['red','orange','green','blue','purple','brown'][i]||'black'
@@ -659,32 +659,34 @@
               </td>
               <td style="width: 320px; position: relative;" class="bg-dark">
                 <table class="full">
-                  <tr style="height: 90px">
+                  <tr style="height: 8.34%">
                   </tr>
-                  <tr style="height: 180px">
+                  <tr style="height: 16.66%">
                     <td>
                       <p class="title center-text text-primary">
-                        第 {{problem.no+1}} 題
+                        <template v-if="!problem.placeholder">
+                          第 {{problem.no+1}} 題
+                        </template>
+                        <template>
+
+                        </template>
                       </p>
                       <p class="content-small center-text text-light">
-                        共 {{roundc.problems.length}} 題 |
+                        共 {{roundc.problemCount}} 題 |
                         <span @click="goRound()" class="clickable">
                           返回場次
                         </span>
                       </p>
                     </td>
                   </tr>
-                  <!-- 選擇題階段 側邊欄 -->
-                  <template v-if="!round.usebutton">
-                    <tr style="height: 270px">
+                  <!-- placeholder mode -->
+                  <template v-if="problemc.placeholder">
+                    <tr style="height: 25%">
                       <td class="center-text text-primary">
-                        <span class="title-big ">{{problem.score}}</span>
-                        <span class="title-small">
-                          分
-                        </span>
+
                       </td>
                     </tr>
-                    <tr style="height: 270px">
+                    <tr style="height: 25%">
                       <td class="center-text text-light">
                         <template v-if="page=='answer'">
                           <template v-if="hasNextProblem">
@@ -703,14 +705,22 @@
                               </div>
                             </span>
                           </template>
+                          <template v-else>
+                            <span class="btn-rect clickable bg-primary text-light" @click="goRound()">
+                              <div class="center title-small" style="line-height: 46px">
+                                <div> 回 到 </div>
+                                <div> 場 次 </div>
+                              </div>
+                            </span>
+                          </template>
                         </template>
                         <template v-else-if="racestart==-1">
                           <p class="title-small">
-                            作答時間
+                            倒數計時
                           </p>
                           <span :style="{
-                            color: (problemTime_second&lt;4)?'red':'white'
-                        }">
+                              color: (problemTime_second&lt;4)?'red':'white'
+                          }">
                             <span class="title-big ">{{problemTime_text_big}}</span>
                             <span class="title-small">
                               {{problemTime_text_small}}
@@ -722,8 +732,8 @@
                             剩餘時間
                           </p>
                           <span :style="{
-                            color: (problemTime_second&lt;4)?'red':'white'
-                        }">
+                              color: (problemTime_second&lt;4)?'red':'white'
+                          }">
                             <span class="title-big ">{{problemTime_text_big}}</span>
                             <span class="title-small">
                               {{problemTime_text_small}}
@@ -734,16 +744,10 @@
 
                       </td>
                     </tr>
-                    <tr style="height: 270px">
+                    <tr style="height: 25%">
                       <td class="center-text text-primary">
                         <template v-if="page=='answer'">
-                          <span class="title-big ">{{answerResult.filter(x=>x.correct).length}}</span>
-                          <span class="title-small">
-                            / {{answerResult.length}}
-                          </span>
-                          <p class="title-small">
-                            答對
-                          </p>
+
                         </template>
                         <template v-else-if="racestart==-1">
 
@@ -751,150 +755,255 @@
                           <span class="btn-rect clickable bg-primary text-light" @click="problemStart(0, 1)">
                             <div class="center title-small" style="line-height: 46px">
                               <div> 開 始 </div>
-                              <div> 作 答 </div>
+                              <div> 計 時 </div>
                             </div>
                           </span>
 
                         </template>
                         <template v-else-if="races.length==players.length">
-                          <span class="btn-rect clickable bg-light" @click="answer(1)">
-                            <div class="center title-small" style="line-height: 46px">
-                              <div> 答 案 </div>
-                              <div> 揭 曉 </div>
-                            </div>
-                          </span>
                         </template>
                         <template v-else>
-
-                          <span class="title-big ">{{races.length}}</span>
-                          <span class="title-small">
-                            / {{players.length}}
-                          </span>
-                          <p class="title-small">
-                            已作答
-                          </p>
                         </template>
                       </td>
                     </tr>
                   </template>
-                  <!-- 搶答題階段 側邊欄 -->
+                  <!-- 選擇題階段 側邊欄 -->
                   <template v-else>
-
-
-                    <tr style="height: 180px;">
-                      <td class="center-text text-light">
-                        <!-- answer button for 搶答 -->
-                        <template v-if="racestart==-1">
-                          <span class="btn-rect clickable bg-primary" @click="problemStart(3000, 2)">
-                            <div class="center title-small" style="line-height: 46px">
-                              <div> 開 始 </div>
-                              <div> 搶 答 </div>
-                            </div>
+                    <template v-if="!round.usebutton">
+                      <tr style="height: 25%">
+                        <td class="center-text text-primary">
+                          <span class="title-big ">{{currentScore}}</span>
+                          <span class="title-small">
+                            分
                           </span>
-                        </template>
-                        <template v-else>
-                          <p class="title-small clickable" @click="problemStart(3000, 2)">
-                            重新搶答
-                          </p>
-                        </template>
-                      </td>
-                    </tr>
-
-
-
-                    <tr style="height: 630px; overflow: scroll;">
-                      <td class="center-text text-light">
-                        <template v-if="page=='answer'">
-                          <template v-if="hasNextProblem">
-                            <span class="btn-rect clickable bg-primary text-light" @click="nextProblem()">
-                              <div class="center title-small" style="line-height: 46px">
-                                <div> 繼 續 </div>
-                                <div> 下 題 </div>
-                              </div>
-                            </span>
-                          </template>
-                          <template v-else-if="hasNextRound">
-                            <span class="btn-rect clickable bg-primary text-light" @click="nextRound()">
-                              <div class="center title-small" style="line-height: 46px">
-                                <div> 下 個 </div>
-                                <div> 階 段 </div>
-                              </div>
-                            </span>
-                          </template>
-                        </template>
-                        <template v-else>
-
-                          <template v-if="racestart==0">
-                            <template v-if="page!='answer2'">
-                              <template v-for="(r,i) in races.slice(0, 5)">
-                                <p class="content-small"> 第 {{i+1}} 位： {{r.time}} ms</p>
-                                <h3>
-                                  <button :class="{main:i==0}" @click="raceAnswerStart(r)">
-                                    第{{r.no+1}}組
-                                  </button>
-                                </h3>
-                              </template>
+                        </td>
+                      </tr>
+                      <tr style="height: 25%">
+                        <td class="center-text text-light">
+                          <template v-if="page=='answer'">
+                            <template v-if="hasNextProblem">
+                              <span class="btn-rect clickable bg-primary text-light" @click="nextProblem()">
+                                <div class="center title-small" style="line-height: 46px">
+                                  <div> 繼 續 </div>
+                                  <div> 下 題 </div>
+                                </div>
+                              </span>
                             </template>
-                            <!-- 回答 -->
+                            <template v-else-if="hasNextRound">
+                              <span class="btn-rect clickable bg-primary text-light" @click="nextRound()">
+                                <div class="center title-small" style="line-height: 46px">
+                                  <div> 下 個 </div>
+                                  <div> 階 段 </div>
+                                </div>
+                              </span>
+                            </template>
                             <template v-else>
-                              <h2>
-                                第{{answerTeam.no+1}}組
-                                <small style="color:orange">請回答</small>
-                              </h2>
-                              <hr>
-                              <h2>
-                                <button style="background:green; color:white" @click="answerCorrect(answerTeam.no)">
-                                  正解
-                                </button>
-                                <button style="background:red; color:white" @click="raceAnswerBack()">
-                                  返回
-                                </button>
-                              </h2>
-                              <p class="title-small">
-                                剩餘時間
-                              </p>
-                              <span :style="{
-                                  color: (problemTime_second&lt;4)?'red':'white'
-                              }">
-                                <span class="title-big ">{{problemTime_text_big}}</span>
-                                <span class="title-small">
-                                  {{problemTime_text_small}}
-                                </span>
+                              <span class="btn-rect clickable bg-primary text-light" @click="goRound()">
+                                <div class="center title-small" style="line-height: 46px">
+                                  <div> 回 到 </div>
+                                  <div> 場 次 </div>
+                                </div>
                               </span>
                             </template>
                           </template>
-                        </template>
-                      </td>
-                    </tr>
-                  </template>
+                          <template v-else-if="racestart==-1">
+                            <p class="title-small">
+                              作答時間
+                            </p>
+                            <span :style="{
+                            color: (problemTime_second&lt;4)?'red':'white'
+                        }">
+                              <span class="title-big ">{{problemTime_text_big}}</span>
+                              <span class="title-small">
+                                {{problemTime_text_small}}
+                              </span>
+                            </span>
+                          </template>
+                          <template v-else-if="problemTime_isBegin">
+                            <p class="title-small">
+                              剩餘時間
+                            </p>
+                            <span :style="{
+                            color: (problemTime_second&lt;4)?'red':'white'
+                        }">
+                              <span class="title-big ">{{problemTime_text_big}}</span>
+                              <span class="title-small">
+                                {{problemTime_text_small}}
+                              </span>
+                            </span>
+                          </template>
 
+
+                        </td>
+                      </tr>
+                      <tr style="height: 25%">
+                        <td class="center-text text-primary">
+                          <template v-if="page=='answer'">
+                            <span class="title-big ">{{answerResult.filter(x=>x.correct).length}}</span>
+                            <span class="title-small">
+                              / {{answerResult.length}}
+                            </span>
+                            <p class="title-small">
+                              答對
+                            </p>
+                          </template>
+                          <template v-else-if="racestart==-1">
+
+                            <!-- answer button for 選擇題 -->
+                            <span class="btn-rect clickable bg-primary text-light" @click="problemStart(0, 1)">
+                              <div class="center title-small" style="line-height: 46px">
+                                <div> 開 始 </div>
+                                <div> 作 答 </div>
+                              </div>
+                            </span>
+
+                          </template>
+                          <template v-else-if="races.length==players.length">
+                            <span class="btn-rect clickable bg-light" @click="answer(1)">
+                              <div class="center title-small" style="line-height: 46px">
+                                <div> 答 案 </div>
+                                <div> 揭 曉 </div>
+                              </div>
+                            </span>
+                          </template>
+                          <template v-else>
+
+                            <span class="title-big ">{{races.length}}</span>
+                            <span class="title-small">
+                              / {{players.length}}
+                            </span>
+                            <p class="title-small">
+                              已作答
+                            </p>
+                          </template>
+                        </td>
+                      </tr>
+                    </template>
+                    <!-- 搶答題階段 側邊欄 -->
+                    <template v-else>
+                      <tr style="height: 8.34%">
+                        <td class="center-text text-primary">
+                          <span class="title-big ">{{currentScore}}</span>
+                          <span class="title-small">
+                            分
+                          </span>
+                        </td>
+                      </tr>
+                      <tr style="height: 66.66%; overflow: scroll;">
+                        <td class="center-text text-light">
+                          <template v-if="racestart==-1">
+                            <span class="btn-rect clickable bg-primary" @click="problemStart(3000, 2)">
+                              <div class="center title-small" style="line-height: 46px">
+                                <div> 開 始 </div>
+                                <div> 搶 答 </div>
+                              </div>
+                            </span>
+
+                          </template>
+                          <template v-if="page=='answer'">
+                            <template v-if="hasNextProblem">
+                              <span class="btn-rect clickable bg-primary text-light" @click="nextProblem()">
+                                <div class="center title-small" style="line-height: 46px">
+                                  <div> 繼 續 </div>
+                                  <div> 下 題 </div>
+                                </div>
+                              </span>
+                            </template>
+                            <template v-else-if="hasNextRound">
+                              <span class="btn-rect clickable bg-primary text-light" @click="nextRound()">
+                                <div class="center title-small" style="line-height: 46px">
+                                  <div> 下 個 </div>
+                                  <div> 階 段 </div>
+                                </div>
+                              </span>
+                            </template>
+                            <template v-else>
+                              <span class="btn-rect clickable bg-primary text-light" @click="goRound()">
+                                <div class="center title-small" style="line-height: 46px">
+                                  <div> 回 到 </div>
+                                  <div> 場 次 </div>
+                                </div>
+                              </span>
+                            </template>
+                          </template>
+                          <template v-else>
+
+                            <template v-if="racestart==0">
+                              <template v-if="page!='answer2'">
+                                <template v-for="(r,i) in races.slice(0, roundc.racelimit)">
+                                  <p class="content-small"> 第 {{i+1}} 位： {{r.time}} ms</p>
+                                  <h3>
+                                    <button :class="{main:i==0}" @click="raceAnswerStart(r)">
+                                      第{{r.no+1}}組
+                                    </button>
+                                  </h3>
+                                </template>
+                              </template>
+                              <!-- 回答 -->
+                              <template v-else>
+                                <h2>
+                                  第{{answerTeam.no+1}}組
+                                  <small style="color:orange">請回答</small>
+                                </h2>
+                                <hr>
+                                <h2>
+                                  <button style="background:green; color:white" @click="answerCorrect(answerTeam.no)">
+                                    正解
+                                  </button>
+                                  <button style="background:red; color:white" @click="raceAnswerWrong()">
+                                    錯誤
+                                  </button>
+                                  <button style="background:grey; color:white" @click="raceAnswerBack()">
+                                    返回
+                                  </button>
+                                </h2>
+                                <p class="title-small">
+                                  剩餘時間
+                                </p>
+                                <span :style="{
+                                  color: (problemTime_second&lt;4)?'red':'white'
+                              }">
+                                  <span class="title-big ">{{problemTime_text_big}}</span>
+                                  <span class="title-small">
+                                    {{problemTime_text_small}}
+                                  </span>
+                                </span>
+                              </template>
+                            </template>
+                          </template>
+                        </td>
+                      </tr>
+                    </template>
+                  </template>
 
                 </table>
-                <div class="fx-countdown-wrapper">
-                  <transition name="countdown">
-                    <p v-if="racestart==3000 &amp;&amp;round.usebutton" class="fx-countdown">
-                      3
-                    </p>
-                  </transition>
-                  <transition name="countdown">
-                    <p v-if="racestart==2000&amp;&amp;round.usebutton" class="fx-countdown">
-                      2
-                    </p>
-                  </transition>
-                  <transition name="countdown">
-                    <p v-if="racestart==1000&amp;&amp;round.usebutton" class="fx-countdown">
-                      1
-                    </p>
-                  </transition>
-                  <template v-if="racestart==0&amp;&amp;round.usebutton">
+                <template v-if="!problemc.placeholder">
+                  <div class="fx-countdown-wrapper" v-if="page=='racestart'">
+                    <transition name="countdown">
+                      <p v-if="racestart==3000 &amp;&amp;round.usebutton" class="fx-countdown">
+                        3
+                      </p>
+                    </transition>
+                    <transition name="countdown">
+                      <p v-if="racestart==2000&amp;&amp;round.usebutton" class="fx-countdown">
+                        2
+                      </p>
+                    </transition>
+                    <transition name="countdown">
+                      <p v-if="racestart==1000&amp;&amp;round.usebutton" class="fx-countdown">
+                        1
+                      </p>
+                    </transition>
+                    <template v-if="racestart==0&amp;&amp;round.usebutton">
 
-                    <p class="fx-countdown" :style="{fontSize: race.length==0?'5em':0}">請
-                      <br>搶
-                      <br>答</p>
+                      <p class="fx-countdown" :style="{fontSize: race.length==0?'5em':0}">請
+                        <br>搶
+                        <br>答</p>
 
-                  </template>
+                    </template>
 
-                </div>
+                  </div>
+                </template>
               </td>
             </tr>
           </table>
@@ -902,8 +1011,8 @@
           <!-- button part -->
           <div class="dright">
             <template v-if="round.usebutton">
-
-              <fbtn r="1" :class="{main:races.length>0}" @click="answer(2)">答案揭曉</fbtn>
+              <fbtn r="1" @click="problemStart(3000, 2)">重新搶答</fbtn>
+              <fbtn r="1" class="main" @click="answer(2)">答案揭曉</fbtn>
               <!-- answer button for 搶答 -->
             </template>
           </div>
