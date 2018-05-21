@@ -201,7 +201,7 @@ function Round(contest, viewKey, io) {
                     socket.emit(actions.showinfo, {
                         content: "登入成功!",
                         backgroundColor: colors.ok,
-                        description: '比賽即將開始，您登入的組別是：\n第' + (team.no+1) + '組\n'
+                        description: '比賽即將開始，您登入的組別是：\n第' + (team.no + 1) + '組\n'
                     })
                     return;
                 }
@@ -444,7 +444,9 @@ function Round(contest, viewKey, io) {
             room_member.emit(actions.race, me.raceTeams);
             me.state.raceStartTime = new Date().getTime();
         }
-        room.emit(actions.racestart, ms);
+        if (!me.state.problem.placeholder)
+            room.emit(actions.racestart, ms);
+        else room_member.emit(actions.racestart, ms)
     }
 
     this.race = function (no, answer) {
@@ -493,16 +495,17 @@ function Round(contest, viewKey, io) {
         if (data == null) return; // 搶答
 
         // finding the team with no answer
-        for (var i in me.onlineTeams) {
-            if (!data.some(reply => reply.team == i)) {
-                data.push({
-                    correct: false,
-                    team: i,
-                    message: '下次再加油~',
-                    score: 0
-                })
+        if (!me.state.problem.placeholder)
+            for (var i in me.onlineTeams) {
+                if (!data.some(reply => reply.team == i)) {
+                    data.push({
+                        correct: false,
+                        team: i,
+                        message: '下次再加油~',
+                        score: 0
+                    })
+                }
             }
-        }
 
         me.state.page = "answered";
 
