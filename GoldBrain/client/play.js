@@ -151,8 +151,9 @@ var app = new Vue({
         raceAnswerWrong() {
             this.page = "problem";
             onProblemTimeout = null;
-            if (this.currentScore > 2)
-                this.currentScore -= 2;
+
+            this.currentScore -= app.problemc.scorereduce;
+            if (this.currentScore < 0) this.currentScore = 0
 
         },
 

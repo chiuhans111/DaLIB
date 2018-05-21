@@ -1022,80 +1022,79 @@
 
           <div class="center-text">
             <button @click="goRound()">返回場次</button>
-            <div style="margin:auto; max-width:90%; overflow: auto;">
 
-              <table class="table-space" style="margin-left:200px; position:relative; left:50%; transform:translate(-50%,0); ">
-                <thead>
-                  <tr>
-                    <td rowspan="2" class="rborder">
-                      <h3>隊伍</h3>
+
+            <table class="table-space" style="position:relative; left:50%; transform:translate(-50%,0); ">
+              <thead>
+                <tr>
+                  <td rowspan="2" class="rborder">
+                    <h3>隊伍</h3>
+                  </td>
+                  <td rowspan="2">
+                    <h3>總分</h3>
+                  </td>
+
+                  <template v-for="round in content.rounds">
+                    <td colspan="2">
+                      <h3>{{round.name.trim()}}</h3>
                     </td>
-                    <td rowspan="2">
-                      <h3>總分</h3>
+                  </template>
+                </tr>
+                <tr>
+                  <template v-for="round in content.rounds">
+                    <td>
+                      得分
                     </td>
+                    <td>
+                      時間
+                    </td>
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
 
-                    <template v-for="round in content.rounds">
-                      <td colspan="2">
-                        <h3>{{round.name.trim()}}</h3>
-                      </td>
-                    </template>
-                  </tr>
-                  <tr>
-                    <template v-for="round in content.rounds">
-                      <td>
-                        得分
-                      </td>
-                      <td>
-                        時間
-                      </td>
-                    </template>
-                  </tr>
-                </thead>
-                <tbody>
-
-                  <template v-for="(team,i) in rank.all">
-                    <tr :class="{
+                <template v-for="(team,i) in rank.all">
+                  <tr :class="{
                     first: team.rank==0,
                     second: team.rank==1,
                     third: team.rank==2,
                     same: team.type==1,
                     out: team.round&lt;round
                 }">
-                      <td class="number rborder" style="position:relative; width :auto; font-size:1em">
-                        <img height="64px" v-if="team.rank==0" style="
+                    <td class="number rborder" style="position:relative; width :auto; font-size:1em">
+                      <img height="64px" v-if="team.rank==0" style="
                         position: absolute; 
                         left: -96px; 
                         top: 50%;
                         transform:translate(0, -50%);
                       " src="./assets/win.svg" alt="">
 
-                        <p class="title-small">
-                          {{team.name}}
-                        </p>
-                      </td>
-                      <td>
-                        <h2>
-                          {{team.score}}
-                          <span class="title-small">分</span>
-                        </h2>
-                      </td>
-                      <template v-for="(round,no) in content.rounds">
-                        <template v-if="team.round>=no">
+                      <p class="title-small">
+                        {{team.name}}
+                      </p>
+                    </td>
+                    <td>
+                      <h2>
+                        {{team.score}}
+                        <span class="title-small">分</span>
+                      </h2>
+                    </td>
+                    <template v-for="(round,no) in content.rounds">
+                      <template v-if="team.round>=no">
 
-                          <td>
-                            {{isNaN(team.scores[no])?'':team.scores[no]+' 分'}}
-                          </td>
-                          <td :title="team.time[no]">
-                            {{isNaN(team.time[no])?'':Math.round(team.time[no])+' ms'}}
-                          </td>
-                        </template>
+                        <td>
+                          {{isNaN(team.scores[no])?'':team.scores[no]+' 分'}}
+                        </td>
+                        <td :title="team.time[no]">
+                          {{isNaN(team.time[no])?'':Math.round(team.time[no])+' ms'}}
+                        </td>
                       </template>
-                    </tr>
+                    </template>
+                  </tr>
 
-                  </template>
-                </tbody>
-              </table>
-            </div>
+                </template>
+              </tbody>
+            </table>
             <button @click="goRound()">返回場次</button>
             <button style="color:red" @click="logout()">結束比賽</button>
           </div>

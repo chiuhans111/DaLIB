@@ -359,6 +359,9 @@
                                                     <v-flex sm6 class="mr-5" v-if="!content.rounds[round].problems[problem].placeholder">
                                                         <v-text-field label="得分" v-model="content.rounds[round].problems[problem].score" type="number" suffix="分"></v-text-field>
                                                     </v-flex>
+                                                    <v-flex sm6 class="mr-5" v-if="!content.rounds[round].problems[problem].placeholder">
+                                                        <v-text-field label="遞減" v-model="content.rounds[round].problems[problem].scorereduce" type="number" suffix="分"></v-text-field>
+                                                    </v-flex>
                                                     <v-flex sm6>
                                                         <v-text-field label="時間" v-model="content.rounds[round].problems[problem].timeout" type="number" suffix="秒"></v-text-field>
                                                     </v-flex>
@@ -627,6 +630,7 @@
                 var CurrentRound = null;
                 var CurrentProblem = null;
                 var defaultScore = 3;
+                var defaultScoreReduce = 0;
 
                 function matchKey(content, key) {
                     var regex = "^\\s*" + key + "\\s*[：:]\\s*(.*)\\s*$";
@@ -635,6 +639,8 @@
 
 
                 function newRound() {
+                    defaultScore = 3;
+                    defaultScoreReduce = 0;
                     CurrentRound = sampleContest().rounds[0];
                     CurrentRound.problems = [];
                     CurrentRound.players = data.content.teams.length;
@@ -646,6 +652,7 @@
                     CurrentProblem.choice = [];
                     CurrentRound.problems.push(CurrentProblem);
                     CurrentProblem.score = defaultScore
+                    CurrentProblem.scorereduce = defaultScoreReduce
                 }
 
                 var inContent = false;
@@ -667,6 +674,7 @@
 
                     var choice = line.match(/^\s*[（\(]([A-Za-zＡ-Ｚａ-ｚ\s]+)[）\)]\s*(.+)\s*$/);
                     var score = line.match(/^配分：(\d+)$/);
+                    var scorereduce = line.match(/^遞減：(\d+)$/);
 
 
                     var matched = true;
@@ -703,6 +711,8 @@
                         CurrentRound.skippable = true;
                     } else if (score) {
                         defaultScore = +score[1]
+                    } else if (scorereduce) {
+                        defaultScoreReduce = +scorereduce[1]
                     } else {
                         if (CurrentProblem)
                             if (CurrentProblem.choice.length == 0)

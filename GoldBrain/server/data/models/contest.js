@@ -44,6 +44,7 @@ exports.schema = new Schema({
                         description: String // 原因
                     },
                     score: Number, // 得分
+                    scorereduce: Number, // 遞減
                     placeholder: Boolean // 此題為空填(倒數)用
                 }
             ],
@@ -87,6 +88,7 @@ exports.schema = new Schema({
  * @property {Number} timeout
  * @property {Answer} answer
  * @property {Number} score
+ * @property {Number} scorereduce
  * @property {Boolean} placeholder
  * 
  * @typedef {Object} Round
