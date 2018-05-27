@@ -1,5 +1,6 @@
 member
 ======
+main task:
 * create contest
 * edit contest content
 
