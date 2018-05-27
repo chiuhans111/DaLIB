@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1d203095-8577-453e-a73d-e565bb99eaaa}</ProjectGuid>
+    <ProjectHome />
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile>app.js</StartupFile>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <LastActiveSolutionConfig>Debug|Any CPU</LastActiveSolutionConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Content Include="index.html" />
+    <Content Include="package.json" />
+    <Content Include="readme.md" />
+    <Compile Include="app.js" />
+    <Compile Include="test.js" />
+    <Compile Include="webpack.config.js" />
+    <Compile Include="Abandoned_code\admin_team.js" />
+    <Compile Include="Abandoned_code\api.js" />
+    <Compile Include="Abandoned_code\apitool.js" />
+    <Compile Include="Abandoned_code\crud.js" />
+    <Compile Include="Abandoned_code\objapi.js" />
+    <Compile Include="Abandoned_code\operator.js" />
+    <Compile Include="Abandoned_code\team.js" />
+    <Content Include="client\mainStyle.css" />
+    <Compile Include="client\admin.js" />
+    <Compile Include="client\general.js" />
+    <Compile Include="client\play.js" />
+    <Compile Include="client\socketTest.js" />
+    <Content Include="public\admin.html" />
+    <Content Include="public\dev.html" />
+    <Content Include="public\index.html" />
+    <Content Include="public\play1.html" />
+    <Content Include="public\play.html" />
+    <Content Include="public\student.html" />
+    <Content Include="public\webapp.html" />
+    <Content Include="server\readme.md" />
+    <Compile Include="server\crypt.js" />
+    <Compile Include="server\main.js" />
+    <Content Include="參考\demo.txt" />
+    <Content Include="參考\題目格式.txt" />
+    <Compile Include="client\admin\admin.js" />
+    <Compile Include="client\admin\rules.js" />
+    <Compile Include="client\lib\bootstrap.js" />
+    <Compile Include="client\lib\vuetify.js" />
+    <Compile Include="client\play\play.js" />
+    <Compile Include="client\play\ranking.js" />
+    <Content Include="client\web\daan.styl" />
+    <Compile Include="client\web\dog.js" />
+    <Compile Include="client\web\palette.js" />
+    <Content Include="GRAPHICS\page_design\pageAPP_INFO 2.jpg" />
+    <Content Include="GRAPHICS\page_design\pageAPP_INFO.jpg" />
+    <Content Include="GRAPHICS\page_design\page問題.jpg" />
+    <Content Include="GRAPHICS\page_design\page問題_公布答案.jpg" />
+    <Content Include="GRAPHICS\page_design\page場次.jpg" />
+    <Content Include="GRAPHICS\page_design\page搶答 倒數.jpg" />
+    <Content Include="GRAPHICS\page_design\page搶答.jpg" />
+    <Content Include="GRAPHICS\page_design\play_designAPP_INFO.jpg" />
+    <Content Include="public\assets\background.png" />
+    <Content Include="public\assets\background2.png" />
+    <Content Include="public\assets\banner.png" />
+    <Content Include="public\assets\daanTree.png" />
+    <Content Include="public\assets\icon.png" />
+    <Content Include="public\assets\background.jpg" />
+    <Content Include="public\assets\background2.jpg" />
+    <Content Include="public\assets\app-store-badge.svg" />
+    <Content Include="public\assets\chaiLogo.svg" />
+    <Content Include="public\assets\daangoldbrain.svg" />
+    <Content Include="public\assets\google-play-badge.svg" />
+    <Content Include="public\assets\icon.svg" />
+    <Content Include="public\assets\win.svg" />
+    <Compile Include="public\dist\admin.js" />
+    <Compile Include="public\dist\general.js" />
+    <Compile Include="public\dist\play.js" />
+    <Compile Include="public\dist\socketTest.js" />
+    <Content Include="public\sample\contest.json" />
+    <Compile Include="public\sample\contest.js" />
+    <Compile Include="public\socket.io\socket.io.js" />
+    <Content Include="public\style\landing.css" />
+    <Content Include="public\style\main.css" />
+    <Content Include="public\style\normalize.css" />
+    <Content Include="public\style\vuetify.min.css" />
+    <Content Include="public\test\member.html" />
+    <Content Include="public\test\socketTest.html" />
+    <Content Include="public\test\test.json" />
+    <Content Include="public\assets\SVG\圖層 2.svg" />
+    <Content Include="public\page\member\create.html" />
+    <Content Include="public\page\member\edit.html" />
+    <Content Include="public\page\member\print.html" />
+    <Content Include="public\page\member\score.html" />
+    <Content Include="public\page\member\sheet.html" />
+    <Content Include="public\page\member\background2.png" />
+    <Compile Include="server\config\config.js" />
+    <Compile Include="server\data\base.js" />
+    <Compile Include="server\data\dog.js" />
+    <Compile Include="server\data\qrcode.js" />
+    <Compile Include="server\routes\admin.js" />
+    <Compile Include="server\routes\api.js" />
+    <Compile Include="server\routes\member.js" />
+    <Compile Include="server\routes\qrcode.js" />
+    <Compile Include="server\routes\team.js" />
+    <Content Include="server\socket\readme.md" />
+    <Compile Include="server\socket\io.js" />
+    <Compile Include="server\webpage\web.js" />
+    <Compile Include="server\data\api\admin.js" />
+    <Compile Include="server\data\api\contest.js" />
+    <Compile Include="server\data\api\round.js" />
+    <Compile Include="server\data\models\contest.js" />
+    <Compile Include="server\socket\round\actions.js" />
+    <Compile Include="server\socket\round\colors.js" />
+    <Compile Include="server\socket\round\round.js" />
+    <Compile Include="server\socket\round\roundManager.js" />
+    <Compile Include="server\socket\round\timer.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Abandoned_code" />
+    <Folder Include="client" />
+    <Folder Include="client\admin" />
+    <Folder Include="client\lib" />
+    <Folder Include="client\play" />
+    <Folder Include="client\web" />
+    <Folder Include="Dalib_GoldBrain" />
+    <Folder Include="Dalib_GoldBrain\Dalib_GoldBrain" />
+    <Folder Include="GRAPHICS" />
+    <Folder Include="GRAPHICS\page_design" />
+    <Folder Include="public" />
+    <Folder Include="public\assets" />
+    <Folder Include="public\assets\SVG" />
+    <Folder Include="public\audio" />
+    <Folder Include="public\dist" />
+    <Folder Include="public\page" />
+    <Folder Include="public\page\member" />
+    <Folder Include="public\sample" />
+    <Folder Include="public\socket.io" />
+    <Folder Include="public\style" />
+    <Folder Include="public\test" />
+    <Folder Include="server" />
+    <Folder Include="server\config" />
+    <Folder Include="server\data" />
+    <Folder Include="server\data\api" />
+    <Folder Include="server\data\models" />
+    <Folder Include="server\routes" />
+    <Folder Include="server\socket" />
+    <Folder Include="server\socket\round" />
+    <Folder Include="server\webpage" />
+    <Folder Include="參考" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
