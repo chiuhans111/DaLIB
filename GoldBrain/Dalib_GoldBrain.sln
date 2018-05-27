@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2018
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Dalib_GoldBrain", "Dalib_GoldBrain.njsproj", "{1D203095-8577-453E-A73D-E565BB99EAAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1D203095-8577-453E-A73D-E565BB99EAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D203095-8577-453E-A73D-E565BB99EAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D203095-8577-453E-A73D-E565BB99EAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D203095-8577-453E-A73D-E565BB99EAAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9522CD49-4223-4712-8391-E9E477D46BF1}
+	EndGlobalSection
+EndGlobal
